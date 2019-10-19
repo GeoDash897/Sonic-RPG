@@ -62,6 +62,9 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
         if (e.getKeyCode() == e.VK_LEFT ) {           
             getReleasedInput(e);
         }
+        if (e.getKeyCode() == e.VK_Z ) {           
+            getReleasedInput(e);
+        }
     }
     @Override
     public void keyPressed(KeyEvent e) {

@@ -31,6 +31,9 @@ public class OverWorldAction extends Sonic {
     private static int waitTimer = 0;
     private static int leftPress = 0;
     private static int rightPress = 0;
+    private static int zPress = 0;
+    private static final double AIR = 0.09375;
+    private static final double GRAVITY = 0.21875;
     private static final double ACCELERATION = 0.046875;
     private static final double DECELERATION = 0.5;
     private static final double FRICTION = 0.046875;
@@ -73,18 +76,21 @@ public class OverWorldAction extends Sonic {
             middleRight = new Rectangle(xDrawCenterSonic,ySpriteCenterSonic+32,44,4); 
         }
         topLeft = new Rectangle(xDrawCenterSonic-28,ySpriteCenterSonic-80,4,80);       
-        topRight = new Rectangle(xDrawCenterSonic+28,ySpriteCenterSonic-80,4,80);                  
+        topRight = new Rectangle(xDrawCenterSonic+28,ySpriteCenterSonic-80,4,80);   
+        xSpeed = groundSpeed*Math.cos(angle);
+        ySpeed = groundSpeed*-Math.sin(angle);
         if(rightPress == 1) {
             rightPress();
         }
         else if(leftPress == 1) {
             leftPress();
         }
-        else if(leftPress == 0 && rightPress == 0 && angle == 0) {
-            groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
+        else if(zPress == 1) {
+            zPress();
         }
-        xSpeed = groundSpeed*Math.cos(angle);
-        ySpeed = groundSpeed*-Math.sin(angle);
+        else if(leftPress == 0 && rightPress == 0 && angle == 0 && zPress == 0) {
+            groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
+        }       
         if(rightPress == 0 && leftPress == 0) {
             waitTimer++;
             if(waitTimer >= 998 && waitTimer < 1000) {
@@ -360,6 +366,9 @@ public class OverWorldAction extends Sonic {
             }            
         }        
     }
+    public void zPress() {
+        ySpeed = -JUMP;
+    }
     public int getXCenterSonic() {
         return xDrawCenterSonic;
     }
@@ -381,6 +390,9 @@ public class OverWorldAction extends Sonic {
             animation.setAnimationNumber(0);
             leftPress = 0;
         }
+        if(e.getKeyCode() == e.VK_LEFT) {
+            zPress = 0;
+        }
     }
     @Override
     public void keyPressed(KeyEvent e) {
@@ -399,11 +411,10 @@ public class OverWorldAction extends Sonic {
             yDrawCenterSonic+=4;
         }
         if (e.getKeyCode() == e.VK_Z ) {
-            yDrawCenterSonic = 300;
-            xDrawCenterSonic = 1000;
+            zPress = 1;
         }
         if (e.getKeyCode() == e.VK_X ) {
-              
+
         }
         if (e.getKeyCode() == e.VK_ENTER) {
             
