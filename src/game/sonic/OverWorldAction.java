@@ -347,9 +347,6 @@ public class OverWorldAction extends Sonic {
             animation = new Animation();
             animation.setAnimationNumber(13);
         }
-        if(mLCollide == 0) {
-            
-        }
         if(groundSpeed > 0) {
             groundSpeed -= DECELERATION;           
             if(groundSpeed <= 0) {
