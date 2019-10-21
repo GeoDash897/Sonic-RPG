@@ -300,8 +300,8 @@ public class OverWorldAction extends Sonic {
             if(xMiddleLeft > checkBoundary.getXRef() && xMiddleLeft < checkBoundary.getXRef()+72) {//Checks if Sonic is with 64x64 tile 
                 //(before calculations
                 Rectangle collisionPixel = checkBoundary.getPixelBox(0);
-                int x = (int) collisionPixel.getX() + 70;
-                if(middleLeft.intersects(collisionPixel) && middleLeft.getX() < x && rightPress == 0) {
+                //int x = (int) collisionPixel.getX() + 70;
+                if(middleLeft.intersects(collisionPixel) && rightPress == 0) {
                     groundSpeed = 0;
                     mLCollide = 1;
                     break;
