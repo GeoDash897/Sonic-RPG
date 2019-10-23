@@ -11,7 +11,6 @@ import java.util.ArrayList;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
-//memes
 public class OverWorld extends Game {;
     public static ArrayList<Tile> environmentTiles = new ArrayList<Tile>();
     public void standard(Graphics2D g2) {
