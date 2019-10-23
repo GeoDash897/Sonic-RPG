@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  * @author GeoSonicDash
  */
 public class OverWorldAction extends Sonic {
-    private static int xDrawCenterSonic = 1000; //center for drawing the picture
+    private static int xDrawCenterSonic = 500; //center for drawing the picture
     private static int yDrawCenterSonic = 300; //center for drawing the picture
     private static int ySpriteCenterSonic; // Center of the actual sprite (basis for positions of collision boxes//The X Position for the center of the actual sprite is the same as xDrawCenterSonic   
     private static double groundSpeed = 0;
@@ -27,6 +27,8 @@ public class OverWorldAction extends Sonic {
     private static double xSpeed = 0;
     private static double ySpeed = 0; 
     private static int slope = 0;
+    private static boolean ground = true;
+    private static int jump = 0;
     private static int direction = 1;
     private static int waitTimer = 0;
     private static int leftPress = 0;
@@ -61,8 +63,17 @@ public class OverWorldAction extends Sonic {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
             Logger.getLogger(OverWorldAction.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        ySpriteCenterSonic = yDrawCenterSonic - 20;    
+        }*/  
+        ySpriteCenterSonic = yDrawCenterSonic - 20;
+        if(bLCollide == 1 && bRCollide == 1) {
+            ground = true;
+        }
+        else if((bLCollide == 1 && bRCollide == 0) || (bLCollide == 0 && bRCollide == 1)) {
+            ground = true;
+        }
+        else if(bLCollide == 0 && bRCollide == 0) {
+            ground = false;
+        }
         if(collideWithSlope == 0) {
             bottomLeft = new Rectangle(xDrawCenterSonic-28,ySpriteCenterSonic,4,84);    
             bottomRight = new Rectangle(xDrawCenterSonic+28,ySpriteCenterSonic,4,84);
@@ -76,19 +87,34 @@ public class OverWorldAction extends Sonic {
             middleRight = new Rectangle(xDrawCenterSonic,ySpriteCenterSonic+32,44,4); 
         }
         topLeft = new Rectangle(xDrawCenterSonic-28,ySpriteCenterSonic-80,4,80);       
-        topRight = new Rectangle(xDrawCenterSonic+28,ySpriteCenterSonic-80,4,80);   
-        xSpeed = groundSpeed*Math.cos(angle);
-        ySpeed = groundSpeed*-Math.sin(angle);
+        topRight = new Rectangle(xDrawCenterSonic+28,ySpriteCenterSonic-80,4,80);       
+        collisionCheck(g2);
+        if(!ground) {           
+            if (ySpeed < 0 && ySpeed > -4)
+            {
+                if (Math.abs(xSpeed) >= 0.125) {
+                    xSpeed = xSpeed * 0.96875;
+                }
+            }   
+            ySpeed += GRAVITY;
+            if(ySpeed > 16) {
+                ySpeed = 16;
+            }
+        }
+        else if(ground) {
+            xSpeed = groundSpeed*Math.cos(angle);
+            ySpeed = groundSpeed*-Math.sin(angle);    
+        }  
         if(rightPress == 1) {
             rightPress();
         }
-        else if(leftPress == 1) {
+        if(leftPress == 1) {
             leftPress();
         }
-        else if(zPress == 1) {
+        if(zPress == 1) {
             zPress();
-        }
-        else if(leftPress == 0 && rightPress == 0 && angle == 0 && zPress == 0) {
+        }    
+        if(leftPress == 0 && rightPress == 0 && angle == 0 && zPress == 0 && ground) {
             groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
         }       
         if(rightPress == 0 && leftPress == 0) {
@@ -119,8 +145,9 @@ public class OverWorldAction extends Sonic {
         g2.drawString("angle: "+angle,100,475); 
         g2.drawString("collideWithSlope: "+collideWithSlope,200,175);
         g2.drawString("yDrawCenterSonic: "+ySpriteCenterSonic,200,200);
-        collisionCheck(g2);
-        drawCollisionBoxes(g2);              
+        g2.drawString("ground: "+ground,200,225);
+        g2.drawString("jump: "+jump,200,250);
+        drawCollisionBoxes(g2);        
         xDrawCenterSonic+= (int) xSpeed;
         yDrawCenterSonic+= (int) ySpeed;
     }
@@ -225,7 +252,7 @@ public class OverWorldAction extends Sonic {
                 }
             }
         }
-        for(Tile checkBoundary: environmentTiles) {
+        for(Tile checkBoundary : environmentTiles) {
             if(ySpeed >= 0) {
                 if(checkBoundary.getAngle() != 0) {              
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+64 && 
@@ -329,19 +356,24 @@ public class OverWorldAction extends Sonic {
         else {
             animation = new Animation();
             animation.setAnimationNumber(14);
-        }  
-        if (groundSpeed < 0) {        
-            groundSpeed += DECELERATION;
-            if (groundSpeed >= 0) {
-                groundSpeed = 0.5;   
-            }                
         }
-        else if (groundSpeed < TOP) {        
-            groundSpeed += ACCELERATION;
-            if (groundSpeed >= TOP) {
-                groundSpeed = TOP;    
-            }               
+        if(!ground) {
+            xSpeed += AIR;
         }
+        else if(ground) {
+            if (groundSpeed < 0) {        
+                groundSpeed += DECELERATION;
+                if (groundSpeed >= 0) {
+                    groundSpeed = 0.5;   
+                }                
+            }
+            else if (groundSpeed < TOP) {        
+                groundSpeed += ACCELERATION;
+                if (groundSpeed >= TOP) {
+                    groundSpeed = TOP;    
+                }               
+            }    
+        }       
     }
     public void leftPress() {
         direction = 0;
@@ -353,21 +385,27 @@ public class OverWorldAction extends Sonic {
             animation = new Animation();
             animation.setAnimationNumber(13);
         }
-        if(groundSpeed > 0) {
-            groundSpeed -= DECELERATION;           
-            if(groundSpeed <= 0) {
-               groundSpeed = -0.5; 
-            }           
+        if(!ground) {
+            xSpeed -= AIR;
         }
-        else if(groundSpeed > -TOP) {   
-            groundSpeed -= ACCELERATION;
-            if(groundSpeed <= -TOP) {
-               groundSpeed = -TOP; 
+        else if(ground) {
+            if(groundSpeed > 0) {
+                groundSpeed -= DECELERATION;           
+                if(groundSpeed <= 0) {
+                   groundSpeed = -0.5; 
+                }           
+            }
+            else if(groundSpeed > -TOP) {   
+                groundSpeed -= ACCELERATION;
+                if(groundSpeed <= -TOP) {
+                   groundSpeed = -TOP; 
+                }            
             }            
-        }        
+        }       
     }
     public void zPress() {
         ySpeed = -JUMP;
+        ground = false;
     }
     public int getXCenterSonic() {
         return xDrawCenterSonic;
@@ -390,8 +428,11 @@ public class OverWorldAction extends Sonic {
             animation.setAnimationNumber(0);
             leftPress = 0;
         }
-        if(e.getKeyCode() == e.VK_LEFT) {
+        if(e.getKeyCode() == e.VK_Z) {
             zPress = 0;
+            if(ySpeed < -4) {
+                ySpeed = -4;
+            }
         }
     }
     @Override
@@ -408,7 +449,7 @@ public class OverWorldAction extends Sonic {
             yDrawCenterSonic-=4;
         }
         if (e.getKeyCode() == e.VK_DOWN) {
-            yDrawCenterSonic+=4;
+            
         }
         if (e.getKeyCode() == e.VK_Z ) {
             zPress = 1;
