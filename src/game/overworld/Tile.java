@@ -83,4 +83,8 @@ public class Tile {
     public int getDirection() {
         return direction;
     }
+    @Override
+    public String toString() {
+        return "Stats of tile Sonic is colliding with- xRef: "+xRef+", yRef: "+yRef+", angle: "+angle+", direction: "+direction;
+    }
 }
