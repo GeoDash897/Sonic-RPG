@@ -300,10 +300,10 @@ public class OverWorldAction extends Sonic {
         if(pixelyL == pixelyR) {
             angle = 0;
         }
-        if(tileDirection == 0) {
+        if(tileDirection == 0 && angle != 0) {
             groundSpeed -= SLOPE*(-Math.sin(angle));    
         }
-        else if(tileDirection == 1) {
+        else if(tileDirection == 1 && angle != 0) {
             groundSpeed -= SLOPE*(Math.sin(angle));    
         }        
         g2.drawString("pixelyL:"+pixelyL,500,100);
@@ -358,7 +358,9 @@ public class OverWorldAction extends Sonic {
             animation.setAnimationNumber(14);
         }
         if(!ground) {
-            xSpeed += AIR;
+            if(xSpeed < 4) {
+                xSpeed += AIR;    
+            }            
         }
         else if(ground) {
             if (groundSpeed < 0) {        
@@ -386,7 +388,9 @@ public class OverWorldAction extends Sonic {
             animation.setAnimationNumber(13);
         }
         if(!ground) {
-            xSpeed -= AIR;
+            if(xSpeed > -4) {
+                xSpeed -= AIR;    
+            }
         }
         else if(ground) {
             if(groundSpeed > 0) {
@@ -428,12 +432,12 @@ public class OverWorldAction extends Sonic {
             animation.setAnimationNumber(0);
             leftPress = 0;
         }
-        if(e.getKeyCode() == e.VK_Z) {
-            zPress = 0;
+        if(e.getKeyCode() == e.VK_Z) {          
             if(ySpeed < -4) {
                 ySpeed = -4;
             }
         }
+        zPress = 0;
     }
     @Override
     public void keyPressed(KeyEvent e) {
