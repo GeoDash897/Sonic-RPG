@@ -217,7 +217,9 @@ public class OverWorldAction extends Sonic {
                 if(checkBoundary.getAngle() != 0) {               
                     if(xBottomRight >= checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+64 && 
                     yBottomRight >= checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()){//Checks if Sonic is with 64x64 tile 
-                        //(before calculations                 
+                        //(before calculations     
+                        bRCollide = 1;     
+                        ySpeed = 0;
                         collideWithSlope = 1;
                         heightBottomRightIndex = (int) Math.abs(((xBottomRight - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
                         //on sensor's x position relative to the tile's xRef (abs to avoid negatives)                   
@@ -227,8 +229,6 @@ public class OverWorldAction extends Sonic {
                         //to screen
                         angleR = checkBoundary.getAngle();  
                         tileDirection = checkBoundary.getDirection();
-                        bRCollide = 1;
-                        ySpeed = 0;
                         break;                         
                     }
                     else {
@@ -240,13 +240,13 @@ public class OverWorldAction extends Sonic {
                         yBottomRight > checkBoundary.getYRef() && yBottomRight < checkBoundary.getYRef()+100) {
                         //the -4 is the offset (since the block is 16x16 the Sensor is not technically within the tile so the -4 extends it to 16x17 
                         //instead)
+                        bRCollide = 1;     
+                        ySpeed = 0;
+                        collideWithSlope = 0;
                         g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 575);
                         g2.drawString(checkBoundary.toString(),1000,525);
                         flatBoxRect = checkBoundary.getPixelBox(0);
-                        bRCollide = 1;
-                        ySpeed = 0;
-                        pixelyR = (checkBoundary.getYRef());
-                        collideWithSlope = 0;
+                        pixelyR = (checkBoundary.getYRef());                        
                         break;
                     }               
                 }
@@ -260,9 +260,11 @@ public class OverWorldAction extends Sonic {
                 if(checkBoundary.getAngle() != 0) {              
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+64 && 
                            yBottomLeft > checkBoundary.getYRef()-4 && ySpriteCenterSonic < checkBoundary.getYRef()) {//Checks if Sonic is with 64x64 tile 
-                        g2.drawString(checkBoundary.toString(),1000,500);
-                        //(before calculations                   
+                        bLCollide = 1;     
+                        ySpeed = 0;
                         collideWithSlope = 1;
+                        g2.drawString(checkBoundary.toString(),1000,500);
+                        //(before calculations                                          
                         heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
                         //on sensor's x position relative to the tile's xRef (abs to avoid negatives)
                         g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 550);
@@ -270,8 +272,6 @@ public class OverWorldAction extends Sonic {
                         //to screen    
                         angleL = checkBoundary.getAngle();      
                         tileDirection = checkBoundary.getDirection();
-                        bLCollide = 1;     
-                        ySpeed = 0;
                         break;
                     } 
                     else {
@@ -283,13 +283,13 @@ public class OverWorldAction extends Sonic {
                         yBottomLeft > checkBoundary.getYRef() && yBottomLeft < checkBoundary.getYRef()+100) {
                         //the -4 is the offset (since the block is 16x16 the Sensor is not technically within the tile so the -4 extends it to 16x17 
                         //instead) 
+                        bLCollide = 1;     
+                        ySpeed = 0;
+                        collideWithSlope = 0; 
                         g2.drawString(checkBoundary.toString(),1000,500);
                         g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 550);
-                        bLCollide = 1;
-                        ySpeed = 0;
                         flatBoxRect = checkBoundary.getPixelBox(0);
-                        pixelyL = (checkBoundary.getYRef());
-                        collideWithSlope = 0;                   
+                        pixelyL = (checkBoundary.getYRef());                                          
                         break;
                     }
                     else {
