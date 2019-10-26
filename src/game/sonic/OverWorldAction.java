@@ -28,6 +28,7 @@ public class OverWorldAction extends Sonic {
     private static double ySpeed = 0; 
     private static int slope = 0;
     private static boolean ground = true;
+    private static int ledge = -1;
     private static int jump = 0;
     private static int direction = 1;
     private static int waitTimer = 0;
@@ -56,7 +57,7 @@ public class OverWorldAction extends Sonic {
     private static Rectangle bottomRight;
     private static Rectangle middleLeft;
     private static Rectangle middleRight;
-    private Animation animation;
+    private Animation animation = new Animation();
     private Inventory inventory;
     public void standard(Graphics2D g2) {  
         /*try {
@@ -67,12 +68,14 @@ public class OverWorldAction extends Sonic {
         ySpriteCenterSonic = yDrawCenterSonic - 20;
         if(bLCollide == 1 && bRCollide == 1) {
             ground = true;
+            ledge = -1;
         }
         else if((bLCollide == 1 && bRCollide == 0) || (bLCollide == 0 && bRCollide == 1)) {
             ground = true;
         }
         else if(bLCollide == 0 && bRCollide == 0) {
             ground = false;
+            ledge = -1;
         }
         if(collideWithSlope == 0) {
             bottomLeft = new Rectangle(xDrawCenterSonic-28,ySpriteCenterSonic,4,84);    
@@ -117,10 +120,12 @@ public class OverWorldAction extends Sonic {
         if(leftPress == 0 && rightPress == 0 && angle == 0 && zPress == 0 && ground) {
             groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
         }       
-        if(rightPress == 0 && leftPress == 0) {
+        if(rightPress == 0 && leftPress == 0 && groundSpeed == 0 && ground == true && ledge == -1) {
             waitTimer++;
-            if(waitTimer >= 998 && waitTimer < 1000) {
-                animation = new Animation();
+            if(waitTimer < 988) {
+                animation.setAnimationNumber(0);                
+            }
+            else if(waitTimer >= 998 && waitTimer < 1000) {
                 animation.setAnimationNumber(1);
             }
             else if(waitTimer >= 1000) {
@@ -129,6 +134,20 @@ public class OverWorldAction extends Sonic {
         }
         else {
             waitTimer = 0;
+        }
+        if(Math.abs(groundSpeed) > 0 && Math.abs(groundSpeed) < 6) {           
+            animation.setAnimationNumber(2);
+        }
+        else if(Math.abs(groundSpeed) >= 6) {
+            animation.setAnimationNumber(3);
+        }
+        else if(ledge == 0) {
+            animation = new Animation();
+            animation.setAnimationNumber(4);
+        }
+        else if(ledge == 1) {
+            animation = new Animation();
+            animation.setAnimationNumber(5);
         }
         //Displaying variables here
         g2.drawString("rightPress: "+rightPress,100,175);
@@ -147,6 +166,7 @@ public class OverWorldAction extends Sonic {
         g2.drawString("yDrawCenterSonic: "+ySpriteCenterSonic,200,200);
         g2.drawString("ground: "+ground,200,225);
         g2.drawString("jump: "+jump,200,250);
+        g2.drawString("ledge: "+ledge,200,300);
         drawCollisionBoxes(g2);        
         xDrawCenterSonic+= (int) xSpeed;
         yDrawCenterSonic+= (int) ySpeed;
@@ -213,23 +233,25 @@ public class OverWorldAction extends Sonic {
         for(Tile checkBoundary: environmentTiles) {
             g2.setColor(Color.red);
             g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),64,4);
-            if(ySpeed >= 0) {
+            
                 if(checkBoundary.getAngle() != 0) {               
                     if(xBottomRight >= checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+64 && 
                     yBottomRight >= checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()){//Checks if Sonic is with 64x64 tile 
-                        //(before calculations     
-                        bRCollide = 1;     
-                        ySpeed = 0;
-                        collideWithSlope = 1;
-                        heightBottomRightIndex = (int) Math.abs(((xBottomRight - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
-                        //on sensor's x position relative to the tile's xRef (abs to avoid negatives)                   
-                        g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(heightBottomRightIndex), 1000, 575);
-                        g2.drawString(checkBoundary.toString(),1000,525);
-                        pixelyR = (checkBoundary.getYRef()+64-(checkBoundary.heightValues.get(heightBottomRightIndex)*4));//gets pixel's height relative
-                        //to screen
-                        angleR = checkBoundary.getAngle();  
-                        tileDirection = checkBoundary.getDirection();
-                        break;                         
+                        //(before calculations   
+                        if(ySpeed >= 0) {
+                            bRCollide = 1;     
+                            ySpeed = 0;
+                            collideWithSlope = 1;
+                            heightBottomRightIndex = (int) Math.abs(((xBottomRight - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
+                            //on sensor's x position relative to the tile's xRef (abs to avoid negatives)                   
+                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(heightBottomRightIndex), 1000, 575);
+                            g2.drawString(checkBoundary.toString(),1000,525);
+                            pixelyR = (checkBoundary.getYRef()+64-(checkBoundary.heightValues.get(heightBottomRightIndex)*4));//gets pixel's height relative
+                            //to screen
+                            angleR = checkBoundary.getAngle();  
+                            tileDirection = checkBoundary.getDirection();
+                        break;   
+                        }
                     }
                     else {
                         bRCollide = 0;
@@ -240,39 +262,42 @@ public class OverWorldAction extends Sonic {
                         yBottomRight > checkBoundary.getYRef() && yBottomRight < checkBoundary.getYRef()+100) {
                         //the -4 is the offset (since the block is 16x16 the Sensor is not technically within the tile so the -4 extends it to 16x17 
                         //instead)
-                        bRCollide = 1;     
-                        ySpeed = 0;
-                        collideWithSlope = 0;
-                        g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 575);
-                        g2.drawString(checkBoundary.toString(),1000,525);
-                        flatBoxRect = checkBoundary.getPixelBox(0);
-                        pixelyR = (checkBoundary.getYRef());                        
-                        break;
+                        if(ySpeed >= 0) {
+                            bRCollide = 1;     
+                            ySpeed = 0;
+                            collideWithSlope = 0;
+                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 575);
+                            g2.drawString(checkBoundary.toString(),1000,525);
+                            flatBoxRect = checkBoundary.getPixelBox(0);
+                            pixelyR = (checkBoundary.getYRef());                        
+                            break;    
+                        }                      
                     }               
                 }
                 else {
                     bRCollide = 0;
                 }
-            }
         }
         for(Tile checkBoundary : environmentTiles) {
-            if(ySpeed >= 0) {
+            
                 if(checkBoundary.getAngle() != 0) {              
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+64 && 
                            yBottomLeft > checkBoundary.getYRef()-4 && ySpriteCenterSonic < checkBoundary.getYRef()) {//Checks if Sonic is with 64x64 tile 
-                        bLCollide = 1;     
-                        ySpeed = 0;
-                        collideWithSlope = 1;
-                        g2.drawString(checkBoundary.toString(),1000,500);
-                        //(before calculations                                          
-                        heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
-                        //on sensor's x position relative to the tile's xRef (abs to avoid negatives)
-                        g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 550);
-                        pixelyL = (checkBoundary.getYRef()+64-(checkBoundary.heightValues.get(heightBottomLeftIndex)*4));//gets pixel's height relative                   
-                        //to screen    
-                        angleL = checkBoundary.getAngle();      
-                        tileDirection = checkBoundary.getDirection();
-                        break;
+                        if(ySpeed >= 0) {
+                            bLCollide = 1;     
+                            ySpeed = 0;
+                            collideWithSlope = 1;
+                            g2.drawString(checkBoundary.toString(),1000,500);
+                            //(before calculations                                          
+                            heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
+                            //on sensor's x position relative to the tile's xRef (abs to avoid negatives)
+                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 550);
+                            pixelyL = (checkBoundary.getYRef()+64-(checkBoundary.heightValues.get(heightBottomLeftIndex)*4));//gets pixel's height relative                   
+                            //to screen    
+                            angleL = checkBoundary.getAngle();      
+                            tileDirection = checkBoundary.getDirection();
+                            break;
+                        }
                     } 
                     else {
                         bLCollide = 0;
@@ -282,21 +307,22 @@ public class OverWorldAction extends Sonic {
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+64 && 
                         yBottomLeft > checkBoundary.getYRef() && yBottomLeft < checkBoundary.getYRef()+100) {
                         //the -4 is the offset (since the block is 16x16 the Sensor is not technically within the tile so the -4 extends it to 16x17 
-                        //instead) 
-                        bLCollide = 1;     
-                        ySpeed = 0;
-                        collideWithSlope = 0; 
-                        g2.drawString(checkBoundary.toString(),1000,500);
-                        g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 550);
-                        flatBoxRect = checkBoundary.getPixelBox(0);
-                        pixelyL = (checkBoundary.getYRef());                                          
+                        //instead) z
+                        if(ySpeed >= 0) {
+                            bLCollide = 1;     
+                            ySpeed = 0;
+                            collideWithSlope = 0; 
+                            g2.drawString(checkBoundary.toString(),1000,500);
+                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 550);
+                            flatBoxRect = checkBoundary.getPixelBox(0);
+                            pixelyL = (checkBoundary.getYRef());                                          
                         break;
+                        }
                     }
                     else {
                         bLCollide = 0;
                     }   
                 }
-            }
         }
         if(pixelyR > pixelyL && pixelyL != 0 && pixelyR != 0) {
             yDrawCenterSonic = pixelyL - 60;//Changes Sonic's yPosition   
@@ -348,12 +374,10 @@ public class OverWorldAction extends Sonic {
             }
         }      
         if(xDrawCenterSonic > (int) flatBoxRect.getX()+68 && bRCollide == 0 && bLCollide == 1 && leftPress == 0 && rightPress == 0 && groundSpeed == 0 && angle == 0) {
-            animation = new Animation();
-            animation.setAnimationNumber(5);
+            ledge = 1;
         }
-        if(xDrawCenterSonic < (int) flatBoxRect.getX()-4 && bRCollide == 1 && bLCollide == 0 && leftPress == 0 && rightPress == 0 && groundSpeed == 0 && angle ==  0) {
-            animation = new Animation();
-            animation.setAnimationNumber(4);
+        else if(xDrawCenterSonic < (int) flatBoxRect.getX()-4 && bRCollide == 1 && bLCollide == 0 && leftPress == 0 && rightPress == 0 && groundSpeed == 0 && angle ==  0) {
+            ledge = 0;
         }
     }
     public void rightPress() {
@@ -432,13 +456,9 @@ public class OverWorldAction extends Sonic {
     @Override
     public void keyReleased(KeyEvent e) {
         if(e.getKeyCode() == e.VK_RIGHT) {
-            animation = new Animation();
-            animation.setAnimationNumber(0);
             rightPress = 0;
         }
         if(e.getKeyCode() == e.VK_LEFT) {
-            animation = new Animation();
-            animation.setAnimationNumber(0);
             leftPress = 0;
         }
         if(e.getKeyCode() == e.VK_Z) {          

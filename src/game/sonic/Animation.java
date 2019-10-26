@@ -56,7 +56,12 @@ public class Animation extends Sonic {//This will control Sonic's animations
                 numberOfFrames = 30;
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
-                sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Walk_"+animationFrame+".png");
+                if(direction == 0) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Walk_"+animationFrame+".png");    
+                }
+                else if (direction == 1) {
+                   sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Walk_"+animationFrame+".png"); 
+                }               
                 break;
             case 3:
                 animationTimerFrameSet = 15;
@@ -130,6 +135,9 @@ public class Animation extends Sonic {//This will control Sonic's animations
     }
     public void setAnimationNumber(int newAnimation) {
         animationNumber = newAnimation;
+    }
+    public int getAnimationNumber() {
+        return animationNumber;
     }
     @Override
     public String toString() {
