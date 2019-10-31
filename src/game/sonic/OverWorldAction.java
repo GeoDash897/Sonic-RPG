@@ -136,20 +136,24 @@ public class OverWorldAction extends Sonic {
             waitTimer = 0;
         }
         if(Math.abs(xSpeed) > 0 && Math.abs(xSpeed) < 6 && jump == 0) {  
-            if(animation.getAnimationNumber() != 3) {
-                animation.setAnimationNumber(3);    
-            }           
+            if(animation.getAnimationNumber() != 2) {
+                animation.setAnimationNumber(2);    
+            }                         
         }
         else if(Math.abs(groundSpeed) >= 6) {
-            animation.setAnimationNumber(3);
+            if(animation.getAnimationNumber() != 3) {
+                animation.setAnimationNumber(3);    
+            }
         }
         else if(ledge == 0) {
-            animation = new Animation();
-            animation.setAnimationNumber(4);
+            if(animation.getAnimationNumber() != 4) {
+                animation.setAnimationNumber(4);    
+            }
         }
         else if(ledge == 1) {
-            animation = new Animation();
-            animation.setAnimationNumber(5);
+            if(animation.getAnimationNumber() != 5) {
+                animation.setAnimationNumber(5);    
+            }
         }
         //Displaying variables here
         g2.drawString("rightPress: "+rightPress,100,175);

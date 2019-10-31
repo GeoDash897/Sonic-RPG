@@ -27,13 +27,9 @@ public class Animation extends Sonic {//This will control Sonic's animations
     public void standard(Graphics2D g2, int xCenterSonic, int yCenterSonic, int direction) {
         int xDrawSonic = xCenterSonic - 144;
         int yDrawSonic = yCenterSonic - 144;
-        if(animationReset == 0) {
-            animationTimer = 1;
-            animationFrame = 1;
-            animationReset = 1;
-        }
         switch (animationNumber) {
             case 0:
+                resetAnimation();
                 animationTimerFrameSet = 10;
                 numberOfFrames = 1;
                 resetAnimationFrame = 1;
@@ -45,6 +41,7 @@ public class Animation extends Sonic {//This will control Sonic's animations
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Wait_"+animationFrame+".png");
                 }   break;
             case 1:
+                resetAnimation();
                 animationTimerFrameSet = 30;
                 numberOfFrames = 6;
                 resetAnimationFrame = 5;
@@ -52,8 +49,9 @@ public class Animation extends Sonic {//This will control Sonic's animations
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Wait_"+animationFrame+".png");
                 break;
             case 2:
+                resetAnimation();
                 animationTimerFrameSet = 30;
-                numberOfFrames = 30;
+                numberOfFrames = 8;
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
                 if(direction == 0) {
@@ -64,6 +62,7 @@ public class Animation extends Sonic {//This will control Sonic's animations
                 }               
                 break;
             case 3:
+                resetAnimation();
                 animationTimerFrameSet = 15;
                 numberOfFrames = 4;
                 resetAnimationFrame = 1;
@@ -75,6 +74,7 @@ public class Animation extends Sonic {//This will control Sonic's animations
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Run_"+animationFrame+".png");
                 }   break;
             case 4:
+                resetAnimation();
                 animationTimerFrameSet = 25;
                 numberOfFrames = 3;
                 resetAnimationFrame = 1;
@@ -82,13 +82,23 @@ public class Animation extends Sonic {//This will control Sonic's animations
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Trip A_"+animationFrame+".png");
                 break;
             case 5:
+                resetAnimation();
                 animationTimerFrameSet = 25;
                 numberOfFrames = 3;
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Trip A_"+animationFrame+".png");
                 break;
+            case 7:
+                resetAnimation();
+                animationTimerFrameSet = 10;
+                numberOfFrames = 8;
+                resetAnimationFrame = 1;
+                resetAnimationTimer = 1;
+                sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Jump_"+animationFrame+".png");
+                break;
             case 13:
+                resetAnimation();
                 animationTimerFrameSet = 40;
                 numberOfFrames = 4;
                 resetAnimationFrame = 1;
@@ -96,6 +106,7 @@ public class Animation extends Sonic {//This will control Sonic's animations
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Push_"+animationFrame+".png");
                 break;
             case 14:
+                resetAnimation();
                 animationTimerFrameSet = 40;
                 numberOfFrames = 4;
                 resetAnimationFrame = 1;
@@ -103,19 +114,14 @@ public class Animation extends Sonic {//This will control Sonic's animations
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Push_"+animationFrame+".png");
                 break;
             case 15:
+                resetAnimation();
                 animationTimerFrameSet = 30;
                 numberOfFrames = 30;
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Idle_"+animationFrame+".png");
                 break;
-            case 16:
-                animationTimerFrameSet = 10;
-                numberOfFrames = 8;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Jump_"+animationFrame+".png");
-                break;
+            
             default:
                 break;
         }
@@ -132,6 +138,13 @@ public class Animation extends Sonic {//This will control Sonic's animations
         g2.drawImage(sonicPicture,xDrawSonic,yDrawSonic,sonicWidth,sonicWidth,this);
         g2.setColor(Color.black);
         
+    }
+    public void resetAnimation() {
+        if(animationReset == 0) {
+            animationTimer = 1;
+            animationFrame = 1;
+            animationReset = 1;
+        }
     }
     public void setAnimationNumber(int newAnimation) {
         animationNumber = newAnimation;
