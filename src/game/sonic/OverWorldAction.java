@@ -135,8 +135,10 @@ public class OverWorldAction extends Sonic {
         else {
             waitTimer = 0;
         }
-        if(Math.abs(groundSpeed) > 0 && Math.abs(groundSpeed) < 6) {           
-            animation.setAnimationNumber(2);
+        if(Math.abs(xSpeed) > 0 && Math.abs(xSpeed) < 6 && jump == 0) {  
+            if(animation.getAnimationNumber() != 3) {
+                animation.setAnimationNumber(3);    
+            }           
         }
         else if(Math.abs(groundSpeed) >= 6) {
             animation.setAnimationNumber(3);
