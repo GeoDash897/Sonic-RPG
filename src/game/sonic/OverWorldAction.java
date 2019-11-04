@@ -356,7 +356,19 @@ public class OverWorldAction extends Sonic {
         }
         else if(tileDirection == 1 && angle != 0 && ground) {
             groundSpeed -= SLOPE*(Math.sin(angle));    
-        }        
+        }    
+        if(jump == 2 && angle < 45) {
+            groundSpeed = xSpeed;
+        }
+        else if(jump == 2 && angle == 45) {
+            if(Math.abs(xSpeed) > ySpeed) {
+                groundSpeed = xSpeed;    
+            }
+            else {
+                groundSpeed = ySpeed*0.5*-Math.signum(Math.sin(angle));
+            }
+            
+        }
         g2.drawString("pixelyL:"+pixelyL,500,100);
         g2.drawString("pixelyR:"+pixelyR,600,100);
         for(Tile checkBoundary: environmentTiles) {
