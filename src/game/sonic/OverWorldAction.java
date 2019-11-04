@@ -59,6 +59,7 @@ public class OverWorldAction extends Sonic {
     private static Rectangle middleRight;
     private Animation animation = new Animation();
     private Inventory inventory;
+    @Override
     public void standard(Graphics2D g2) {  
         /*try {
             Thread.sleep(100);
@@ -106,7 +107,8 @@ public class OverWorldAction extends Sonic {
         }
         else if(ground) {
             xSpeed = groundSpeed*Math.cos(angle);
-            ySpeed = groundSpeed*-Math.sin(angle);    
+            ySpeed = groundSpeed*-Math.sin(angle);
+            jump = 0;
         }  
         if(rightPress == 1) {
             rightPress();
@@ -123,10 +125,14 @@ public class OverWorldAction extends Sonic {
         if(rightPress == 0 && leftPress == 0 && groundSpeed == 0 && ground == true && ledge == -1) {
             waitTimer++;
             if(waitTimer < 988) {
-                animation.setAnimationNumber(0);                
+                if(animation.getAnimationNumber() != 0) {
+                    animation.setAnimationNumber(0);               
+                }                   
             }
             else if(waitTimer >= 998 && waitTimer < 1000) {
-                animation.setAnimationNumber(1);
+                if(animation.getAnimationNumber() != 1) {
+                    animation.setAnimationNumber(1);               
+                }
             }
             else if(waitTimer >= 1000) {
                 waitTimer = 1000;
@@ -155,6 +161,11 @@ public class OverWorldAction extends Sonic {
                 animation.setAnimationNumber(5);    
             }
         }
+        if(jump > 0) {
+            if(animation.getAnimationNumber() != 7) {
+                animation.setAnimationNumber(7);    
+            }
+        }
         //Displaying variables here
         g2.drawString("rightPress: "+rightPress,100,175);
         g2.drawString("leftPress: "+leftPress,100,200);
@@ -173,6 +184,7 @@ public class OverWorldAction extends Sonic {
         g2.drawString("ground: "+ground,200,225);
         g2.drawString("jump: "+jump,200,250);
         g2.drawString("ledge: "+ledge,200,300);
+        g2.drawString("ground: "+ground,200,325);
         drawCollisionBoxes(g2);        
         xDrawCenterSonic+= (int) xSpeed;
         yDrawCenterSonic+= (int) ySpeed;
@@ -238,8 +250,7 @@ public class OverWorldAction extends Sonic {
         int tileDirection = 0;
         for(Tile checkBoundary: environmentTiles) {
             g2.setColor(Color.red);
-            g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),64,4);
-            
+            g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),64,4);        
                 if(checkBoundary.getAngle() != 0) {               
                     if(xBottomRight >= checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+64 && 
                     yBottomRight >= checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()){//Checks if Sonic is with 64x64 tile 
@@ -278,17 +289,16 @@ public class OverWorldAction extends Sonic {
                             pixelyR = (checkBoundary.getYRef());                        
                             break;    
                         }                      
-                    }               
-                }
-                else {
-                    bRCollide = 0;
-                }
+                    }
+                    else {
+                        bRCollide = 0;
+                    }
+                }             
         }
-        for(Tile checkBoundary : environmentTiles) {
-            
+        for(Tile checkBoundary : environmentTiles) {         
                 if(checkBoundary.getAngle() != 0) {              
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+64 && 
-                           yBottomLeft > checkBoundary.getYRef()-4 && ySpriteCenterSonic < checkBoundary.getYRef()) {//Checks if Sonic is with 64x64 tile 
+                           yBottomLeft > checkBoundary.getYRef()-4 && yBottomRight < checkBoundary.getYRef()+100) {//Checks if Sonic is with 64x64 tile 
                         if(ySpeed >= 0) {
                             bLCollide = 1;     
                             ySpeed = 0;
@@ -341,10 +351,10 @@ public class OverWorldAction extends Sonic {
         if(pixelyL == pixelyR) {
             angle = 0;
         }
-        if(tileDirection == 0 && angle != 0) {
+        if(tileDirection == 0 && angle != 0 && ground) {
             groundSpeed -= SLOPE*(-Math.sin(angle));    
         }
-        else if(tileDirection == 1 && angle != 0) {
+        else if(tileDirection == 1 && angle != 0 && ground) {
             groundSpeed -= SLOPE*(Math.sin(angle));    
         }        
         g2.drawString("pixelyL:"+pixelyL,500,100);
@@ -388,13 +398,10 @@ public class OverWorldAction extends Sonic {
     }
     public void rightPress() {
         direction = 1;
-        if(mRCollide == 0) {
-            animation = new Animation();
-            animation.setAnimationNumber(3);
-        }
-        else {
-            animation = new Animation();
-            animation.setAnimationNumber(14);
+        if(mRCollide == 1) {
+            if(animation.getAnimationNumber() != 14) {
+                animation.setAnimationNumber(14);    
+            }
         }
         if(!ground) {
             if(xSpeed < 4) {
@@ -418,13 +425,10 @@ public class OverWorldAction extends Sonic {
     }
     public void leftPress() {
         direction = 0;
-        if(mLCollide == 0) {
-            animation = new Animation();
-            animation.setAnimationNumber(3); 
-        }
-        else {
-            animation = new Animation();
-            animation.setAnimationNumber(13);
+        if(mLCollide == 1) {
+            if(animation.getAnimationNumber() != 13) {
+                animation.setAnimationNumber(13);    
+            }          
         }
         if(!ground) {
             if(xSpeed > -4) {
@@ -447,8 +451,13 @@ public class OverWorldAction extends Sonic {
         }       
     }
     public void zPress() {
-        ySpeed = -JUMP;
-        ground = false;
+        if(jump == 0) {
+            jump = 1;
+        }
+        if(jump != 2) {
+            ySpeed = -JUMP;    
+        }      
+        ground = false;      
     }
     public int getXCenterSonic() {
         return xDrawCenterSonic;
@@ -470,6 +479,9 @@ public class OverWorldAction extends Sonic {
         if(e.getKeyCode() == e.VK_Z) {          
             if(ySpeed < -4) {
                 ySpeed = -4;
+            }
+            if(jump == 1) {
+                jump = 2;
             }
         }
         zPress = 0;
