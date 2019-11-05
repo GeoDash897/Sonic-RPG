@@ -15,20 +15,18 @@ import java.util.ArrayList;
 public class OverWorld extends Game {;
     public static ArrayList<Tile> environmentTiles = new ArrayList<Tile>();
     public void standard(Graphics2D g2) {
-        if(environmentTiles.size() < 25) {//limits how many tiles are created (don't want to constantly create tile objects = lag
+        if(environmentTiles.size() < 31) {//limits how many tiles are created (don't want to constantly create tile objects = lag
             //Sending X,Y and angles of tiles I want to create to method
-            /*createTile(799,444,45,1);
+            createTile(799,444,45,1);
             createTile(856,386,45,1);
-            createTile(912,327,45,1);   
+            createTile(912,327,45,1);
             createTile(975,326,0,1);
             createTile(1032,327,45,0);
             createTile(1100,383,0,1);
-            createTile(200,500,0,1);*/
             for(int i = 0; i < 24;i++) {
                 createTile(0+(i*64),664,0,1);    
             }      
             createTile(200,500,0,1);
-            //createTile(640,500,0,1);
         }
         for(Tile create : environmentTiles) {
             create.create(); //Creates the Rectangle hitboxes 

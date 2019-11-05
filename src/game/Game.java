@@ -75,6 +75,9 @@ public class Game extends JFrame implements KeyListener, ActionListener {
         if (e.getKeyCode() == e.VK_LEFT ) {           
             getReleasedInput(e);
         } 
+        if (e.getKeyCode() == e.VK_DOWN ) {           
+            getReleasedInput(e);
+        }
         if (e.getKeyCode() == e.VK_Z ) {           
             getReleasedInput(e);
         } 
