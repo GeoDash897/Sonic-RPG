@@ -108,7 +108,7 @@ public class Animation extends Sonic {//This will control Sonic's animations
                 resetAnimationFrame = 2;
                 resetAnimationTimer = 200;
                 if(direction == 0) {
-                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Duck_"+animationFrame+".png");
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Duck_"+animationFrame+".png");
                 }
                 else if(direction == 1) {
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Duck_"+animationFrame+".png");

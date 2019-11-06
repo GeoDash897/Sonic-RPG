@@ -423,9 +423,11 @@ public class OverWorldAction extends Sonic {
             }
         }      
         if(xDrawCenterSonic > (int) flatBoxRect.getX()+68 && bRCollide == 0 && bLCollide == 1 && leftPress == 0 && rightPress == 0 && groundSpeed == 0 && angle == 0) {
+            duck = 0;
             ledge = 1;
         }
         else if(xDrawCenterSonic < (int) flatBoxRect.getX()-4 && bRCollide == 1 && bLCollide == 0 && leftPress == 0 && rightPress == 0 && groundSpeed == 0 && angle ==  0) {
+            duck = 0;
             ledge = 0;
         }
     }
@@ -484,18 +486,18 @@ public class OverWorldAction extends Sonic {
         }       
     }
     public void downPress() {
-        if(Math.abs(groundSpeed) < 1) {
+        if(Math.abs(groundSpeed) < 1 && ground && ledge == -1) {
             duck = 1;
         }
-        else if(Math.abs(groundSpeed) > 1) {
+        else if(Math.abs(groundSpeed) > 1 && ground && ledge == -1) {
             duck = 2;
         }
     }
     public void zPress() {
-        if(jump == 0) {
+        if(jump == 0 && ground) {
             jump = 1;
         }
-        if(jump != 2) {
+        if(jump == 1) {
             duck = 0;
             ySpeed = -JUMP;    
         }      
