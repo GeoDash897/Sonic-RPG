@@ -31,16 +31,19 @@ public class OverWorldAction extends Sonic {
     private static int ledge = -1;
     private static int jump = 0;
     private static int duck = 0;
+    private static int spindash = 0;
+    private static double spindashCharge = 0;
     private static int direction = 1;
     private static int waitTimer = 0;
     private static int leftPress = 0;
     private static int rightPress = 0;
     private static int downPress = 0;
     private static int zPress = 0;
+    private static int zPressTimer = 0;
     private static final double AIR = 0.09375;
     private static final double GRAVITY = 0.21875;
     private static final double ACCELERATION = 0.046875;
-    private static final double DECELERATION = 0.5;
+    private static final double DECELERATION = 0.2;
     private static final double FRICTION = 0.046875;
     private static final double TOP = 6;
     private static final double JUMP = 6.5;
@@ -111,23 +114,46 @@ public class OverWorldAction extends Sonic {
             xSpeed = groundSpeed*Math.cos(angle);
             ySpeed = groundSpeed*-Math.sin(angle);
             jump = 0;
-        }  
+        } 
+        if((leftPress == 0 && rightPress == 0 && angle == 0 && zPress == 0 && ground) || (Math.abs(groundSpeed) > 0 && duck > 0)) {
+            groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
+        } 
         if(rightPress == 1) {
             rightPress();
         }
         if(leftPress == 1) {
             leftPress();
         }
-        if(downPress == 1) {
+        if(downPress == 1 && spindash == 0) {
             downPress();
+        }
+        if(Math.abs(groundSpeed) < 1) {
+            if(duck == 2) {
+                duck = 0;    
+            }
+        }
+        if(downPress == 1 && zPress == 1 && groundSpeed == 0 && ledge == -1 && ground && jump == 0 && spindash == 0) {
+            spindash = 1;
+        }
+        if(spindashCharge > 0.01) {
+            spindashCharge -= ((spindashCharge / 0.125) / 256); //"div" is division ignoring any remainder    
+        }
+        else {
+            spindashCharge = 0;
+        }           
+        if(spindash == 0 && spindashCharge > 0) {
+            duck = 2;
+            if(direction == 0) {
+                groundSpeed = -8 + (Math.floor(spindashCharge) / 2); //this would be negative if the character were facing left, of course    
+            }
+            else if(direction == 1) {
+                groundSpeed = 8 + (Math.floor(spindashCharge) / 2); //this would be negative if the character were facing left, of course    
+            }           
         }
         if(zPress == 1) {
             zPress();
-        }    
-        if((leftPress == 0 && rightPress == 0 && angle == 0 && zPress == 0 && ground) || (Math.abs(groundSpeed) > 0 && duck > 0)) {
-            groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
-        }       
-        if(rightPress == 0 && leftPress == 0 && groundSpeed == 0 && ground == true && ledge == -1 && duck == 0) {
+        }              
+        if(rightPress == 0 && leftPress == 0 && groundSpeed == 0 && ground == true && ledge == -1 && duck == 0 && spindash == 0) {
             waitTimer++;
             if(waitTimer < 988) {
                 if(animation.getAnimationNumber() != 0 && duck == 0) {
@@ -146,7 +172,12 @@ public class OverWorldAction extends Sonic {
         else {
             waitTimer = 0;
         }
-        if(Math.abs(xSpeed) > 0 && Math.abs(xSpeed) < 6 && jump == 0 && duck == 0) {  
+        if((groundSpeed > 0 && groundSpeed < 6 && rightPress == 1 && direction == 1 && mRCollide == 0 && jump == 0) || (groundSpeed > 0 && groundSpeed < 6 && rightPress == 0 && leftPress == 0 && direction == 1 && mRCollide == 0 && jump == 0 && duck == 0)) {  
+            if(animation.getAnimationNumber() != 2) {
+                animation.setAnimationNumber(2);    
+            }                         
+        }
+        else if((groundSpeed < 0 && groundSpeed > -6 && leftPress == 1 && direction == 0 && mLCollide == 0 && jump == 0) || (groundSpeed < 0 && groundSpeed > -6 && rightPress == 0 && leftPress == 0 && direction == 0 && mLCollide == 0 && jump == 0 && duck == 0)) {  
             if(animation.getAnimationNumber() != 2) {
                 animation.setAnimationNumber(2);    
             }                         
@@ -171,7 +202,7 @@ public class OverWorldAction extends Sonic {
                 animation.setAnimationNumber(7);    
             }
         }  
-        if(duck == 1 && ledge == -1 && angle == 0) {
+        if(duck == 1 && ledge == -1 && angle == 0 && spindash == 0) {
             if(animation.getAnimationNumber() != 8) {
                 animation.setAnimationNumber(8);    
             }
@@ -179,6 +210,11 @@ public class OverWorldAction extends Sonic {
         else if(duck == 2) {
             if(animation.getAnimationNumber() != 7) {
                 animation.setAnimationNumber(7);    
+            }
+        }
+        else if(spindash == 1) {
+            if(animation.getAnimationNumber() != 10) {
+                animation.setAnimationNumber(10);
             }
         }
         //Displaying variables here
@@ -202,6 +238,9 @@ public class OverWorldAction extends Sonic {
         g2.drawString("ledge: "+ledge,200,300);
         g2.drawString("ground: "+ground,200,325);
         g2.drawString("duck: "+duck,200,350);
+        g2.drawString("zPressTimer: "+zPressTimer,200,400);
+        g2.drawString("spindash: "+spindash,325,175);
+        g2.drawString("spindashCharge: "+spindashCharge,325,200);
         drawCollisionBoxes(g2);        
         xDrawCenterSonic+= (int) xSpeed;
         yDrawCenterSonic+= (int) ySpeed;
@@ -432,7 +471,9 @@ public class OverWorldAction extends Sonic {
         }
     }
     public void rightPress() {
-        direction = 1;
+        if(groundSpeed > 0 ) {
+            direction = 1;    
+        }      
         if(mRCollide == 1) {
             if(animation.getAnimationNumber() != 14) {
                 animation.setAnimationNumber(14);    
@@ -446,6 +487,9 @@ public class OverWorldAction extends Sonic {
         else if(ground && duck == 0) {
             if (groundSpeed < 0) {        
                 groundSpeed += DECELERATION;
+                if(animation.getAnimationNumber() != 9) {
+                    animation.setAnimationNumber(9);    
+                }
                 if (groundSpeed >= 0) {
                     groundSpeed = 0.5;   
                 }                
@@ -459,7 +503,9 @@ public class OverWorldAction extends Sonic {
         }       
     }
     public void leftPress() {
-        direction = 0;
+        if(groundSpeed < 0) {
+            direction = 0;
+        }
         if(mLCollide == 1) {
             if(animation.getAnimationNumber() != 13) {
                 animation.setAnimationNumber(13);    
@@ -470,9 +516,12 @@ public class OverWorldAction extends Sonic {
                 xSpeed -= AIR;    
             }
         }
-        else if(ground && duck == 0) {
+        else if(ground && duck == 0) {         
             if(groundSpeed > 0) {
-                groundSpeed -= DECELERATION;           
+                groundSpeed -= DECELERATION;   
+                if(animation.getAnimationNumber() != 9) {
+                    animation.setAnimationNumber(9);    
+                }
                 if(groundSpeed <= 0) {
                    groundSpeed = -0.5; 
                 }           
@@ -494,14 +543,23 @@ public class OverWorldAction extends Sonic {
         }
     }
     public void zPress() {
-        if(jump == 0 && ground) {
-            jump = 1;
+        zPressTimer++;
+        if(spindash == 0) {
+            if(jump == 0 && ground) {
+                jump = 1;
+            }
+            if(jump == 1) {
+                duck = 0;
+                spindashCharge = 0;
+                ySpeed = -JUMP;    
+            }      
+            ground = false;    
+        }     
+        else if(spindash == 1) {
+            if(zPressTimer == 1) {
+                spindashCharge++;    
+            }           
         }
-        if(jump == 1) {
-            duck = 0;
-            ySpeed = -JUMP;    
-        }      
-        ground = false;      
     }
     public int getXCenterSonic() {
         return xDrawCenterSonic;
@@ -521,10 +579,16 @@ public class OverWorldAction extends Sonic {
             leftPress = 0;
         }
         if(e.getKeyCode() == e.VK_DOWN) {
-            duck = 0;
+            if(duck == 1) {
+                duck = 0;
+            }
             downPress = 0;
+            if(spindash == 1) {
+                spindash = 0;
+            }
         }
-        if(e.getKeyCode() == e.VK_Z) {          
+        if(e.getKeyCode() == e.VK_Z) {  
+            zPressTimer = 0;
             if(ySpeed < -4) {
                 ySpeed = -4;
             }

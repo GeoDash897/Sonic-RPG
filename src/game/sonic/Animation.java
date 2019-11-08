@@ -114,6 +114,30 @@ public class Animation extends Sonic {//This will control Sonic's animations
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Duck_"+animationFrame+".png");
                 }
                 break;
+            case 9:
+                animationTimerFrameSet = 10;
+                numberOfFrames = 1;
+                resetAnimationFrame = 1;
+                resetAnimationTimer = 1;
+                if(direction == 0) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Skid_"+animationFrame+".png");
+                }
+                else if(direction == 1) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Skid_"+animationFrame+".png");
+                }
+                break;
+            case 10:
+                animationTimerFrameSet = 20;
+                numberOfFrames = 6;
+                resetAnimationFrame = 1;
+                resetAnimationTimer = 1;
+                if(direction == 0) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Spindash_"+animationFrame+".png");
+                }
+                else if(direction == 1) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Spindash_"+animationFrame+".png");
+                }
+                break;
             case 13:                
                 animationTimerFrameSet = 40;
                 numberOfFrames = 4;
