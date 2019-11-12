@@ -14,6 +14,7 @@ import java.util.ArrayList;
 //memes
 public class OverWorld extends Game {;
     public static ArrayList<Tile> environmentTiles = new ArrayList<Tile>();
+    public static ArrayList<InteractObject> interactObjectList = new ArrayList<InteractObject>();
     public void standard(Graphics2D g2) {
         if(environmentTiles.size() < 32) {//limits how many tiles are created (don't want to constantly create tile objects = lag
             //Sending X,Y and angles of tiles I want to create to method

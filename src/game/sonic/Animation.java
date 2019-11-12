@@ -132,10 +132,22 @@ public class Animation extends Sonic {//This will control Sonic's animations
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
                 if(direction == 0) {
-                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Spindash_"+animationFrame+".png");
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Spindash_"+animationFrame+".png");
                 }
                 else if(direction == 1) {
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Spindash_"+animationFrame+".png");
+                }
+                break;
+            case 11:
+                animationTimerFrameSet = 50;
+                numberOfFrames = 4;
+                resetAnimationFrame = 4;
+                resetAnimationTimer = 200;
+                if(direction == 0) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Sleep_"+animationFrame+".png");
+                }
+                else if(direction == 1) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Sleep_"+animationFrame+".png");
                 }
                 break;
             case 13:                

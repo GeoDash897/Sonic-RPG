@@ -40,17 +40,17 @@ public class OverWorldAction extends Sonic {
     private static int downPress = 0;
     private static int zPress = 0;
     private static int zPressTimer = 0;
-    private static final double AIR = 0.09375;
-    private static final double GRAVITY = 0.21875;
-    private static final double ACCELERATION = 0.046875;
-    private static final double DECELERATION = 0.2;
-    private static final double FRICTION = 0.046875;
-    private static final double TOP = 6;
-    private static final double JUMP = 6.5;
-    private static final double SLOPE = 0.125;
-    private static final double SLOPEROLLUP = 0.078125;
-    private static final double SLOPEROLLDOWN = 0.3125;
-    private static final double FALL = 2.5;
+    private static double AIR = 0.09375;
+    private static double GRAVITY = 0.21875;
+    private static double ACCELERATION = 0.046875;
+    private static double DECELERATION = 0.2;
+    private static double FRICTION = 0.046875;
+    private static double TOP = 6;
+    private static double JUMP = 6.5;
+    private static double SLOPE = 0.125;
+    private static double SLOPEROLLUP = 0.078125;
+    private static double SLOPEROLLDOWN = 0.3125;
+    private static double FALL = 2.5;
     private static int collideWithSlope = 0;
     private static int bLCollide = 0;
     private static int bRCollide = 0;
@@ -160,13 +160,18 @@ public class OverWorldAction extends Sonic {
                     animation.setAnimationNumber(0);               
                 }                   
             }
-            else if(waitTimer >= 998 && waitTimer < 1000) {
+            else if(waitTimer >= 998 && waitTimer < 3000) {
                 if(animation.getAnimationNumber() != 1) {
                     animation.setAnimationNumber(1);               
                 }
             }
-            else if(waitTimer >= 1000) {
-                waitTimer = 1000;
+            else if(waitTimer >= 3000 && waitTimer < 3001) {
+                if(animation.getAnimationNumber() != 11) {
+                    animation.setAnimationNumber(11);               
+                }
+            }
+            else if(waitTimer >= 3000) {
+                waitTimer = 3000;
             }
         }
         else {
@@ -471,7 +476,7 @@ public class OverWorldAction extends Sonic {
         }
     }
     public void rightPress() {
-        if(groundSpeed > 0 ) {
+        if(groundSpeed > 0) {
             direction = 1;    
         }      
         if(mRCollide == 1) {
@@ -609,7 +614,7 @@ public class OverWorldAction extends Sonic {
             rightPress = 0;
         }          
         if (e.getKeyCode() == e.VK_UP ) {
-            yDrawCenterSonic-=4;
+            
         }
         if (e.getKeyCode() == e.VK_DOWN) {
             downPress = 1;
