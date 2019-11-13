@@ -23,8 +23,9 @@ public class Animation extends Sonic {//This will control Sonic's animations
     private static int numberOfFrames = 0;
     private static int resetAnimationFrame = 1;
     private static int resetAnimationTimer = 0;
+    public static int direction = 1;
     private static Image sonicPicture;
-    public void standard(Graphics2D g2, int xCenterSonic, int yCenterSonic, int direction) {
+    public void standard(Graphics2D g2, int xCenterSonic, int yCenterSonic) {
         int xDrawSonic = xCenterSonic - 144;
         int yDrawSonic = yCenterSonic - 144;
         switch (animationNumber) {
@@ -200,6 +201,12 @@ public class Animation extends Sonic {//This will control Sonic's animations
     }
     public int getAnimationNumber() {
         return animationNumber;
+    }
+    public int getDirection() {
+        return direction;
+    }
+    public void setDirection(int change) {
+        direction = change;
     }
     @Override
     public String toString() {

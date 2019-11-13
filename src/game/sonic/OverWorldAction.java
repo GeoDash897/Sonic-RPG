@@ -33,7 +33,6 @@ public class OverWorldAction extends Sonic {
     private static int duck = 0;
     private static int spindash = 0;
     private static double spindashCharge = 0;
-    private static int direction = 1;
     private static int waitTimer = 0;
     private static int leftPress = 0;
     private static int rightPress = 0;
@@ -143,10 +142,10 @@ public class OverWorldAction extends Sonic {
         }           
         if(spindash == 0 && spindashCharge > 0) {
             duck = 2;
-            if(direction == 0) {
+            if(animation.getDirection() == 0) {
                 groundSpeed = -8 + (Math.floor(spindashCharge) / 2); //this would be negative if the character were facing left, of course    
             }
-            else if(direction == 1) {
+            else if(animation.getDirection() == 1) {
                 groundSpeed = 8 + (Math.floor(spindashCharge) / 2); //this would be negative if the character were facing left, of course    
             }           
         }
@@ -177,12 +176,12 @@ public class OverWorldAction extends Sonic {
         else {
             waitTimer = 0;
         }
-        if((groundSpeed > 0 && groundSpeed < 6 && rightPress == 1 && direction == 1 && mRCollide == 0 && jump == 0) || (groundSpeed > 0 && groundSpeed < 6 && rightPress == 0 && leftPress == 0 && direction == 1 && mRCollide == 0 && jump == 0 && duck == 0)) {  
+        if((groundSpeed > 0 && groundSpeed < 6 && rightPress == 1 && animation.getDirection() == 1 && mRCollide == 0 && jump == 0) || (groundSpeed > 0 && groundSpeed < 6 && rightPress == 0 && leftPress == 0 && animation.getDirection() == 1 && mRCollide == 0 && jump == 0 && duck == 0)) {  
             if(animation.getAnimationNumber() != 2) {
                 animation.setAnimationNumber(2);    
             }                         
         }
-        else if((groundSpeed < 0 && groundSpeed > -6 && leftPress == 1 && direction == 0 && mLCollide == 0 && jump == 0) || (groundSpeed < 0 && groundSpeed > -6 && rightPress == 0 && leftPress == 0 && direction == 0 && mLCollide == 0 && jump == 0 && duck == 0)) {  
+        else if((groundSpeed < 0 && groundSpeed > -6 && leftPress == 1 && animation.getDirection() == 0 && mLCollide == 0 && jump == 0) || (groundSpeed < 0 && groundSpeed > -6 && rightPress == 0 && leftPress == 0 && animation.getDirection() == 0 && mLCollide == 0 && jump == 0 && duck == 0)) {  
             if(animation.getAnimationNumber() != 2) {
                 animation.setAnimationNumber(2);    
             }                         
@@ -230,7 +229,7 @@ public class OverWorldAction extends Sonic {
         g2.drawString("bRCollide: "+bRCollide,100,250);
         g2.drawString("mLCollide: "+mLCollide,100,275);
         g2.drawString("mRCollide: "+mRCollide,100,300);
-        g2.drawString("direction: "+direction,100,325); //0 for left, 1 for right
+        g2.drawString("direction: "+animation.getDirection(),100,325); //0 for left, 1 for right
         g2.drawString("waitTimer: "+waitTimer,100,350);
         g2.drawString("groundSpeed: "+groundSpeed,100,375); 
         g2.drawString("xSpeed: "+xSpeed,100,425);
@@ -311,9 +310,9 @@ public class OverWorldAction extends Sonic {
         int tileDirection = 0;
         for(Tile checkBoundary: environmentTiles) {
             g2.setColor(Color.red);
-            g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),64,4);        
+            g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),checkBoundary.getLength()*4,4);        
                 if(checkBoundary.getAngle() != 0) {               
-                    if(xBottomRight >= checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+64 && 
+                    if(xBottomRight >= checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                     yBottomRight >= checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()){//Checks if Sonic is with 64x64 tile 
                         //(before calculations   
                         if(ySpeed >= 0) {
@@ -336,7 +335,7 @@ public class OverWorldAction extends Sonic {
                     }        
                 }                                                         
                 else if(checkBoundary.getAngle() == 0) {
-                    if(xBottomRight > checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+64 && 
+                    if(xBottomRight > checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                         yBottomRight > checkBoundary.getYRef() && yBottomRight < checkBoundary.getYRef()+100) {
                         //the -4 is the offset (since the block is 16x16 the Sensor is not technically within the tile so the -4 extends it to 16x17 
                         //instead)
@@ -358,7 +357,7 @@ public class OverWorldAction extends Sonic {
         }
         for(Tile checkBoundary : environmentTiles) {         
                 if(checkBoundary.getAngle() != 0) {              
-                    if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+64 && 
+                    if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                            yBottomLeft > checkBoundary.getYRef()-4 && yBottomRight < checkBoundary.getYRef()+100) {//Checks if Sonic is with 64x64 tile 
                         if(ySpeed >= 0) {
                             bLCollide = 1;     
@@ -381,7 +380,7 @@ public class OverWorldAction extends Sonic {
                     }
                 }
                 else if(checkBoundary.getAngle() == 0) {
-                    if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+64 && 
+                    if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                         yBottomLeft > checkBoundary.getYRef() && yBottomLeft < checkBoundary.getYRef()+100) {
                         //the -4 is the offset (since the block is 16x16 the Sensor is not technically within the tile so the -4 extends it to 16x17 
                         //instead) z
@@ -477,7 +476,7 @@ public class OverWorldAction extends Sonic {
     }
     public void rightPress() {
         if(groundSpeed > 0) {
-            direction = 1;    
+            animation.setDirection(1);    
         }      
         if(mRCollide == 1) {
             if(animation.getAnimationNumber() != 14) {
@@ -509,7 +508,7 @@ public class OverWorldAction extends Sonic {
     }
     public void leftPress() {
         if(groundSpeed < 0) {
-            direction = 0;
+            animation.setDirection(0);
         }
         if(mLCollide == 1) {
             if(animation.getAnimationNumber() != 13) {
@@ -571,9 +570,6 @@ public class OverWorldAction extends Sonic {
     }
     public int getYCenterSonic() {
         return yDrawCenterSonic;
-    }
-    public int getDirection() {
-        return direction;
     }
     @Override
     public void keyReleased(KeyEvent e) {

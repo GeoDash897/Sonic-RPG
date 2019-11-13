@@ -36,7 +36,7 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
         inventory.drawItem(0, g2);
         animation =  new Animation();
         if(!cutscene) {
-            animation.standard(g2,owa.getXCenterSonic(),owa.getYCenterSonic(), owa.getDirection()); 
+            animation.standard(g2,owa.getXCenterSonic(),owa.getYCenterSonic()); 
             owa.standard(g2);
         }
         g2.drawString(animation.toString(),100,150);

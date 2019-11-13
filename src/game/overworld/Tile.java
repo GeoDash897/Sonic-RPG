@@ -19,6 +19,8 @@ public class Tile {
     private int yRef;
     private int angle;
     private int direction;
+    private int length;
+    private int width;
     public ArrayList<Integer> heightValues = new ArrayList<Integer>();
     private ArrayList<Rectangle> pixelBoxes = new ArrayList<Rectangle>();
     public Tile(int xRef, int yRef, int angle, int direction) {
@@ -26,11 +28,22 @@ public class Tile {
         this.yRef = yRef;
         this.angle = angle;
         this.direction = direction;
+        this.length = 16;
+        this.width = 16;
     }
+    public Tile(int xRef, int yRef, int angle, int direction, int length, int width) {
+        this.xRef = xRef;
+        this.yRef = yRef;
+        this.angle = angle;
+        this.direction = direction;
+        this.length = length;
+        this.width = width;
+    }
+
     public void create() {
         if(angle == 0) {               
-            heightValues.add(16);
-            pixelBoxes.add(new Rectangle(xRef,yRef,64,64));   
+            heightValues.add(width);
+            pixelBoxes.add(new Rectangle(xRef,yRef,length*4,width*4));   
         }
         else if(angle == 15) {
             for(int i = 0; i < 16; i++ ) {
@@ -60,7 +73,7 @@ public class Tile {
     }
     public void drawRectangle(Graphics2D g2) {
         g2.setColor(Color.black);
-        g2.fillRect(xRef, yRef, 64, 64);
+        g2.fillRect(xRef, yRef, length*4, width*4);
     }
     public void drawSlope(Graphics2D g2) {
         for(int i = 0; i < 16; i ++) {
@@ -82,6 +95,9 @@ public class Tile {
     }
     public int getDirection() {
         return direction;
+    }
+    public int getLength() {
+        return length;
     }
     @Override
     public String toString() {
