@@ -17,8 +17,8 @@ import java.awt.event.KeyEvent;
  */
 public class OverWorldAction extends Sonic {
     private static int xDrawCenterSonic = 500; //center for drawing the picture
-    private static int yDrawCenterSonic = 300; //center for drawing the picture
-    private static int ySpriteCenterSonic; // Center of the actual sprite (basis for positions of collision boxes
+    private static int yDrawCenterSonic; //center for drawing the picture
+    private static int ySpriteCenterSonic = 300; // Center of the actual sprite (basis for positions of collision boxes
     //The X Position for the center of the actual sprite is the same as xDrawCenterSonic   
     private static double groundSpeed = 0;//The actual speed that Sonic is running at (not influenced by accel, slope or anything)
     private static double angle = 0;//The angle of Sonic (influenced by the tile that Sonic is curre
@@ -79,7 +79,7 @@ public class OverWorldAction extends Sonic {
         } catch (InterruptedException ex) {
             Logger.getLogger(OverWorldAction.class.getName()).log(Level.SEVERE, null, ex);
         }*/  
-        ySpriteCenterSonic = yDrawCenterSonic - 20;       
+        yDrawCenterSonic = ySpriteCenterSonic + 20;     
         /*Controls how Sonic senses the ground:
         1. bLCollide & bRCollide are true - ground is true (Sonic is on the ground and is not near ledge, so ledge = -1)
         2. bLCollide is true or bRCollide is true - ground is true (Sonic is near or on ledge, so ledge is 0 or 1)
@@ -179,79 +179,8 @@ public class OverWorldAction extends Sonic {
             }           
         }           
         //Animations:
-        //Controls waiting animation
-        if(rightPress == 0 && leftPress == 0 && groundSpeed == 0 && ground == true && ledge == -1 && duck == 0 && spindash == 0) {
-            //If no keys are pressed and Sonic is not moving on ground (groundSpeed == 0), increase waitTimer
-            waitTimer++;
-            //Depending on how long the keys aren't pressed, a certain animation plays
-            if(waitTimer < 988) {
-                if(animation.getAnimationNumber() != 0 && duck == 0) {
-                    animation.setAnimationNumber(0);               
-                }                   
-            }
-            else if(waitTimer >= 998 && waitTimer < 3000) {
-                if(animation.getAnimationNumber() != 1) {
-                    animation.setAnimationNumber(1);               
-                }
-            }
-            else if(waitTimer >= 3000 && waitTimer < 3001) {
-                if(animation.getAnimationNumber() != 11) {
-                    animation.setAnimationNumber(11);               
-                }
-            }
-            else if(waitTimer >= 3000) {
-                waitTimer = 3000;
-            }
-        }
-        else {
-            waitTimer = 0;
-        }
-        //Controls when Sonic's walking animation plays
-        if((groundSpeed > 0 && groundSpeed < 6 && rightPress == 1 && mRCollide == 0 && jump == 0) || (groundSpeed > 0 && groundSpeed < 6 && rightPress == 0 && leftPress == 0 && mRCollide == 0 && jump == 0 && duck == 0)) {  
-            if(animation.getAnimationNumber() != 2) {
-                animation.setAnimationNumber(2);    
-            }                         
-        }
-        else if((groundSpeed < 0 && groundSpeed > -6 && leftPress == 1 && mLCollide == 0 && jump == 0) || (groundSpeed < 0 && groundSpeed > -6 && rightPress == 0 && leftPress == 0 && mLCollide == 0 && jump == 0 && duck == 0)) {  
-            if(animation.getAnimationNumber() != 2) {
-                animation.setAnimationNumber(2);    
-            }                         
-        }
-        else if(Math.abs(groundSpeed) >= 6 && duck == 0) {//Controls when Sonic's running animation plays
-            if(animation.getAnimationNumber() != 3) {
-                animation.setAnimationNumber(3);    
-            }
-        }
-        else if(ledge == 0) {//If Sonic is on a left ledge, play Left Ledge animation
-            if(animation.getAnimationNumber() != 4) {
-                animation.setAnimationNumber(4);    
-            }
-        }
-        else if(ledge == 1) {
-            if(animation.getAnimationNumber() != 5) {//If Sonic is on a right ledge, play Right Ledge animation
-                animation.setAnimationNumber(5);    
-            }
-        }
-        if(jump > 0) {//Plays Sonic's jumping animation when Sonic is jumping
-            if(animation.getAnimationNumber() != 7) {
-                animation.setAnimationNumber(7);    
-            }
-        }  
-        if(duck == 1 && ledge == -1 && angle == 0 && spindash == 0) {//Plays Sonic's ducking animation if duck == 1
-            if(animation.getAnimationNumber() != 8) {
-                animation.setAnimationNumber(8);    
-            }
-        }
-        else if(duck == 2) {//If duck is equal to 2 (Sonic is rolling), play jumping animation
-            if(animation.getAnimationNumber() != 7) {
-                animation.setAnimationNumber(7);    
-            }
-        }
-        else if(spindash == 1) {//If Sonic is charging the spindash, play the spindash animation
-            if(animation.getAnimationNumber() != 10) {
-                animation.setAnimationNumber(10);
-            }
-        }
+        changeAnimation();
+        
         //Displaying variables here
         g2.drawString("downPress: "+downPress,0,175);
         g2.drawString("rightPress: "+rightPress,100,175);
@@ -278,7 +207,7 @@ public class OverWorldAction extends Sonic {
         g2.drawString("spindashCharge: "+spindashCharge,325,200);
         drawCollisionBoxes(g2);        
         xDrawCenterSonic+= (int) xSpeed;
-        yDrawCenterSonic+= (int) ySpeed;
+        ySpriteCenterSonic+= (int) ySpeed;
     }
     public void drawCollisionBoxes(Graphics2D g2) {
         //Draws rectangles themselves
@@ -438,12 +367,12 @@ public class OverWorldAction extends Sonic {
         //So the value would be [insert number here]-20 (to count for that offset)
         if(pixelyR > pixelyL && pixelyL != 0 && pixelyR != 0) {//If pixelyR is greater than pixelyL (meaning that it is lower on the screen)
             //set Sonic's yPosition based on pixelyL + use angleL for angle
-            yDrawCenterSonic = pixelyL - 60;//Changes Sonic's yPosition   
+            ySpriteCenterSonic = pixelyL - 80;//Changes Sonic's yPosition   
             angle = angleL;
         } 
         else if(pixelyL > pixelyR && pixelyL != 0 && pixelyR != 0) {//If pixelyL is greater than pixelyL (meaning that it is lower on the screen)
             //set Sonic's yPosition based on pixelyR + use angleR for angle
-            yDrawCenterSonic = pixelyR - 60;//Changes Sonic's yPosition   
+            ySpriteCenterSonic = pixelyR - 80;//Changes Sonic's yPosition   
             angle = angleR;
         }  
         if(pixelyL == pixelyR && ground) {//If they are equal, angle is 0 (since Sonic is on flat ground)
@@ -519,6 +448,81 @@ public class OverWorldAction extends Sonic {
             ledge = 0;
         }
     }
+    public void changeAnimation() {
+        //Controls waiting animation
+        if(rightPress == 0 && leftPress == 0 && groundSpeed == 0 && ground == true && ledge == -1 && duck == 0 && spindash == 0) {
+            //If no keys are pressed and Sonic is not moving on ground (groundSpeed == 0), increase waitTimer
+            waitTimer++;
+            //Depending on how long the keys aren't pressed, a certain animation plays
+            if(waitTimer < 988) {
+                if(animation.getAnimationNumber() != 0 && duck == 0) {
+                    animation.setAnimationNumber(0);               
+                }                   
+            }
+            else if(waitTimer >= 998 && waitTimer < 3000) {
+                if(animation.getAnimationNumber() != 1) {
+                    animation.setAnimationNumber(1);               
+                }
+            }
+            else if(waitTimer >= 3000 && waitTimer < 3001) {
+                if(animation.getAnimationNumber() != 11) {
+                    animation.setAnimationNumber(11);               
+                }
+            }
+            else if(waitTimer >= 3000) {
+                waitTimer = 3000;
+            }
+        }
+        else {
+            waitTimer = 0;
+        }
+        //Controls when Sonic's walking animation plays
+        if((groundSpeed > 0 && groundSpeed < 6 && rightPress == 1 && mRCollide == 0 && jump == 0) || (groundSpeed > 0 && groundSpeed < 6 && rightPress == 0 && leftPress == 0 && mRCollide == 0 && jump == 0 && duck == 0)) {  
+            if(animation.getAnimationNumber() != 2) {
+                animation.setAnimationNumber(2);    
+            }                         
+        }
+        else if((groundSpeed < 0 && groundSpeed > -6 && leftPress == 1 && mLCollide == 0 && jump == 0) || (groundSpeed < 0 && groundSpeed > -6 && rightPress == 0 && leftPress == 0 && mLCollide == 0 && jump == 0 && duck == 0)) {  
+            if(animation.getAnimationNumber() != 2) {
+                animation.setAnimationNumber(2);    
+            }                         
+        }
+        else if(Math.abs(groundSpeed) >= 6 && duck == 0) {//Controls when Sonic's running animation plays
+            if(animation.getAnimationNumber() != 3) {
+                animation.setAnimationNumber(3);    
+            }
+        }
+        else if(ledge == 0) {//If Sonic is on a left ledge, play Left Ledge animation
+            if(animation.getAnimationNumber() != 4) {
+                animation.setAnimationNumber(4);    
+            }
+        }
+        else if(ledge == 1) {
+            if(animation.getAnimationNumber() != 5) {//If Sonic is on a right ledge, play Right Ledge animation
+                animation.setAnimationNumber(5);    
+            }
+        }
+        if(jump > 0) {//Plays Sonic's jumping animation when Sonic is jumping
+            if(animation.getAnimationNumber() != 7) {
+                animation.setAnimationNumber(7);    
+            }
+        }  
+        if(duck == 1 && ledge == -1 && angle == 0 && spindash == 0) {//Plays Sonic's ducking animation if duck == 1
+            if(animation.getAnimationNumber() != 8) {
+                animation.setAnimationNumber(8);    
+            }
+        }
+        else if(duck == 2) {//If duck is equal to 2 (Sonic is rolling), play jumping animation
+            if(animation.getAnimationNumber() != 7) {
+                animation.setAnimationNumber(7);    
+            }
+        }
+        else if(spindash == 1) {//If Sonic is charging the spindash, play the spindash animation
+            if(animation.getAnimationNumber() != 10) {
+                animation.setAnimationNumber(10);
+            }
+        }
+    }
     public void rightPress() {//If Sonic's groundSpeed is greater than 0, set his direction to 0 (left), this makes it so the player has to stop 
             //completely (skid) before changing direction (can't change direction immediately)
         if(groundSpeed > 0) {
@@ -559,7 +563,7 @@ public class OverWorldAction extends Sonic {
             //completely (skid) before changing direction (can't change direction immediately)
             animation.setDirection(0);
         }
-        if(mLCollide == 1 && ground) {//Displays pushing animayion
+        if(mLCollide == 1 && ground) {//Displays pushing animation
             if(animation.getAnimationNumber() != 13) {
                 animation.setAnimationNumber(13);    
             }          
