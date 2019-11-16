@@ -24,7 +24,7 @@ public class OverWorld extends Game {;
             createTile(1032,327+150,45,0);
             createTile(1100,383+150,0,1);
             createCustomTile(0,664,0,1,1400,32);   
-            createCustomTile(0,536,0,1,16,32);
+            createCustomTile(0,472,0,1,16,48);
             createTile(1525,600,0,1);
         }
         for(Tile create : environmentTiles) {
