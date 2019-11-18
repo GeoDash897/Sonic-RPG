@@ -97,23 +97,30 @@ public class OverWorldAction extends Sonic {
             ledge = -1;
         }
         /*Changes Sonic's sensors depending on what he is doing:
-            1.Sonic is not colliding with a slope or Sonic is not on the ground - (default size + positions)
-            2.Sonic is colliding with a slope - bottomLeft and bottomRight are extended + middle sensors are moved to ySpriteCenterSonic
+            1.Sonic is not colliding with a slope and is on the ground - (default size + positions)
+            2.Sonic is on the ground and colliding with a slope - (Middle Sensors are moved up, Bottom Sensors are extended)
+            3.Sonic is in the air (Middle Sensors are moved up, Bottom Sensors stay the same length that they were on the ground)
         */      
-        if(collideWithSlope == 0 || !ground) {
-            bottomLeft = new Rectangle(xDrawCenterSonic-28,ySpriteCenterSonic,4,84);    
-            bottomRight = new Rectangle(xDrawCenterSonic+28,ySpriteCenterSonic,4,84);
-            middleLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic+32,36,4);    
+        if(collideWithSlope == 0 && ground) {
+            bottomLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic,4,84);    
+            bottomRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic,4,84);
+            middleLeft = new Rectangle(xDrawCenterSonic-40,ySpriteCenterSonic+32,40,4);    
             middleRight = new Rectangle(xDrawCenterSonic,ySpriteCenterSonic+32,44,4); 
         }
-        else if(collideWithSlope == 1) {
-            bottomLeft = new Rectangle(xDrawCenterSonic-28,ySpriteCenterSonic,4,148);    
-            bottomRight = new Rectangle(xDrawCenterSonic+28,ySpriteCenterSonic,4,148);
-            middleLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic,36,4);    
+        else if(collideWithSlope == 1 && ground) {
+            bottomLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic,4,148);    
+            bottomRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic,4,148);  
+            middleLeft = new Rectangle(xDrawCenterSonic-40,ySpriteCenterSonic,40,4);    
             middleRight = new Rectangle(xDrawCenterSonic,ySpriteCenterSonic,44,4); 
         }
-        topLeft = new Rectangle(xDrawCenterSonic-28,ySpriteCenterSonic-80,4,80);//Creates the topLeft and topRight sensors (don't change like the       
-        topRight = new Rectangle(xDrawCenterSonic+28,ySpriteCenterSonic-80,4,80);//others do)       
+        else if(!ground) {
+            bottomLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic,4,84);    
+            bottomRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic,4,84);
+            middleLeft = new Rectangle(xDrawCenterSonic-40,ySpriteCenterSonic,40,4);    
+            middleRight = new Rectangle(xDrawCenterSonic,ySpriteCenterSonic,44,4); 
+        }
+        topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//Creates the topLeft and topRight sensors (don't change like the       
+        topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do)       
         collisionCheck(g2);//Checks for collisions, gets and uses information from tiles
         //Controls gravity + xSpeed and ySpeed when Sonic is not on ground
         if(!ground) {           
@@ -212,29 +219,39 @@ public class OverWorldAction extends Sonic {
     public void drawCollisionBoxes(Graphics2D g2) {
         //Draws rectangles themselves
         g2.setColor(Color.blue);
-        g2.fillRect(xDrawCenterSonic-28,ySpriteCenterSonic-80,4,80);//topLeft       
+        g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//topLeft       
         g2.setColor(Color.green);
-        g2.fillRect(xDrawCenterSonic+28,ySpriteCenterSonic-80,4,80);//topRight
-        if(collideWithSlope == 0) {
+        g2.fillRect(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//topRight
+        if(collideWithSlope == 0 && ground) {
             g2.setColor(Color.red);
-            g2.fillRect(xDrawCenterSonic-28,ySpriteCenterSonic,4,84);//bottomLeft    
+            g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic,4,84);//bottomLeft    
             g2.setColor(Color.yellow);
-            g2.fillRect(xDrawCenterSonic+28,ySpriteCenterSonic,4,84);//bottomRight
+            g2.fillRect(xDrawCenterSonic+36,ySpriteCenterSonic,4,84);//bottomRight
             g2.setColor(Color.orange);
-            g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic+32,36,4);//middleLeft
+            g2.fillRect(xDrawCenterSonic-40,ySpriteCenterSonic+32,40,4);//middleLeft
             g2.setColor(Color.cyan);
-            g2.fillRect(xDrawCenterSonic,ySpriteCenterSonic+32,40,4);//middleRight
+            g2.fillRect(xDrawCenterSonic,ySpriteCenterSonic+32,44,4);//middleRight
         }
         else if(collideWithSlope == 1) {
             g2.setColor(Color.red);
-            g2.fillRect(xDrawCenterSonic-28,ySpriteCenterSonic,4,148);//bottomLeft    
+            g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic,4,148);//bottomLeft    
             g2.setColor(Color.yellow);
-            g2.fillRect(xDrawCenterSonic+28,ySpriteCenterSonic,4,148);//bottomRight
+            g2.fillRect(xDrawCenterSonic+36,ySpriteCenterSonic,4,148);//bottomRight 
             g2.setColor(Color.orange);
-            g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic,40,4);//middleLeft
+            g2.fillRect(xDrawCenterSonic-40,ySpriteCenterSonic,40,4);//middleLeft
             g2.setColor(Color.cyan);
-            g2.fillRect(xDrawCenterSonic,ySpriteCenterSonic,40,4);//middleRight
-        }  
+            g2.fillRect(xDrawCenterSonic,ySpriteCenterSonic,44,4);//middleRight
+        }
+        else if(!ground) {
+            g2.setColor(Color.red);
+            g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic,4,84);//bottomLeft    
+            g2.setColor(Color.yellow);
+            g2.fillRect(xDrawCenterSonic+36,ySpriteCenterSonic,4,84);//bottomRight
+            g2.setColor(Color.orange);
+            g2.fillRect(xDrawCenterSonic-40,ySpriteCenterSonic,40,4);//middleLeft
+            g2.setColor(Color.cyan);
+            g2.fillRect(xDrawCenterSonic,ySpriteCenterSonic,44,4);//middleRight
+        }
         //Draw collision rectangles
         g2.setColor(Color.blue);
         g2.drawString(""+topLeft,1000,100);
@@ -413,11 +430,14 @@ public class OverWorldAction extends Sonic {
         g2.drawString("pixelyR:"+pixelyR,600,100);
         //Controls collisions with the middle sensors
         for(Tile checkBoundary: environmentTiles) {
-            if(middleRight.intersects(checkBoundary.getPixelBox(0)) && leftPress == 0) {//If middleRight sensor is intersecting a tile's hitbox
+            if(middleRight.intersects(checkBoundary.getPixelBox(0))) {//If middleRight sensor is intersecting a tile's hitbox
                 //set groundSpeed = 0, set mRCollide = 1, and xSpeed = 0 (I need to set both groundSpeed and xSpeed to 0 so Sonic can stop
                 //moving when is on the ground or in the air (Sonic doesn't use groundSpeed in the air, only xSpeed)
-                groundSpeed = 0;
-                xSpeed = 0;
+                if(xSpeed > 0) {
+                    spindashCharge = 0;
+                    groundSpeed = 0;
+                    xSpeed = 0;                    
+                }
                 mRCollide = 1;
                 break;
             }
@@ -426,11 +446,14 @@ public class OverWorldAction extends Sonic {
             }
         }
         for(Tile checkBoundary: environmentTiles) {
-            if(middleLeft.intersects(checkBoundary.getPixelBox(0)) && rightPress == 0) {//If middleRight sensor is intersecting a tile's hitbox
+            if(middleLeft.intersects(checkBoundary.getPixelBox(0))) {//If middleRight sensor is intersecting a tile's hitbox
                 //set groundSpeed = 0, set mLCollide = 1, and xSpeed = 0 (I need to set both groundSpeed and xSpeed to 0 so Sonic can stop
                 //moving when is on the ground or in the air (Sonic doesn't use groundSpeed in the air, only xSpeed)
-                groundSpeed = 0;
-                xSpeed = 0;
+                if(xSpeed < 0) {
+                    spindashCharge = 0;
+                    groundSpeed = 0;
+                    xSpeed = 0;
+                }
                 mLCollide = 1;
                 break;
             }
