@@ -14,47 +14,30 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class Tile {
+public class Ground {
+    private int id;
     private int xRef;
     private int yRef;
-    private int angle;
-    private int direction;
     private int length;
     private int width;
-    public ArrayList<Integer> heightValues = new ArrayList<Integer>();
+    private int angle;
+    private int direction;
+
+    private ArrayList<Integer> heightValues = new ArrayList<Integer>();
     private ArrayList<Rectangle> pixelBoxes = new ArrayList<Rectangle>();
-    public Tile(int xRef, int yRef, int angle, int direction) {
+    public Ground(int id,int xRef, int yRef, int length, int width, int angle, int direction) {
+        this.id = 0;
         this.xRef = xRef;
         this.yRef = yRef;
-        this.angle = angle;
-        this.direction = direction;
-        this.length = 16;
-        this.width = 16;
-    }
-    public Tile(int xRef, int yRef, int angle, int direction, int length, int width) {
-        this.xRef = xRef;
-        this.yRef = yRef;
-        this.angle = angle;
-        this.direction = direction;
         this.length = length;
         this.width = width;
+        this.angle = angle;
+        this.direction = direction;
     }
-
     public void create() {
         if(angle == 0) {               
             heightValues.add(width);
             pixelBoxes.add(new Rectangle(xRef,yRef,length*4,width*4));   
-        }
-        else if(angle == 15) {
-            for(int i = 0; i < 16; i++ ) {
-                if(i < 5) {
-                    heightValues.add(i);    
-                }
-                else { 
-                    heightValues.add(5);
-                }
-                pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
-            }
         }
         else if(angle == 45) {
             if(direction == 0) {
@@ -71,18 +54,17 @@ public class Tile {
             }                      
         }
     }
-    public void drawRectangle(Graphics2D g2) {
-        g2.setColor(Color.black);
-        g2.fillRect(xRef, yRef, length*4, width*4);
-    }
-    public void drawSlope(Graphics2D g2) {
-        for(int i = 0; i < 16; i ++) {
-            g2.setColor(Color.black);
-            g2.fillRect((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4));
-        }        
-    }
-    public Rectangle getPixelBox(int selection) {
-        return pixelBoxes.get(selection);
+    public void draw(Graphics2D g2) {
+        g2.setColor(Color.BLACK);
+        if(angle == 0) {
+            g2.fillRect(xRef,yRef,length*4,width*4);     
+        }
+        else {
+            for(int i = 0; i < 16; i ++) {
+                g2.setColor(Color.black);
+                g2.fillRect((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4));
+            } 
+        }
     }
     public int getXRef() {
         return xRef;
@@ -99,8 +81,13 @@ public class Tile {
     public int getLength() {
         return length;
     }
-    @Override
-    public String toString() {
-        return "Stats of tile Sonic is colliding with- xRef: "+xRef+", yRef: "+yRef+", angle: "+angle+", direction: "+direction;
+    public Rectangle getPixelBox(int selection) {
+        return pixelBoxes.get(selection);
+    }
+    public int getHeightValueInArrayList(int selection) {
+        return heightValues.get(selection);
+    }
+    public ArrayList<Rectangle> getPixelBoxes() {
+        return pixelBoxes;
     }
 }

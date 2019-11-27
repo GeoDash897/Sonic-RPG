@@ -13,16 +13,17 @@ import java.awt.event.KeyEvent;
 */
 public class Sonic extends OverWorld {//This is the main Sonic class; 
     //this will run all the other classes related to Sonic (Animation, Inventory,etc)
-    private int level;
-    private int exp;
-    private int coins;
-    private int health;
-    private int maxHealth;
-    private int rings;
-    private int maxRings;
-    private int attack;
-    private int defense;
-    private int speed;
+    private static int level;
+    private static int exp;
+    private static int coins;
+    private static int health;
+    private static int maxHealth;
+    private static int rings;
+    private static int maxRings;
+    private static int attack;
+    private static int defense;
+    private static int speed;
+    private static int area = 1;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
     private Inventory inventory;
@@ -39,7 +40,15 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
             animation.standard(g2,owa.getXCenterSonic(),owa.getYCenterSonic()); 
             owa.standard(g2);
         }
+        g2.drawString(String.valueOf(rings),100,50);
         g2.drawString(animation.toString(),100,150);
+    }
+    public int getAreaNumber() {
+        return area;
+    }
+    public void increaseRings(int amount) {
+        rings += amount;
+        System.out.println("Code Ran");
     }
     @Override
     public void getPressInput(KeyEvent e) {

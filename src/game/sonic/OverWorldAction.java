@@ -5,7 +5,10 @@
  */
 package game.sonic;
 
-import game.overworld.Tile;
+import game.overworld.DefaultObject;
+import game.overworld.Ground;
+import game.overworld.Monitor;
+import game.overworld.OverWorld;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -16,7 +19,7 @@ import java.awt.event.KeyEvent;
  * @author GeoSonicDash
  */
 public class OverWorldAction extends Sonic {
-    private static int xDrawCenterSonic = 500; //center for drawing the picture
+    private static int xDrawCenterSonic = 0; //center for drawing the picture
     private static int yDrawCenterSonic; //center for drawing the picture
     private static int ySpriteCenterSonic = 300; // Center of the actual sprite (basis for positions of collision boxes
     //The X Position for the center of the actual sprite is the same as xDrawCenterSonic   
@@ -69,7 +72,9 @@ public class OverWorldAction extends Sonic {
     private static Rectangle middleLeft;
     private static Rectangle middleRight;
     
+    
     //Creates Animation object so Sonic's animations can be changed
+    private OverWorld overworld = new OverWorld();
     private Animation animation = new Animation();
     private Inventory inventory;
     @Override
@@ -123,6 +128,7 @@ public class OverWorldAction extends Sonic {
         topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do)       
         collisionCheck(g2);//Checks for collisions, gets and uses information from tiles
         //Controls gravity + xSpeed and ySpeed when Sonic is not on ground
+        intersectDefaultObject(g2);
         if(!ground) {           
             if (ySpeed < 0 && ySpeed > -4)//air drag calculation
             {
@@ -285,7 +291,7 @@ public class OverWorldAction extends Sonic {
         double angleL = 0;
         double angleR = 0;
         int tileDirection = 0;
-        for(Tile checkBoundary: environmentTiles) {
+        for(Ground checkBoundary: overworld.getGroundArrayList()) {
             g2.setColor(Color.red);
             g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),checkBoundary.getLength()*4,4);        
                 if(checkBoundary.getAngle() != 0) {               
@@ -298,13 +304,13 @@ public class OverWorldAction extends Sonic {
                             collideWithSlope = 1;
                             heightBottomRightIndex = (int) Math.abs(((xBottomRight - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
                             //on sensor's x position relative to the tile's xRef (abs to avoid negatives)                   
-                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(heightBottomRightIndex), 1000, 575);
+                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.getHeightValueInArrayList(heightBottomRightIndex), 1000, 575);
                             g2.drawString(checkBoundary.toString(),1000,525);
-                            pixelyR = (checkBoundary.getYRef()+64-(checkBoundary.heightValues.get(heightBottomRightIndex)*4));//gets pixel's height relative
+                            pixelyR = (checkBoundary.getYRef()+64-(checkBoundary.getHeightValueInArrayList(heightBottomRightIndex)*4));//gets pixel's height relative
                             //to screen
                             angleR = checkBoundary.getAngle();//gets angle of tile that sensors are colliding with
                             tileDirection = checkBoundary.getDirection();//gets the tiles direction that sensors are colliding with
-                        break;   
+                            break;   
                         }
                     }
                     else {//if Sonic is not within tile, bottomRight is not colliding with anything
@@ -313,14 +319,14 @@ public class OverWorldAction extends Sonic {
                 }                                                         
                 else if(checkBoundary.getAngle() == 0) {
                     if(xBottomRight > checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
-                        yBottomRight > checkBoundary.getYRef() && yBottomRight < checkBoundary.getYRef()+100) {//checks if bottomRight sensor is 
+                        yBottomRight > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//checks if bottomRight sensor is 
                         //within tile (the +100 is to extend the tiles range downward since the sensors are lower than the tile's range when Sonic
                         //is going up a slope
                         if(ySpeed >= 0) {//Checks for collision if Sonic is falling/on the ground and not when he is jumping
                             bRCollide = 1;     
                             ySpeed = 0;
                             collideWithSlope = 0;//changes the sensors to appropiate sizes and positions
-                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 575);
+                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.getHeightValueInArrayList(0), 1000, 575);
                             g2.drawString(checkBoundary.toString(),1000,525);
                             flatBoxRect = checkBoundary.getPixelBox(0);//gets the rectangles hitbox (only one box is in the pixelbox arrayList)
                             //used for ledges
@@ -333,7 +339,7 @@ public class OverWorldAction extends Sonic {
                     }
                 }             
         }
-        for(Tile checkBoundary : environmentTiles) {         
+        for(Ground checkBoundary : overworld.getGroundArrayList()) {         
                 if(checkBoundary.getAngle() != 0) {              
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                            yBottomLeft > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//Checks if  
@@ -345,8 +351,8 @@ public class OverWorldAction extends Sonic {
                             g2.drawString(checkBoundary.toString(),1000,500);                                     
                             heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
                             //on sensor's x position relative to the tile's xRef (abs to avoid negatives)
-                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 550);
-                            pixelyL = (checkBoundary.getYRef()+64-(checkBoundary.heightValues.get(heightBottomLeftIndex)*4));//gets pixel's height relative                   
+                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.getHeightValueInArrayList(0), 1000, 550);
+                            pixelyL = (checkBoundary.getYRef()+64-(checkBoundary.getHeightValueInArrayList(heightBottomLeftIndex)*4));//gets pixel's height relative                   
                             //to screen    
                             angleL = checkBoundary.getAngle();//gets angle of tile that sensors are colliding with
                             tileDirection = checkBoundary.getDirection();//gets the tiles direction that sensors are colliding with 
@@ -367,7 +373,7 @@ public class OverWorldAction extends Sonic {
                             ySpeed = 0;
                             collideWithSlope = 0; 
                             g2.drawString(checkBoundary.toString(),1000,500);
-                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.heightValues.get(0), 1000, 550);
+                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.getHeightValueInArrayList(0), 1000, 550);
                             flatBoxRect = checkBoundary.getPixelBox(0);//gets the rectangles hitbox (only one box is in the pixelbox arrayList)
                             //used for ledges
                             pixelyL = (checkBoundary.getYRef());//gets pixel's height relative to the screen                                       
@@ -379,22 +385,7 @@ public class OverWorldAction extends Sonic {
                     }   
                 }
         }
-        //Changes Sonic's yPosition based on the heights of the pixels that each of the bottom sensors get
-        //REMEMBER- ySpriteCenterSonic is 20 pixels higher than yDrawCenterSonic, so everything is based on yDrawCenterSonic
-        //So the value would be [insert number here]-20 (to count for that offset)
-        if(pixelyR > pixelyL && pixelyL != 0 && pixelyR != 0) {//If pixelyR is greater than pixelyL (meaning that it is lower on the screen)
-            //set Sonic's yPosition based on pixelyL + use angleL for angle
-            ySpriteCenterSonic = pixelyL - 80;//Changes Sonic's yPosition   
-            angle = angleL;
-        } 
-        else if(pixelyL > pixelyR && pixelyL != 0 && pixelyR != 0) {//If pixelyL is greater than pixelyL (meaning that it is lower on the screen)
-            //set Sonic's yPosition based on pixelyR + use angleR for angle
-            ySpriteCenterSonic = pixelyR - 80;//Changes Sonic's yPosition   
-            angle = angleR;
-        }  
-        if(pixelyL == pixelyR && ground) {//If they are equal, angle is 0 (since Sonic is on flat ground)
-            angle = 0;
-        }
+        setSonicPosition(pixelyL, pixelyR, angleL, angleR);
         //Controls groundSpeed (which is influenced by angle), used when Sonic is on a slope + when is on a slope and no keys are pressed
         //(used for sliding) + rolling down slopes, is influenced by direction
         if(tileDirection == 0 && angle != 0 && ground) {
@@ -425,11 +416,10 @@ public class OverWorldAction extends Sonic {
             else {
                 groundSpeed = ySpeed*0.5*-Math.signum(Math.sin(angle));
             }          
-        }     
-        g2.drawString("pixelyL:"+pixelyL,500,100);
-        g2.drawString("pixelyR:"+pixelyR,600,100);
+        }            
+        g2.drawString("flatBoxRect:"+flatBoxRect,500,100);
         //Controls collisions with the middle sensors
-        for(Tile checkBoundary: environmentTiles) {
+        for(Ground checkBoundary: overworld.getGroundArrayList()) {
             if(middleRight.intersects(checkBoundary.getPixelBox(0))) {//If middleRight sensor is intersecting a tile's hitbox
                 //set groundSpeed = 0, set mRCollide = 1, and xSpeed = 0 (I need to set both groundSpeed and xSpeed to 0 so Sonic can stop
                 //moving when is on the ground or in the air (Sonic doesn't use groundSpeed in the air, only xSpeed)
@@ -445,7 +435,7 @@ public class OverWorldAction extends Sonic {
                 mRCollide = 0;
             }
         }
-        for(Tile checkBoundary: environmentTiles) {
+        for(Ground checkBoundary: overworld.getGroundArrayList()) {
             if(middleLeft.intersects(checkBoundary.getPixelBox(0))) {//If middleRight sensor is intersecting a tile's hitbox
                 //set groundSpeed = 0, set mLCollide = 1, and xSpeed = 0 (I need to set both groundSpeed and xSpeed to 0 so Sonic can stop
                 //moving when is on the ground or in the air (Sonic doesn't use groundSpeed in the air, only xSpeed)
@@ -461,6 +451,25 @@ public class OverWorldAction extends Sonic {
                 mLCollide = 0;
             }
         }
+        setSonicLedge(flatBoxRect);
+    }
+    public void setSonicPosition(int pixelyL, int pixelyR, double angleL, double angleR) {//Method that sets Sonic's correct position and angle
+         //Changes Sonic's yPosition based on the heights of the pixels that each of the bottom sensors get
+        if(pixelyR > pixelyL && pixelyL != 0 && pixelyR != 0) {//If pixelyR is greater than pixelyL (meaning that it is lower on the screen)
+            //set Sonic's yPosition based on pixelyL + use angleL for angle
+            ySpriteCenterSonic = pixelyL - 80;//Changes Sonic's yPosition   
+            angle = angleL;
+        } 
+        else if(pixelyL > pixelyR && pixelyL != 0 && pixelyR != 0) {//If pixelyL is greater than pixelyL (meaning that it is lower on the screen)
+            //set Sonic's yPosition based on pixelyR + use angleR for angle
+            ySpriteCenterSonic = pixelyR - 80;//Changes Sonic's yPosition   
+            angle = angleR;
+        }  
+        if(pixelyL == pixelyR && ground) {//If they are equal, angle is 0 (since Sonic is on flat ground)
+            angle = 0;
+        }
+    }
+    public void setSonicLedge(Rectangle flatBoxRect) {//Sets the ledges of the tile that Sonic is currently standing on 
         //Controls ledges (when Sonic is near a ledge or not)      
         if(xDrawCenterSonic > (int) flatBoxRect.getX()+68 && bRCollide == 0 && bLCollide == 1 && leftPress == 0 && rightPress == 0 && groundSpeed == 0 && angle == 0) {
             duck = 0;
@@ -470,6 +479,76 @@ public class OverWorldAction extends Sonic {
             duck = 0;
             ledge = 0;
         }
+    }
+     public void intersectDefaultObject(Graphics2D g2) {//Checks if Sonic is interacting with an object (not ground)
+        int index = 0;
+        for(int i = 0; i < overworld.getDefaultObjectArrayList().size(); i++) {
+            if(overworld.getIDInArray(index) == 1) {
+               intersectWithMonitor(overworld.getDefaultObjectArrayList().get(i),index); 
+            }
+            index++;
+        }
+    }
+    public void intersectWithMonitor(DefaultObject var, int index) {//Checks for collision with monitors (similar to ground) and destroys monitor
+        //if jumped on
+        Rectangle flatBoxRect = new Rectangle(0,0,0,0);
+        int pixelyL = ySpriteCenterSonic + 200;
+        int pixelyR = ySpriteCenterSonic + 200;
+        double angleL = 0;
+        double angleR = 0;
+        Monitor monitor = (Monitor) var;
+        if(bottomLeft.intersects(monitor.getHitBox())) {
+            if(ySpeed >= 0) {//Checks for collision if Sonic is falling/on the ground and not when he is jumping
+                if(jump == 0 && duck == 0) {
+                    bLCollide = 1;     
+                    ySpeed = 0;
+                    collideWithSlope = 0; 
+                    flatBoxRect = monitor.getHitBox();//gets the rectangles hitbox
+                    //used for ledges
+                    pixelyL = (monitor.getYRef());//gets pixel's height relative to the screen          
+                }
+                else if(jump == 2 || duck == 2) {
+                    ySpeed = -ySpeed;
+                    monitor.interactWithSonic();
+                    overworld.removeObject(index);
+                }
+            }
+        }
+        if(bottomRight.intersects(monitor.getHitBox())) {
+            if(ySpeed >= 0) {//Checks for collision if Sonic is falling/on the ground and not when he is jumping
+                if(jump == 0 && duck == 0) {
+                    bRCollide = 1;     
+                    ySpeed = 0;
+                    collideWithSlope = 0; 
+                    flatBoxRect = monitor.getHitBox();//gets the rectangles hitbox
+                    //used for ledges
+                    pixelyR = (monitor.getYRef());//gets pixel's height relative to the screen          
+                }
+                else if(jump == 2 || duck == 2) {
+                    ySpeed = -ySpeed;
+                    monitor.interactWithSonic();
+                    overworld.removeObject(index);
+                }
+            }
+        }
+        setSonicPosition(pixelyL, pixelyR, angleL, angleR);
+        setSonicLedge(flatBoxRect);
+        if(middleRight.intersects(monitor.getHitBox())) {
+                if(xSpeed > 0 && duck == 0) {
+                    spindashCharge = 0;
+                    groundSpeed = 0;
+                    xSpeed = 0;                    
+                }
+                mRCollide = 1;
+        }
+        if(middleLeft.intersects(monitor.getHitBox())) {
+                if(xSpeed < 0 && duck == 0) {
+                    spindashCharge = 0;
+                    groundSpeed = 0;
+                    xSpeed = 0;                    
+                }
+                mLCollide = 1;
+        }       
     }
     public void changeAnimation() {
         //Controls waiting animation

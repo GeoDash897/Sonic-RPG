@@ -12,39 +12,63 @@ import java.util.ArrayList;
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
 //memes
-public class OverWorld extends Game {;
-    public static ArrayList<Tile> environmentTiles = new ArrayList<Tile>();
+public class OverWorld extends Game {
+    private static ArrayList<Ground> groundTiles = new ArrayList<Ground>();
+    private static ArrayList<DefaultObject> monitors = new ArrayList<DefaultObject>();
+    private static int generateEverything = 0;
     public void standard(Graphics2D g2) {
-        if(environmentTiles.size() < 32) {//limits how many tiles are created (don't want to constantly create tile objects = lag
-            //Sending X,Y and angles of tiles I want to create to method
-            createTile(799,444+150,45,1);
-            createTile(856,386+150,45,1);
-            createTile(912,327+150,45,1);
-            createTile(975,326+150,0,1);
-            createTile(1032,327+150,45,0);
-            createTile(1100,383+150,0,1);
-            createCustomTile(0,664,0,1,1400,32);   
-            createCustomTile(0,472,0,1,16,48);
-            createTile(1525,600,0,1);
+        if(generateEverything == 0) {
+            generate(g2);
         }
-        for(Tile create : environmentTiles) {
+        for(Ground create : groundTiles) {
             create.create(); //Creates the Rectangle hitboxes 
-            if(create.getAngle() == 0) {
-                create.drawRectangle(g2);    
-            }
-            else if(create.getAngle() != 0) {
-                create.drawSlope(g2);    
-            }
+            create.draw(g2);    
         }
-
+        for(DefaultObject create : monitors) {
+            create.create();
+            create.draw(g2);
+            create.action();
+        }
         g2.drawString("OverWorld is running",100,100);
         Sonic sonic = new Sonic();
         sonic.setup(g2);
     }
-    public void createTile(int xRef, int yRef, int angleOfTile, int direction) {//Actually creates the Tile Objects and adds it to the arrayList
-            environmentTiles.add(new Tile(xRef,yRef,angleOfTile,direction));                
+    public void generate(Graphics2D g2) {
+        if(groundTiles.size() < 33) {//limits how many tiles are created (don't want to constantly create tile objects = lag
+            //Sending X,Y and angles of tiles I want to create to method
+            createTile(0,799,444+150,16,16,45,1);
+            createTile(0,856,386+150,16,16,45,1);
+            createTile(0,912,327+150,16,16,45,1);
+            createTile(0,975,326+150,16,16,0,1);
+            createTile(0,1032,327+150,16,16,45,0);
+            createTile(0,1100,383+150,16,16,0,1);
+            createTile(0,0,664,1400,32,0,1);   
+            createTile(0,0,472,16,48,0,1);
+            createTile(0,1525,600,16,16,0,1);
+            createTile(0,100,300,16,16,0,1);
+        }
+        if(monitors.size() < 2) {
+            createMonitor(1,400,300);
+            createMonitor(1,600,300);
+        }      
+        generateEverything = 1;
     }
-    public void createCustomTile(int xRef, int yRef, int angleOfTile, int direction, int length, int width) {//Actually creates the Tile Objects and adds it to the arrayList
-            environmentTiles.add(new Tile(xRef,yRef,angleOfTile,direction, length, width));                
+    public void createTile(int id, int xRef, int yRef, int length, int width, int angleOfTile, int direction) {//Actually creates the Tile Objects and adds it to the arrayList
+        groundTiles.add(new Ground(id,xRef,yRef,length,width, angleOfTile, direction));                
+    }
+    public void createMonitor(int id, int xRef, int yRef) {
+        monitors.add(new Monitor(id, xRef, yRef));
+    }
+    public ArrayList<Ground> getGroundArrayList() {
+        return groundTiles;
+    }
+    public ArrayList<DefaultObject> getDefaultObjectArrayList() {
+        return monitors;
+    }
+    public int getIDInArray(int index) {
+        return monitors.get(index).getID();
+    }
+    public void removeObject(int index) {
+        monitors.remove(index);
     }
 }
