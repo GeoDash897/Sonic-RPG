@@ -31,7 +31,6 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     private Animation animation;
     public void setup(Graphics2D g2) {
         owa = new OverWorldAction();
-        g2.drawString("Sonic is running",100,125);
         inventory = new Inventory();
         inventory.addItem(new Potion());
         inventory.drawItem(0, g2);
@@ -40,15 +39,12 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
             animation.standard(g2,owa.getXCenterSonic(),owa.getYCenterSonic()); 
             owa.standard(g2);
         }
-        g2.drawString(String.valueOf(rings),100,50);
-        g2.drawString(animation.toString(),100,150);
     }
     public int getAreaNumber() {
         return area;
     }
     public void increaseRings(int amount) {
         rings += amount;
-        System.out.println("Code Ran");
     }
     @Override
     public void getPressInput(KeyEvent e) {
@@ -77,6 +73,9 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
         if (e.getKeyCode() == e.VK_Z ) {           
             getReleasedInput(e);
         }
+        if (e.getKeyCode() == e.VK_X) {           
+            getReleasedInput(e);
+        }
     }
     @Override
     public void keyPressed(KeyEvent e) {
@@ -96,10 +95,13 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
             getPressInput(e);
         }
         if (e.getKeyCode() == e.VK_X ) {
-              
+            getPressInput(e);  
         }
         if (e.getKeyCode() == e.VK_ENTER) {
             
-        }                 
+        } 
+        if (e.getKeyCode() == e.VK_ESCAPE) {
+            getPressInput(e);
+        }
     }//end keypressed
 }

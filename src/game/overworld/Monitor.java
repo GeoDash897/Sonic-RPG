@@ -16,6 +16,7 @@ import java.awt.Toolkit;
  * @author GeoSonicDash
  */
 public class Monitor extends OverWorld implements DefaultObject {
+    private int group = 1;
     private int id;
     private int xRef;
     private int yRef;
@@ -24,6 +25,7 @@ public class Monitor extends OverWorld implements DefaultObject {
     private Rectangle hitBox;
     private Image monitorPicture;
     private boolean ground;
+    private boolean observable = false;
     private OverWorld overworld = new OverWorld();
     private Sonic sonic = new Sonic();
     Monitor(int id, int xRef, int yRef) {
@@ -34,7 +36,7 @@ public class Monitor extends OverWorld implements DefaultObject {
     }
     @Override
     public void create() {
-        if(id == 1) {
+        if(id == 0) {
             monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor.png");
         }
         length = 27;
@@ -59,17 +61,19 @@ public class Monitor extends OverWorld implements DefaultObject {
         }     
     }
     @Override
-    public void interactWithSonic() {
-        if(id == 1) {
+    public void interactWithSonic(Rectangle sensor) {
+        if(id == 0) {
             sonic.increaseRings(10);    
         }     
     }
-
+    @Override
+    public int getGroup() {
+        return group;
+    }
     @Override
     public int getID() {
        return id;
     }
-
     @Override
     public int getXRef() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

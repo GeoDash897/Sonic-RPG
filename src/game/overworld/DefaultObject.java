@@ -16,7 +16,8 @@ public interface DefaultObject {
     void create();
     void draw(Graphics2D g2);
     void action();
-    void interactWithSonic();
+    void interactWithSonic(Rectangle sensor);
+    int getGroup();
     int getID();
     int getXRef();
     int getYRef();

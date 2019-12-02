@@ -5,6 +5,7 @@
  */
 package game.overworld;
 import game.Game;
+import game.Music;
 import game.sonic.*;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ public class OverWorld extends Game {
     private static int generateEverything = 0;
     public void standard(Graphics2D g2) {
         if(generateEverything == 0) {
+            //Music.playTestAreaTheme(1, 0);    
+        }      
+        if(generateEverything == 0) {
             generate(g2);
         }
         for(Ground create : groundTiles) {
@@ -29,7 +33,6 @@ public class OverWorld extends Game {
             create.draw(g2);
             create.action();
         }
-        g2.drawString("OverWorld is running",100,100);
         Sonic sonic = new Sonic();
         sonic.setup(g2);
     }
@@ -47,9 +50,10 @@ public class OverWorld extends Game {
             createTile(0,1525,600,16,16,0,1);
             createTile(0,100,300,16,16,0,1);
         }
-        if(monitors.size() < 2) {
-            createMonitor(1,400,300);
-            createMonitor(1,600,300);
+        if(monitors.size() < 3) {
+            createMonitor(0,400,300);
+            createMonitor(0,600,300);
+            createSign(0,150,600);
         }      
         generateEverything = 1;
     }
@@ -59,11 +63,17 @@ public class OverWorld extends Game {
     public void createMonitor(int id, int xRef, int yRef) {
         monitors.add(new Monitor(id, xRef, yRef));
     }
+    public void createSign(int id, int xRef, int yRef) {
+        monitors.add(new Sign(id, xRef, yRef));
+    }
     public ArrayList<Ground> getGroundArrayList() {
         return groundTiles;
     }
     public ArrayList<DefaultObject> getDefaultObjectArrayList() {
         return monitors;
+    }
+    public int getGroupInArray(int index) {
+        return monitors.get(index).getGroup();
     }
     public int getIDInArray(int index) {
         return monitors.get(index).getID();

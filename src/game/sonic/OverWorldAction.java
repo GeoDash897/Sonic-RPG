@@ -5,10 +5,7 @@
  */
 package game.sonic;
 
-import game.overworld.DefaultObject;
-import game.overworld.Ground;
-import game.overworld.Monitor;
-import game.overworld.OverWorld;
+import game.overworld.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -29,6 +26,7 @@ public class OverWorldAction extends Sonic {
     private static double ySpeed = 0; //Same but for up and down
     private static int slope = 0;//The current slope factor being used (normal, rolling up a slope, or rolling down it)
     private static boolean ground = true;//Sonic is on ground = true, not = false
+    private static boolean observe = false;
     private static int ledge = -1;//Determines if Sonic is near a ledge or not, -1 = not near a ledge, 0 = he is near a ledge on the left
     //1 = he is near a ledge on the right
     private static int jump = 0;//Phases of Sonic's jump: 0 = not jumping,1 = playing is holding jump button (Sonic is moving up)
@@ -43,7 +41,9 @@ public class OverWorldAction extends Sonic {
     private static int downPress = 0;//Likewise for down
     private static int zPress = 0;//Likewise for Z key
     private static int zPressTimer = 0;//Increases when the Z key is pressed, used to calculate presses of a key
-    
+    private static int xPress = 0;
+    private static int xPressTimer = 0;
+    private static boolean debug = true;
     //Physic variables
     private static double AIR = 0.09375;
     private static double GRAVITY = 0.21875;
@@ -150,7 +150,7 @@ public class OverWorldAction extends Sonic {
         if((leftPress == 0 && rightPress == 0 && angle == 0 && zPress == 0 && ground) || (Math.abs(groundSpeed) > 0 && duck > 0)) {
             groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
         } 
-        //Controls key presses (left, right, down, and Z)
+        //Controls key presses (left, right, down, Z and X)
         if(rightPress == 1) {
             rightPress();
         }
@@ -163,6 +163,9 @@ public class OverWorldAction extends Sonic {
         if(zPress == 1) {
             zPress();
         }   
+        if(xPress == 1) {
+            xPress();
+        }
         //If Sonic is rolling and the abs of his groundSpeed (since he has to be on the ground) is < 1 (basically stopped), set it to 0 
         //(Sonic is now standing)
         if(Math.abs(groundSpeed) < 1) {
@@ -192,35 +195,48 @@ public class OverWorldAction extends Sonic {
             }           
         }           
         //Animations:
-        changeAnimation();
-        
-        //Displaying variables here
-        g2.drawString("downPress: "+downPress,0,175);
-        g2.drawString("rightPress: "+rightPress,100,175);
-        g2.drawString("leftPress: "+leftPress,100,200);
-        g2.drawString("bLCollide: "+bLCollide,100,225);
-        g2.drawString("bRCollide: "+bRCollide,100,250);
-        g2.drawString("mLCollide: "+mLCollide,100,275);
-        g2.drawString("mRCollide: "+mRCollide,100,300);
-        g2.drawString("direction: "+animation.getDirection(),100,325); //0 for left, 1 for right
-        g2.drawString("waitTimer: "+waitTimer,100,350);
-        g2.drawString("groundSpeed: "+groundSpeed,100,375); 
-        g2.drawString("xSpeed: "+xSpeed,100,425);
-        g2.drawString("ySpeed: "+ySpeed,100,450);
-        g2.drawString("angle: "+angle,100,475); 
-        g2.drawString("collideWithSlope: "+collideWithSlope,200,175);
-        g2.drawString("yDrawCenterSonic: "+ySpriteCenterSonic,200,200);
-        g2.drawString("ground: "+ground,200,225);
-        g2.drawString("jump: "+jump,200,250);
-        g2.drawString("ledge: "+ledge,200,300);
-        g2.drawString("ground: "+ground,200,325);
-        g2.drawString("duck: "+duck,200,350);
-        g2.drawString("zPressTimer: "+zPressTimer,200,400);
-        g2.drawString("spindash: "+spindash,325,175);
-        g2.drawString("spindashCharge: "+spindashCharge,325,200);
-        drawCollisionBoxes(g2);        
+        changeAnimation();        
+        //Displaying variables here   
+        g2.setFont(debugStat);
+        g2.setColor(Color.MAGENTA);
+        g2.drawString("Debug: "+debug, 0, 25);
+        if(debug) {
+            drawDebug(g2);
+        }
         xDrawCenterSonic+= (int) xSpeed;
         ySpriteCenterSonic+= (int) ySpeed;
+    }
+    public void drawDebug(Graphics2D g2) {
+        g2.drawString("DEBUG MENU",600,25);
+        g2.setColor(Color.MAGENTA);
+        //Variables that have to do with Sonic's x and y position, checking ground, x and y speed, etc:
+        g2.drawString("xDrawCenterSonic: "+xDrawCenterSonic,75,75);
+        g2.drawString("yDrawCenterSonic: "+yDrawCenterSonic,75,100);
+        g2.drawString("ySpriteCenterSonic: "+ySpriteCenterSonic,75,125);
+        g2.drawString("ground: "+ground,75,150);
+        g2.drawString("groundSpeed: "+groundSpeed,75,175);
+        g2.drawString("xSpeed: "+xSpeed,75,200);
+        g2.drawString("ySpeed: "+ySpeed,75,225);       
+        g2.drawString("slope: "+slope,75,250);
+        g2.drawString("jump: "+jump,75,275);
+        g2.drawString("duck: "+duck,75,300);
+        g2.drawString("spindash: "+spindash,75,325);
+        g2.drawString("spindashCharge: "+spindashCharge,75,350);
+        g2.drawString("observe: "+observe,75,375);
+        //Variables that have to do with Sonic's animations:
+        g2.setColor(Color.GREEN);
+        g2.drawString("angle: "+angle, 400, 75);
+        g2.drawString("waitTimer: "+waitTimer, 400, 100);
+        //Variables that have to with input (checking how long a button is pressed, when a button is pressed, etc):
+        g2.setColor(Color.PINK);
+        g2.drawString("leftPress: "+leftPress,600,75);
+        g2.drawString("rightPress: "+rightPress,600,100);
+        g2.drawString("downPress: "+downPress,600,125);
+        g2.drawString("zPress: "+zPress,600,150);
+        g2.drawString("zPressTimer: "+zPressTimer,600,175); 
+        g2.drawString("xPress: "+xPress,600,200);  
+        g2.drawString("xPressTimer: "+xPressTimer,600,225);
+        drawCollisionBoxes(g2);  
     }
     public void drawCollisionBoxes(Graphics2D g2) {
         //Draws rectangles themselves
@@ -304,8 +320,6 @@ public class OverWorldAction extends Sonic {
                             collideWithSlope = 1;
                             heightBottomRightIndex = (int) Math.abs(((xBottomRight - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
                             //on sensor's x position relative to the tile's xRef (abs to avoid negatives)                   
-                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.getHeightValueInArrayList(heightBottomRightIndex), 1000, 575);
-                            g2.drawString(checkBoundary.toString(),1000,525);
                             pixelyR = (checkBoundary.getYRef()+64-(checkBoundary.getHeightValueInArrayList(heightBottomRightIndex)*4));//gets pixel's height relative
                             //to screen
                             angleR = checkBoundary.getAngle();//gets angle of tile that sensors are colliding with
@@ -326,8 +340,6 @@ public class OverWorldAction extends Sonic {
                             bRCollide = 1;     
                             ySpeed = 0;
                             collideWithSlope = 0;//changes the sensors to appropiate sizes and positions
-                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.getHeightValueInArrayList(0), 1000, 575);
-                            g2.drawString(checkBoundary.toString(),1000,525);
                             flatBoxRect = checkBoundary.getPixelBox(0);//gets the rectangles hitbox (only one box is in the pixelbox arrayList)
                             //used for ledges
                             pixelyR = (checkBoundary.getYRef());//gets pixel's height relative to the screen                     
@@ -347,11 +359,9 @@ public class OverWorldAction extends Sonic {
                         if(ySpeed >= 0) {//Checks for collision if Sonic is falling/on the ground and not when he is jumping
                             bLCollide = 1;     
                             ySpeed = 0;
-                            collideWithSlope = 1;
-                            g2.drawString(checkBoundary.toString(),1000,500);                                     
+                            collideWithSlope = 1;                                   
                             heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - checkBoundary.getXRef())/4));//gets specific height of pixel (depends
                             //on sensor's x position relative to the tile's xRef (abs to avoid negatives)
-                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.getHeightValueInArrayList(0), 1000, 550);
                             pixelyL = (checkBoundary.getYRef()+64-(checkBoundary.getHeightValueInArrayList(heightBottomLeftIndex)*4));//gets pixel's height relative                   
                             //to screen    
                             angleL = checkBoundary.getAngle();//gets angle of tile that sensors are colliding with
@@ -372,8 +382,6 @@ public class OverWorldAction extends Sonic {
                             bLCollide = 1;     
                             ySpeed = 0;
                             collideWithSlope = 0; 
-                            g2.drawString(checkBoundary.toString(),1000,500);
-                            g2.drawString("Height value of pixel (in 16x16 tile)"+checkBoundary.getHeightValueInArrayList(0), 1000, 550);
                             flatBoxRect = checkBoundary.getPixelBox(0);//gets the rectangles hitbox (only one box is in the pixelbox arrayList)
                             //used for ledges
                             pixelyL = (checkBoundary.getYRef());//gets pixel's height relative to the screen                                       
@@ -417,7 +425,6 @@ public class OverWorldAction extends Sonic {
                 groundSpeed = ySpeed*0.5*-Math.signum(Math.sin(angle));
             }          
         }            
-        g2.drawString("flatBoxRect:"+flatBoxRect,500,100);
         //Controls collisions with the middle sensors
         for(Ground checkBoundary: overworld.getGroundArrayList()) {
             if(middleRight.intersects(checkBoundary.getPixelBox(0))) {//If middleRight sensor is intersecting a tile's hitbox
@@ -483,14 +490,40 @@ public class OverWorldAction extends Sonic {
      public void intersectDefaultObject(Graphics2D g2) {//Checks if Sonic is interacting with an object (not ground)
         int index = 0;
         for(int i = 0; i < overworld.getDefaultObjectArrayList().size(); i++) {
-            if(overworld.getIDInArray(index) == 1) {
-               intersectWithMonitor(overworld.getDefaultObjectArrayList().get(i),index); 
+            if(overworld.getGroupInArray(index) == 0) {
+                intersectWithSign(overworld.getDefaultObjectArrayList().get(i),g2);
+            }
+            else if(overworld.getGroupInArray(index) == 1) {
+               if(overworld.getIDInArray(index) == 0) {
+                intersectWithMonitor(overworld.getDefaultObjectArrayList().get(i),index);     
+               }             
             }
             index++;
         }
     }
+    public void intersectWithSign(DefaultObject var, Graphics2D g2) {
+        int xMiddleLeft = (int) middleLeft.getX();//gets the x position of bottomLeft
+        Sign sign = (Sign) var;
+        sign.drawXKey(g2, bottomLeft);
+        sign.drawXKey(g2, bottomLeft);
+        sign.drawXKey(g2, middleLeft);
+        sign.drawXKey(g2, middleRight);
+        if(sign.getCurrentSection() != -3) {
+            observe = true;
+            leftPress = 0;
+            rightPress = 0;
+            waitTimer = 0;
+        }
+        if(Math.abs(xMiddleLeft - sign.getXRef()) <= 50 && Math.abs(groundSpeed) == 0 && checkForXPressOnce() 
+                && ground && jump == 0 && duck == 0 && spindash == 0) {
+            sign.increaseCurrentSection();
+        }
+        if(observe) {
+            sign.drawDescription(g2);   
+        }      
+    }
     public void intersectWithMonitor(DefaultObject var, int index) {//Checks for collision with monitors (similar to ground) and destroys monitor
-        //if jumped on
+        //if jumped on       
         Rectangle flatBoxRect = new Rectangle(0,0,0,0);
         int pixelyL = ySpriteCenterSonic + 200;
         int pixelyR = ySpriteCenterSonic + 200;
@@ -509,7 +542,7 @@ public class OverWorldAction extends Sonic {
                 }
                 else if(jump == 2 || duck == 2) {
                     ySpeed = -ySpeed;
-                    monitor.interactWithSonic();
+                    monitor.interactWithSonic(bottomLeft);
                     overworld.removeObject(index);
                 }
             }
@@ -526,7 +559,7 @@ public class OverWorldAction extends Sonic {
                 }
                 else if(jump == 2 || duck == 2) {
                     ySpeed = -ySpeed;
-                    monitor.interactWithSonic();
+                    monitor.interactWithSonic(bottomRight);
                     overworld.removeObject(index);
                 }
             }
@@ -724,11 +757,24 @@ public class OverWorldAction extends Sonic {
             }           
         }
     }
+    public void xPress() {
+        xPressTimer++;
+    }
+    public boolean checkForXPressOnce() {
+        boolean check = false;
+        if(xPress == 1 && xPressTimer < 1) {
+            check = true;
+        }
+        return check;
+    }
     public int getXCenterSonic() {
         return xDrawCenterSonic;
     }
     public int getYCenterSonic() {
         return yDrawCenterSonic;
+    }
+    public void setObserve(boolean set) {
+        observe = set;
     }
     @Override
     public void keyReleased(KeyEvent e) {
@@ -756,34 +802,41 @@ public class OverWorldAction extends Sonic {
             if(jump == 1) {
                 jump = 2;
             }
+            zPress = 0;
         }
-        zPress = 0;
+        if(e.getKeyCode() == e.VK_X) {
+            xPressTimer = 0;
+            xPress = 0;
+        }
     }
     @Override
     public void keyPressed(KeyEvent e) {
         //Gets key inputs from the different keys
-        if (e.getKeyCode() == e.VK_RIGHT ) {
+        if (e.getKeyCode() == e.VK_RIGHT && !observe) {
             rightPress = 1;
             leftPress = 0;
         }
-        if (e.getKeyCode() == e.VK_LEFT ) {  
+        if (e.getKeyCode() == e.VK_LEFT && !observe) {  
             leftPress = 1;
             rightPress = 0;
         }          
         if (e.getKeyCode() == e.VK_UP ) {
             
         }
-        if (e.getKeyCode() == e.VK_DOWN) {
+        if (e.getKeyCode() == e.VK_DOWN && !observe) {
             downPress = 1;
         }
-        if (e.getKeyCode() == e.VK_Z ) {
+        if (e.getKeyCode() == e.VK_Z && !observe) {
             zPress = 1;
         }
         if (e.getKeyCode() == e.VK_X ) {
-
+            xPress = 1;
         }
         if (e.getKeyCode() == e.VK_ENTER) {
             
-        }                 
+        } 
+        if (e.getKeyCode() == e.VK_ESCAPE) {
+            debug = !debug;
+        } 
     }//end keypressed   
 }
