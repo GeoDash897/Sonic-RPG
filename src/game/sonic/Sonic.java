@@ -24,6 +24,7 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     private static int defense;
     private static int speed;
     private static int area = 1;
+    private static int layer = 2;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
     private Inventory inventory;
@@ -42,6 +43,9 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     }
     public int getAreaNumber() {
         return area;
+    }
+    public int getLayer() {
+        return layer;
     }
     public void increaseRings(int amount) {
         rings += amount;

@@ -9,6 +9,7 @@ import game.Music;
 import game.sonic.*;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collections;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
@@ -24,6 +25,7 @@ public class OverWorld extends Game {
         if(generateEverything == 0) {
             generate(g2);
         }
+        Collections.sort(monitors,DefaultObject.defaultObjectCompareLayer);
         for(Ground create : groundTiles) {
             create.create(); //Creates the Rectangle hitboxes 
             create.draw(g2);    
@@ -51,20 +53,20 @@ public class OverWorld extends Game {
             createTile(0,100,300,16,16,0,1);
         }
         if(monitors.size() < 3) {
-            createMonitor(0,400,300);
-            createMonitor(0,600,300);
-            createSign(0,150,600);
+            createMonitor(0,1,400,300);
+            createMonitor(0,1,600,300);
+            createSign(0,1,150,600);
         }      
         generateEverything = 1;
     }
     public void createTile(int id, int xRef, int yRef, int length, int width, int angleOfTile, int direction) {//Actually creates the Tile Objects and adds it to the arrayList
         groundTiles.add(new Ground(id,xRef,yRef,length,width, angleOfTile, direction));                
     }
-    public void createMonitor(int id, int xRef, int yRef) {
-        monitors.add(new Monitor(id, xRef, yRef));
+    public void createMonitor(int id, int layer, int xRef, int yRef) {
+        monitors.add(new Monitor(id, layer,xRef, yRef));
     }
-    public void createSign(int id, int xRef, int yRef) {
-        monitors.add(new Sign(id, xRef, yRef));
+    public void createSign(int id, int layer, int xRef, int yRef) {
+        monitors.add(new Sign(id, layer, xRef, yRef));
     }
     public ArrayList<Ground> getGroundArrayList() {
         return groundTiles;

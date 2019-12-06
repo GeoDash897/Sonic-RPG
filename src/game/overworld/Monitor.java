@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.util.Comparator;
 
 /**
  *
@@ -22,14 +23,16 @@ public class Monitor extends OverWorld implements DefaultObject {
     private int yRef;
     private int length;
     private int width;
+    private int layer;
     private Rectangle hitBox;
     private Image monitorPicture;
     private boolean ground;
     private boolean observable = false;
     private OverWorld overworld = new OverWorld();
     private Sonic sonic = new Sonic();
-    Monitor(int id, int xRef, int yRef) {
+    Monitor(int id, int layer, int xRef, int yRef) {
         this.id = id;
+        this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
         this.ground = false;
@@ -37,7 +40,10 @@ public class Monitor extends OverWorld implements DefaultObject {
     @Override
     public void create() {
         if(id == 0) {
-            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor.png");
+            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor.gif");
+        }
+        if(id == 1) {
+            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Jump_1.png");
         }
         length = 27;
         width = 32;
@@ -76,7 +82,7 @@ public class Monitor extends OverWorld implements DefaultObject {
     }
     @Override
     public int getXRef() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xRef;
     }
 
     @Override
@@ -86,12 +92,16 @@ public class Monitor extends OverWorld implements DefaultObject {
 
     @Override
     public int getLength() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return length;
     }
 
     @Override
     public int getWidth() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return width;
+    }
+    @Override
+    public int getLayer() {
+        return layer;
     }
     @Override
     public Rectangle getHitBox() {
@@ -101,4 +111,5 @@ public class Monitor extends OverWorld implements DefaultObject {
     public String toString() {
         return "Monitor: "+xRef+", "+yRef;
     }
+    
 }

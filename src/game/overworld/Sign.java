@@ -25,6 +25,7 @@ public class Sign extends OverWorld implements DefaultObject {
     private int yRef;
     private int length;
     private int width;
+    private int layer;
     private int currentSection;
     private Rectangle hitBox;
     private Image signPicture;
@@ -33,8 +34,9 @@ public class Sign extends OverWorld implements DefaultObject {
     private boolean observable;
     private boolean stopAdd;
     private ArrayList<String> splitDescription;
-    public Sign(int id, int xRef, int yRef) {
+    public Sign(int id, int layer, int xRef, int yRef) {
         this.id = id;
+        this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
         this.currentSection = -3;
@@ -52,7 +54,8 @@ public class Sign extends OverWorld implements DefaultObject {
                 + "pretty self explainatory huh? I'm kind of surprised that this thing works but I need to figure out a way to display"
                 + " text in an easier format as well as figure out cutscenes I guess? I don't know man, I'm just a sign afterall, so I"
                 + "My next plans are to optimize this code.ewjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjioeeerwrerer"
-                + "qweeeeeeeeeeeeeeeeeeeeeqqqqqeqecccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+                + "qweeeeeeeeeeeeeeeeeeeeeqqqqqeqecccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+                + "Big Beans! higoewhsdiomv hr80fw9yenh gowe iphg98we nshoigw omg niow oi";
             setUpSplitDescriptionArray();
         }
         xKey = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\insert something here pls.png");
@@ -80,7 +83,7 @@ public class Sign extends OverWorld implements DefaultObject {
     }
     @Override
     public int getID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return id;
     }
 
     @Override
@@ -90,7 +93,7 @@ public class Sign extends OverWorld implements DefaultObject {
 
     @Override
     public int getYRef() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return yRef;
     }
 
     @Override
@@ -100,9 +103,13 @@ public class Sign extends OverWorld implements DefaultObject {
 
     @Override
     public int getWidth() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return width;
     }
-
+    
+    @Override
+    public int getLayer() {
+        return layer;
+    }
     @Override
     public Rectangle getHitBox() {
         return hitBox;
