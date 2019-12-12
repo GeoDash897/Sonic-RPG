@@ -17,7 +17,7 @@ import java.util.Comparator;
  * @author GeoSonicDash
  */
 public class Monitor extends OverWorld implements DefaultObject {
-    private int group = 1;
+    private int group; 
     private int id;
     private int xRef;
     private int yRef;
@@ -31,6 +31,7 @@ public class Monitor extends OverWorld implements DefaultObject {
     private OverWorld overworld = new OverWorld();
     private Sonic sonic = new Sonic();
     Monitor(int id, int layer, int xRef, int yRef) {
+        group = 1;
         this.id = id;
         this.layer = layer;
         this.xRef = xRef;

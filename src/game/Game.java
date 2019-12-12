@@ -18,6 +18,7 @@ public class Game extends JFrame implements KeyListener, ActionListener {
 //opens program
     private static int wide;
     private static int high;
+    private static boolean debug;
     public static Font debugStat;
     public static Font dialog;
 /***********************************************************/
@@ -65,6 +66,12 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             super.paintComponent(g2);//allows for painting and
             repaint();
         } 
+    }
+    public static boolean getDebug() {
+        return debug;
+    }
+    public static void setDebug() {
+        debug = !debug;
     }
     public void getPressInput(KeyEvent e) {
         Sonic sonic = new Sonic();

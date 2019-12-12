@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 package game.sonic;
+import game.Game;
 import game.overworld.OverWorld;
 import game.items.*;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 /*
@@ -39,6 +41,10 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
         if(!cutscene) {
             animation.standard(g2,owa.getXCenterSonic(),owa.getYCenterSonic()); 
             owa.standard(g2);
+        }
+        if(Game.getDebug()) {
+            g2.setColor(Color.RED);
+            g2.drawString("Sonic's area: "+area+", Sonic's layer: "+layer, 75,500);
         }
     }
     public int getAreaNumber() {

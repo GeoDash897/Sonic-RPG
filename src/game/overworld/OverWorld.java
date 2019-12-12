@@ -16,7 +16,7 @@ import java.util.Collections;
 //memes
 public class OverWorld extends Game {
     private static ArrayList<Ground> groundTiles = new ArrayList<Ground>();
-    private static ArrayList<DefaultObject> monitors = new ArrayList<DefaultObject>();
+    private static ArrayList<DefaultObject> objects = new ArrayList<DefaultObject>();
     private static int generateEverything = 0;
     public void standard(Graphics2D g2) {
         if(generateEverything == 0) {
@@ -25,12 +25,12 @@ public class OverWorld extends Game {
         if(generateEverything == 0) {
             generate(g2);
         }
-        Collections.sort(monitors,DefaultObject.defaultObjectCompareLayer);
+        Collections.sort(objects,DefaultObject.defaultObjectCompareLayer);
         for(Ground create : groundTiles) {
             create.create(); //Creates the Rectangle hitboxes 
             create.draw(g2);    
         }
-        for(DefaultObject create : monitors) {
+        for(DefaultObject create : objects) {
             create.create();
             create.draw(g2);
             create.action();
@@ -52,10 +52,11 @@ public class OverWorld extends Game {
             createTile(0,1525,600,16,16,0,1);
             createTile(0,100,300,16,16,0,1);
         }
-        if(monitors.size() < 3) {
+        if(objects.size() < 3) {
             createMonitor(0,1,400,300);
             createMonitor(0,1,600,300);
             createSign(0,1,150,600);
+            createNPC(0,1,400,300);
         }      
         generateEverything = 1;
     }
@@ -63,24 +64,27 @@ public class OverWorld extends Game {
         groundTiles.add(new Ground(id,xRef,yRef,length,width, angleOfTile, direction));                
     }
     public void createMonitor(int id, int layer, int xRef, int yRef) {
-        monitors.add(new Monitor(id, layer,xRef, yRef));
+        objects.add(new Monitor(id, layer,xRef, yRef));
     }
     public void createSign(int id, int layer, int xRef, int yRef) {
-        monitors.add(new Sign(id, layer, xRef, yRef));
+        objects.add(new Sign(id, layer, xRef, yRef));
+    }
+    public void createNPC(int id, int layer, int xRef,int yRef) {
+        objects.add(new NPC(id,layer,xRef,yRef));
     }
     public ArrayList<Ground> getGroundArrayList() {
         return groundTiles;
     }
     public ArrayList<DefaultObject> getDefaultObjectArrayList() {
-        return monitors;
+        return objects;
     }
     public int getGroupInArray(int index) {
-        return monitors.get(index).getGroup();
+        return objects.get(index).getGroup();
     }
     public int getIDInArray(int index) {
-        return monitors.get(index).getID();
+        return objects.get(index).getID();
     }
     public void removeObject(int index) {
-        monitors.remove(index);
+        objects.remove(index);
     }
 }

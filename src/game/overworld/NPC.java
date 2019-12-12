@@ -18,7 +18,7 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class Sign extends OverWorld implements DefaultObject {
+public class NPC extends OverWorld implements DefaultObject {
     private int group;
     private int id;
     private int xRef;
@@ -30,61 +30,81 @@ public class Sign extends OverWorld implements DefaultObject {
     private int limit;
     private int currentSection;
     private Rectangle hitBox;
-    private Image signPicture;
-    private Image xKey;
-    private String description;
+    private Image npcPicture;
+    private boolean right;
+    private boolean ground;
     private boolean stopAdd;
-    public Sign(int id, int layer, int xRef, int yRef) {
-        group = 0;
+    private ArrayList<String> splitDescription;
+    private String description;
+    private OverWorld overworld = new OverWorld();
+    public NPC(int id, int layer, int xRef, int yRef) {
+        group = 2;
         this.id = id;
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
         this.currentSection = -3;
         this.stopAdd = false;        
+        this.splitDescription = new ArrayList<String>();
+        this.right = false;
+        this.ground = false;
     }
     @Override
     public void create() {
         if(id == 0) {
-            //insert picture here later
-            length = 16;
-            width = 16;
+            length = 30;
+            width = 48;
             middle = xRef+((length*4)/2)-40;
-            description = "Hello Player! Welcome to the area known as the Test Zone. This is the area where the programmer tests crap-"
-                + "pretty self explainatory huh? I'm kind of surprised that this thing works but I need to figure out a way to display"
-                + " text in an easier format as well as figure out cutscenes I guess? I don't know man, I'm just a sign afterall, so I"
-                + "My next plans are to optimize this code.ewjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjioeeerwrerer"
-                + "qweeeeeeeeeeeeeeeeeeeeeqqqqqeqecccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
-                + "Big Beans! higoewhsdiomv hr80fw9yenh gowe iphg98we nshoigw omg niow oi";
+            npcPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSkeleton.png");
+            description = "Hello Strange Fellow! It has been many years since I've seen a race like yours, many indeed";
             if(description.length() % 80 == 0) {
                 limit = (description.length()/80);    
             }
             else {
                 limit = (description.length()/80) + 1;    
-            }          
-        }      
+            }
+        }
     }
 
     @Override
     public void draw(Graphics2D g2) {
         if(id == 0) {
-            g2.setColor(Color.RED);
-            g2.fillRect(xRef, yRef, length*4, width*4);
+            if(!right) {
+                npcPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSkeleton.png");
+            }
+            else if(right) {
+                npcPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Skeleton.png");
+            }
+            g2.drawImage(npcPicture,xRef, yRef, length*4, width*4,this);
+            //g2.fillRect(xRef, yRef, length*4, width*4);
         }
     }
 
     @Override
     public void action() {
-        hitBox = new Rectangle(xRef, yRef, length*4, width*4);
+        hitBox = new Rectangle(xRef,yRef,length*4,width*4);
+        for(Ground var : overworld.getGroundArrayList()) {
+            if(hitBox.intersects(var.getPixelBox(0))) {       
+                if((yRef+(width*4)) > var.getYRef()) {
+                    yRef = var.getYRef()-(width*4);
+                }
+                ground = true;
+            }
+        }
+        if(!ground) {
+            yRef+=16;
+        }
     }
 
     @Override
     public void interactWithSonic(Rectangle sensor) {
+        
     }
     @Override
     public int getGroup() {
         return group;
     }
+
     @Override
     public int getID() {
         return id;
@@ -109,14 +129,23 @@ public class Sign extends OverWorld implements DefaultObject {
     public int getWidth() {
         return width;
     }
-    
+
     @Override
     public int getLayer() {
         return layer;
     }
+
     @Override
     public Rectangle getHitBox() {
         return hitBox;
+    }
+    public void changeDirection(int sonicPosition) {
+        if(sonicPosition <= middle) {
+            right = false;
+        }
+        else if(sonicPosition > middle) {
+            right = true;
+        }
     }
     public int getCurrentSection() {
         return currentSection;
@@ -138,7 +167,7 @@ public class Sign extends OverWorld implements DefaultObject {
         }
     }
     public void drawDescription(Graphics2D g2) {       
-        Dialog.drawDialog(g2, currentSection, description);             
+        Dialog.drawDialog(g2, currentSection, description);
         /*for(int i = currentSection; i < splitDescription.size();i++) {
             String firstLetter = String.valueOf(splitDescription.get(i).charAt(0));
             if(!firstLetter.equals(" ")) {

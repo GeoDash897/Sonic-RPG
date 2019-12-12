@@ -5,6 +5,7 @@
  */
 package game.sonic;
 
+import game.Game;
 import game.overworld.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -43,7 +44,6 @@ public class OverWorldAction extends Sonic {
     private static int zPressTimer = 0;//Increases when the Z key is pressed, used to calculate presses of a key
     private static int xPress = 0;
     private static int xPressTimer = 0;
-    private static boolean debug = true;
     //Physic variables
     private static double AIR = 0.09375;
     private static double GRAVITY = 0.21875;
@@ -199,8 +199,8 @@ public class OverWorldAction extends Sonic {
         //Displaying variables here   
         g2.setFont(debugStat);
         g2.setColor(Color.MAGENTA);
-        g2.drawString("Debug: "+debug, 0, 25);
-        if(debug) {
+        g2.drawString("Debug: "+Game.getDebug(), 0, 25);
+        if(Game.getDebug()) {
             drawDebug(g2);
         }
         xDrawCenterSonic+= (int) xSpeed;
@@ -490,13 +490,19 @@ public class OverWorldAction extends Sonic {
      public void intersectDefaultObject(Graphics2D g2) {//Checks if Sonic is interacting with an object (not ground)
         int index = 0;
         for(int i = 0; i < overworld.getDefaultObjectArrayList().size(); i++) {
-            if(overworld.getGroupInArray(index) == 0) {
-                intersectWithSign(overworld.getDefaultObjectArrayList().get(i),g2);
-            }
-            else if(overworld.getGroupInArray(index) == 1) {
-               if(overworld.getIDInArray(index) == 0) {
-                intersectWithMonitor(overworld.getDefaultObjectArrayList().get(i),index);     
-               }             
+            switch (overworld.getGroupInArray(index)) {
+                case 0:
+                    intersectWithSign(overworld.getDefaultObjectArrayList().get(i),g2);
+                    break;
+                case 1:
+                    intersectWithMonitor(overworld.getDefaultObjectArrayList().get(i),index);
+                    break;
+                case 2:
+                    if(overworld.getIDInArray(index) == 0) {
+                        intersectWithNPC(overworld.getDefaultObjectArrayList().get(i),g2);             
+                    }    break;
+                default:
+                    break;
             }
             index++;
         }
@@ -520,6 +526,28 @@ public class OverWorldAction extends Sonic {
         }
         if(observe) {
             sign.drawDescription(g2);   
+        }      
+    }
+    public void intersectWithNPC(DefaultObject var, Graphics2D g2) {//Fix this so this isn't copy paste (optimize it)
+        int xMiddleLeft = (int) middleLeft.getX();//gets the x position of bottomLeft
+        NPC npc = (NPC) var;
+        npc.changeDirection(xDrawCenterSonic);
+        npc.drawXKey(g2, bottomLeft);
+        npc.drawXKey(g2, bottomLeft);
+        npc.drawXKey(g2, middleLeft);
+        npc.drawXKey(g2, middleRight);
+        if(npc.getCurrentSection() != -3) {
+            observe = true;
+            leftPress = 0;
+            rightPress = 0;
+            waitTimer = 0;
+        }
+        if(Math.abs(xMiddleLeft - npc.getXRef()) <= 50 && Math.abs(groundSpeed) == 0 && checkForXPressOnce() 
+                && ground && jump == 0 && duck == 0 && spindash == 0) {
+            npc.increaseCurrentSection();
+        }
+        if(observe) {
+            npc.drawDescription(g2);   
         }      
     }
     public void intersectWithMonitor(DefaultObject var, int index) {//Checks for collision with monitors (similar to ground) and destroys monitor
@@ -836,7 +864,7 @@ public class OverWorldAction extends Sonic {
             
         } 
         if (e.getKeyCode() == e.VK_ESCAPE) {
-            debug = !debug;
+            Game.setDebug();
         } 
     }//end keypressed   
 }
