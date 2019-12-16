@@ -19,7 +19,6 @@ public interface DefaultObject {
     void action();
     void interactWithSonic(Rectangle sensor);
     int getGroup();
-    int getID();
     int getXRef();
     int getYRef();
     int getLength();

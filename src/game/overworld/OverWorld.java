@@ -5,7 +5,12 @@
  */
 package game.overworld;
 import game.Game;
-import game.Music;
+import static game.overworld.NPC.NPCType.*;
+import game.overworld.NPC.NPCType;
+import game.overworld.Monitor.MonitorType;
+import static game.overworld.Monitor.MonitorType.*;
+import game.overworld.Sign.SignType;
+import static game.overworld.Sign.SignType.*;
 import game.sonic.*;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -53,24 +58,25 @@ public class OverWorld extends Game {
             createTile(0,100,300,16,16,0,1);
         }
         if(objects.size() < 3) {
-            createMonitor(0,1,400,300);
-            createMonitor(0,1,600,300);
-            createSign(0,1,150,600);
-            createNPC(0,1,400,300);
+            createMonitor(MONITOR_RING,1,400,300);
+            createMonitor(MONITOR_RING,2,600,300);
+            createMonitor(MONITOR_SPEED,1,600,300);
+            createSign(SIGN_STDUKEDESERT,1,150,600);
+            createNPC(NPC_SKELETON,1,400,300);
         }      
         generateEverything = 1;
     }
     public void createTile(int id, int xRef, int yRef, int length, int width, int angleOfTile, int direction) {//Actually creates the Tile Objects and adds it to the arrayList
         groundTiles.add(new Ground(id,xRef,yRef,length,width, angleOfTile, direction));                
     }
-    public void createMonitor(int id, int layer, int xRef, int yRef) {
-        objects.add(new Monitor(id, layer,xRef, yRef));
+    public void createMonitor(MonitorType monitorType, int layer, int xRef, int yRef) {
+        objects.add(new Monitor(monitorType, layer,xRef, yRef));
     }
-    public void createSign(int id, int layer, int xRef, int yRef) {
-        objects.add(new Sign(id, layer, xRef, yRef));
+    public void createSign(SignType signType, int layer, int xRef, int yRef) {
+        objects.add(new Sign(signType, layer, xRef, yRef));
     }
-    public void createNPC(int id, int layer, int xRef,int yRef) {
-        objects.add(new NPC(id,layer,xRef,yRef));
+    public void createNPC(NPCType npcType, int layer, int xRef,int yRef) {
+        objects.add(new NPC(npcType,layer,xRef,yRef));
     }
     public ArrayList<Ground> getGroundArrayList() {
         return groundTiles;
@@ -80,9 +86,6 @@ public class OverWorld extends Game {
     }
     public int getGroupInArray(int index) {
         return objects.get(index).getGroup();
-    }
-    public int getIDInArray(int index) {
-        return objects.get(index).getID();
     }
     public void removeObject(int index) {
         objects.remove(index);

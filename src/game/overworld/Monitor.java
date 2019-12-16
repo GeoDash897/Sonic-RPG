@@ -5,12 +5,11 @@
  */
 package game.overworld;
 
-import game.sonic.Sonic;
+import game.sonic.*;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.util.Comparator;
 
 /**
  *
@@ -18,7 +17,7 @@ import java.util.Comparator;
  */
 public class Monitor extends OverWorld implements DefaultObject {
     private int group; 
-    private int id;
+    private MonitorType monitorType;
     private int xRef;
     private int yRef;
     private int length;
@@ -30,9 +29,9 @@ public class Monitor extends OverWorld implements DefaultObject {
     private boolean observable = false;
     private OverWorld overworld = new OverWorld();
     private Sonic sonic = new Sonic();
-    Monitor(int id, int layer, int xRef, int yRef) {
+    Monitor(MonitorType monitorType, int layer, int xRef, int yRef) {
         group = 1;
-        this.id = id;
+        this.monitorType = monitorType;
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
@@ -40,11 +39,11 @@ public class Monitor extends OverWorld implements DefaultObject {
     }
     @Override
     public void create() {
-        if(id == 0) {
+        if(monitorType == MonitorType.MONITOR_RING) {
             monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor.gif");
         }
-        if(id == 1) {
-            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Jump_1.png");
+        if(monitorType == MonitorType.MONITOR_SPEED) {
+            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor 1.png");
         }
         length = 27;
         width = 32;
@@ -69,17 +68,19 @@ public class Monitor extends OverWorld implements DefaultObject {
     }
     @Override
     public void interactWithSonic(Rectangle sensor) {
-        if(id == 0) {
+        if(monitorType == MonitorType.MONITOR_RING) {
             sonic.increaseRings(10);    
-        }     
+        } 
+        else if(monitorType == MonitorType.MONITOR_SPEED) {
+            sonic.changeOWPowerUp(1);    
+        }
     }
     @Override
     public int getGroup() {
         return group;
     }
-    @Override
-    public int getID() {
-       return id;
+    public MonitorType getMonitorType() { 
+        return monitorType;
     }
     @Override
     public int getXRef() {
@@ -112,5 +113,8 @@ public class Monitor extends OverWorld implements DefaultObject {
     public String toString() {
         return "Monitor: "+xRef+", "+yRef;
     }
-    
+    public enum MonitorType {
+        MONITOR_RING,
+        MONITOR_SPEED
+    }
 }

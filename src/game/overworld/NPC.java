@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class NPC extends OverWorld implements DefaultObject {
     private int group;
-    private int id;
+    private NPCType npcType;
     private int xRef;
     private int yRef;
     private int length;
@@ -37,9 +37,9 @@ public class NPC extends OverWorld implements DefaultObject {
     private ArrayList<String> splitDescription;
     private String description;
     private OverWorld overworld = new OverWorld();
-    public NPC(int id, int layer, int xRef, int yRef) {
+    public NPC(NPCType npcType, int layer, int xRef, int yRef) {
         group = 2;
-        this.id = id;
+        this.npcType = npcType;
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
@@ -51,7 +51,7 @@ public class NPC extends OverWorld implements DefaultObject {
     }
     @Override
     public void create() {
-        if(id == 0) {
+        if(npcType == NPCType.NPC_SKELETON) {
             length = 30;
             width = 48;
             middle = xRef+((length*4)/2)-40;
@@ -68,7 +68,7 @@ public class NPC extends OverWorld implements DefaultObject {
 
     @Override
     public void draw(Graphics2D g2) {
-        if(id == 0) {
+        if(npcType == NPCType.NPC_SKELETON) {
             if(!right) {
                 npcPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSkeleton.png");
             }
@@ -104,12 +104,9 @@ public class NPC extends OverWorld implements DefaultObject {
     public int getGroup() {
         return group;
     }
-
-    @Override
-    public int getID() {
-        return id;
+    public NPCType getNPCType() {
+        return npcType;
     }
-
     @Override
     public int getXRef() {
         return xRef;
@@ -178,4 +175,7 @@ public class NPC extends OverWorld implements DefaultObject {
             } 
         }*/
     }
+    public enum NPCType {
+        NPC_SKELETON
+    };
 }

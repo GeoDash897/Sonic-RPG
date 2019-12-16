@@ -27,6 +27,7 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     private static int speed;
     private static int area = 1;
     private static int layer = 2;
+    private static int owPowerUp = 0;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
     private Inventory inventory;
@@ -52,6 +53,12 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     }
     public int getLayer() {
         return layer;
+    }
+    public int getOWPowerUp() {
+        return owPowerUp;
+    }
+    public void changeOWPowerUp(int change) {
+        owPowerUp = change;
     }
     public void increaseRings(int amount) {
         rings += amount;

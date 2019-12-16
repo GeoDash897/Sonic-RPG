@@ -5,6 +5,7 @@
  */
 package game.sonic;
 
+import game.sonic.Sonic;
 import game.Game;
 import game.overworld.*;
 import java.awt.Color;
@@ -74,6 +75,7 @@ public class OverWorldAction extends Sonic {
     
     
     //Creates Animation object so Sonic's animations can be changed
+    private Sonic sonic = new Sonic();
     private OverWorld overworld = new OverWorld();
     private Animation animation = new Animation();
     private Inventory inventory;
@@ -125,7 +127,8 @@ public class OverWorldAction extends Sonic {
             middleRight = new Rectangle(xDrawCenterSonic,ySpriteCenterSonic,44,4); 
         }
         topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//Creates the topLeft and topRight sensors (don't change like the       
-        topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do)       
+        topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do) 
+        checkPowerUp();
         collisionCheck(g2);//Checks for collisions, gets and uses information from tiles
         //Controls gravity + xSpeed and ySpeed when Sonic is not on ground
         intersectDefaultObject(g2);
@@ -236,6 +239,7 @@ public class OverWorldAction extends Sonic {
         g2.drawString("zPressTimer: "+zPressTimer,600,175); 
         g2.drawString("xPress: "+xPress,600,200);  
         g2.drawString("xPressTimer: "+xPressTimer,600,225);
+        g2.drawString("owPowerUp: "+sonic.getOWPowerUp(),600,250);
         drawCollisionBoxes(g2);  
     }
     public void drawCollisionBoxes(Graphics2D g2) {
@@ -291,6 +295,14 @@ public class OverWorldAction extends Sonic {
         g2.fillRect(xDrawCenterSonic, yDrawCenterSonic, 4, 4);
         g2.setColor(Color.red);
         g2.fillRect(xDrawCenterSonic,ySpriteCenterSonic,4,4);
+    }
+    public void checkPowerUp() {
+        if(sonic.getOWPowerUp() == 1) {
+            ACCELERATION = 0.09375;
+            FRICTION = 0.09375;
+            TOP = 10;
+            AIR = 0.1875;   
+        }
     }
     public void collisionCheck(Graphics2D g2) {
         int xBottomLeft = (int) bottomLeft.getX();//gets the x position of bottomLeft
@@ -498,9 +510,8 @@ public class OverWorldAction extends Sonic {
                     intersectWithMonitor(overworld.getDefaultObjectArrayList().get(i),index);
                     break;
                 case 2:
-                    if(overworld.getIDInArray(index) == 0) {
-                        intersectWithNPC(overworld.getDefaultObjectArrayList().get(i),g2);             
-                    }    break;
+                    intersectWithNPC(overworld.getDefaultObjectArrayList().get(i),g2);           
+                    break;
                 default:
                     break;
             }
