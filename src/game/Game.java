@@ -7,7 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +23,7 @@ public class Game extends JFrame implements KeyListener, ActionListener {
     private static int wide;
     private static int high;
     private static boolean debug;
+    private static boolean loadTempSave = false;
     public static Font debugStat;
     public static Font dialog;
 /***********************************************************/
@@ -46,6 +51,7 @@ public class Game extends JFrame implements KeyListener, ActionListener {
         } catch (FontFormatException | IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
+        createTempSave();       
     }//close main
 /***********************************************************/
     public class JP extends JPanel {//start JPanel CLass
@@ -62,10 +68,36 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             g2.setFont(debugStat);
             g2.setColor(Color.CYAN);
             OverWorld overWorld = new OverWorld();//creates object OverWorld (which in turn creates everything else)
-            overWorld.standard(g2);
+            if(loadTempSave) {
+                overWorld.standard(g2);    
+            } 
             super.paintComponent(g2);//allows for painting and
             repaint();
         } 
+    }
+    public static void createTempSave() {
+        File local = new File("src/game/Area1.txt");
+        File temp = new File("src/game/TempSave.txt");
+        try {
+            if(!temp.exists()) {
+                temp.createNewFile();
+            }
+            BufferedReader br = new BufferedReader(new FileReader(local));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
+            String currentLine = br.readLine();
+            while(currentLine != null) {
+                bw.write(currentLine);
+                bw.newLine();
+                currentLine = br.readLine();
+            }
+            bw.flush();
+            bw.close();
+            br.close();
+        }
+        catch(IOException ex) {
+            ex.printStackTrace();
+        }
+        loadTempSave = true;
     }
     public static boolean getDebug() {
         return debug;
@@ -123,10 +155,15 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             getPressInput(e);
         }
         if (e.getKeyCode() == e.VK_X ) {
-              getPressInput(e);
+            getPressInput(e);
         }
         if (e.getKeyCode() == e.VK_ENTER) {
-            
+            OverWorld ow = new OverWorld();
+            ow.keyPressed(e);
+        }
+        if (e.getKeyCode() == e.VK_C) {
+            OverWorld ow = new OverWorld();
+            ow.keyPressed(e);
         }
         if (e.getKeyCode() == e.VK_ESCAPE) {
             getPressInput(e);

@@ -111,7 +111,7 @@ public class Monitor extends OverWorld implements DefaultObject {
     }
     @Override
     public String toString() {
-        return "Monitor: "+xRef+", "+yRef;
+        return "Monitor: "+monitorType+" "+layer+" "+xRef+" "+yRef;
     }
     public enum MonitorType {
         MONITOR_RING,

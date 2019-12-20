@@ -136,6 +136,10 @@ public class NPC extends OverWorld implements DefaultObject {
     public Rectangle getHitBox() {
         return hitBox;
     }
+    @Override
+    public String toString() {
+        return "NPC: "+npcType+" "+layer+" "+xRef+" "+yRef;
+    }
     public void changeDirection(int sonicPosition) {
         if(sonicPosition <= middle) {
             right = false;

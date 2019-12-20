@@ -52,7 +52,7 @@ public class Sign extends OverWorld implements DefaultObject {
                     + "with rolling dunes far into the distance. Tall skyscapers and buildings with bright lights and signs hover "
                     + "behind them. People are shuffling in the foreground and the background of the picture as well- some laughing, "
                     + "others talking, and few doing some.....questionable stuff. In the corner of the picture there is a blurred object "
-                    + "that looks like an alien arm, but it's too hard to make out. In the corner of the picture, there are the numbers '01 in "
+                    + "that looks like an alien arm, but it's too hard to make out. In the other corner, there are the numbers '01 in "
                     + "old, smudged black ink.";
             if(description.length() % 80 == 0) {
                 limit = (description.length()/80);    
@@ -144,6 +144,10 @@ public class Sign extends OverWorld implements DefaultObject {
                 g2.drawString(splitDescription.get(i), 185, 50+(i*30));  
             } 
         }*/
+    }
+    @Override
+    public String toString() {
+      return "Sign: "+signType+" "+layer+" "+xRef+" "+yRef;
     }
     public enum SignType {
       SIGN_STDUKEDESERT  

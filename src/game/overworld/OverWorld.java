@@ -13,6 +13,13 @@ import game.overworld.Sign.SignType;
 import static game.overworld.Sign.SignType.*;
 import game.sonic.*;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 /*
@@ -23,6 +30,82 @@ public class OverWorld extends Game {
     private static ArrayList<Ground> groundTiles = new ArrayList<Ground>();
     private static ArrayList<DefaultObject> objects = new ArrayList<DefaultObject>();
     private static int generateEverything = 0;
+    private static int currentArea = 0;
+    public void getObject() {
+        File file = new File("src/game/TempSave.txt");
+        try {
+            if(!file.exists()) {
+                file.createNewFile();
+            }
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String currentLine = br.readLine();
+            while(currentLine != null) {
+                String [] line = currentLine.split(" ");
+                if(line[0].equals(String.valueOf(currentArea))) {
+                    if(line[1].equals("Monitor:")) {
+                        createMonitor(MonitorType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                    }
+                    else if(line[1].equals("NPC:")) {
+                        createNPC(NPCType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                    }
+                    else if(line[1].equals("Sign:")) {
+                        createSign(SignType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                    }    
+                }
+                currentLine = br.readLine();
+            }
+            br.close();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void saveCurrentRoom(int direction) {
+        File file = new File("src/game/TempSave.txt");
+        File saveRoom = new File("src/game/saveRoomTemp.txt");
+        try {
+            if(!saveRoom.exists()) {
+                saveRoom.createNewFile();
+            }
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(saveRoom));
+            ArrayList<String> sortObject = new ArrayList<String>();
+            String currentLine = br.readLine();
+            while(currentLine != null) {
+                String [] cLArray = currentLine.split(" ");
+                if(!cLArray[0].equals(""+currentArea)) {
+                    sortObject.add(String.join(" ", cLArray));
+                }
+                currentLine = br.readLine();
+            }        
+            br.close();
+            for(DefaultObject temp : objects) {
+                sortObject.add(currentArea+" "+temp.toString());
+            }
+            Collections.sort(sortObject);
+            for(String temp : sortObject) {
+                bw.write(""+temp);
+                bw.newLine();
+            }        
+            bw.flush();
+            bw.close();
+            file.delete();
+            saveRoom.renameTo(new File("src/game/TempSave.txt"));
+            objects.removeAll(objects);
+            if(objects.isEmpty()) {
+                if(direction == 0) {
+                    currentArea--;
+                }
+                else {
+                    currentArea++;    
+                }               
+                generateEverything = 0;
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
     public void standard(Graphics2D g2) {
         if(generateEverything == 0) {
             //Music.playTestAreaTheme(1, 0);    
@@ -40,6 +123,8 @@ public class OverWorld extends Game {
             create.draw(g2);
             create.action();
         }
+        g2.drawString(""+currentArea,300,200);
+        g2.drawString("size of object array: "+objects.size(),300,325);
         Sonic sonic = new Sonic();
         sonic.setup(g2);
     }
@@ -57,13 +142,9 @@ public class OverWorld extends Game {
             createTile(0,1525,600,16,16,0,1);
             createTile(0,100,300,16,16,0,1);
         }
-        if(objects.size() < 3) {
-            createMonitor(MONITOR_RING,1,400,300);
-            createMonitor(MONITOR_RING,2,600,300);
-            createMonitor(MONITOR_SPEED,1,600,300);
-            createSign(SIGN_STDUKEDESERT,1,150,600);
-            createNPC(NPC_SKELETON,1,400,300);
-        }      
+        if(objects.isEmpty()) {
+            getObject();
+        }
         generateEverything = 1;
     }
     public void createTile(int id, int xRef, int yRef, int length, int width, int angleOfTile, int direction) {//Actually creates the Tile Objects and adds it to the arrayList
@@ -89,5 +170,13 @@ public class OverWorld extends Game {
     }
     public void removeObject(int index) {
         objects.remove(index);
+    }
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == e.VK_ENTER) {
+            saveCurrentRoom(1);
+        }
+        if(e.getKeyCode() == e.VK_C) {
+            saveCurrentRoom(0);
+        }
     }
 }
