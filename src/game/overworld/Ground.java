@@ -7,34 +7,56 @@ package game.overworld;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 
 /**
  *
  * @author GeoSonicDash
  */
-public class Ground {
-    private int id;
+public class Ground extends OverWorld {
+    private GroundType groundType;
     private int xRef;
     private int yRef;
     private int length;
     private int width;
     private int angle;
     private int direction;
-
+    private boolean loadFile;
+    private Image groundPicture;
     private ArrayList<Integer> heightValues = new ArrayList<Integer>();
     private ArrayList<Rectangle> pixelBoxes = new ArrayList<Rectangle>();
-    public Ground(int id,int xRef, int yRef, int length, int width, int angle, int direction) {
-        this.id = 0;
+    public Ground(GroundType groundType ,int xRef, int yRef, int direction) {
+        this.groundType = groundType;
         this.xRef = xRef;
         this.yRef = yRef;
-        this.length = length;
-        this.width = width;
-        this.angle = angle;
         this.direction = direction;
+        this.loadFile = false;
     }
     public void create() {
+        //0 = left, 1 = right
+        if(!loadFile) {
+            if(groundType == GroundType.GRD_SONICHOUSE_WOODPLANK) {
+                length = 16;
+                width = 16;
+                angle = 0;
+                groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic House Wood Plank_1.png");
+            }
+            else if(groundType == GroundType.GRD_SONICHOUSE_WOODSLOPE) {
+                length = 16;
+                width = 16;
+                if(direction == 0) {
+                    groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic House Wood Slope_1.png");    
+                }
+                else if(direction == 1) {
+                    groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic House Wood Slope_1.png");    
+                }
+                angle = 45;           
+            }    
+        }
+        loadFile = true;
         if(angle == 0) {               
             heightValues.add(width);
             pixelBoxes.add(new Rectangle(xRef,yRef,length*4,width*4));   
@@ -56,7 +78,8 @@ public class Ground {
     }
     public void draw(Graphics2D g2) {
         g2.setColor(Color.BLACK);
-        if(angle == 0) {
+        g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
+        /*if(angle == 0) {
             g2.fillRect(xRef,yRef,length*4,width*4);     
         }
         else {
@@ -64,7 +87,7 @@ public class Ground {
                 g2.setColor(Color.black);
                 g2.fillRect((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4));
             } 
-        }
+        }*/
     }
     public int getXRef() {
         return xRef;
@@ -89,5 +112,9 @@ public class Ground {
     }
     public ArrayList<Rectangle> getPixelBoxes() {
         return pixelBoxes;
+    }
+    public enum GroundType {
+        GRD_SONICHOUSE_WOODPLANK,
+        GRD_SONICHOUSE_WOODSLOPE
     }
 }

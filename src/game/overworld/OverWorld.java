@@ -5,12 +5,12 @@
  */
 package game.overworld;
 import game.Game;
-import static game.overworld.NPC.NPCType.*;
+import game.overworld.Ground.GroundType;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
 import game.overworld.NPC.NPCType;
 import game.overworld.Monitor.MonitorType;
-import static game.overworld.Monitor.MonitorType.*;
 import game.overworld.Sign.SignType;
-import static game.overworld.Sign.SignType.*;
 import game.sonic.*;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -22,6 +22,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
@@ -29,6 +31,7 @@ import java.util.Collections;
 public class OverWorld extends Game {
     private static ArrayList<Ground> groundTiles = new ArrayList<Ground>();
     private static ArrayList<DefaultObject> objects = new ArrayList<DefaultObject>();
+    private static ArrayList<Thread> loadObjectThreads = new ArrayList<Thread>();
     private static int generateEverything = 0;
     private static int currentArea = 0;
     public void getObject() {
@@ -40,18 +43,9 @@ public class OverWorld extends Game {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String currentLine = br.readLine();
             while(currentLine != null) {
-                String [] line = currentLine.split(" ");
-                if(line[0].equals(String.valueOf(currentArea))) {
-                    if(line[1].equals("Monitor:")) {
-                        createMonitor(MonitorType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
-                    }
-                    else if(line[1].equals("NPC:")) {
-                        createNPC(NPCType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
-                    }
-                    else if(line[1].equals("Sign:")) {
-                        createSign(SignType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
-                    }    
-                }
+                Thread lo = new Thread(new LoadObject(currentLine));
+                loadObjectThreads.add(lo);                
+                lo.start();          
                 currentLine = br.readLine();
             }
             br.close();
@@ -92,6 +86,7 @@ public class OverWorld extends Game {
             file.delete();
             saveRoom.renameTo(new File("src/game/TempSave.txt"));
             objects.removeAll(objects);
+            loadObjectThreads.removeAll(loadObjectThreads);
             if(objects.isEmpty()) {
                 if(direction == 0) {
                     currentArea--;
@@ -128,27 +123,33 @@ public class OverWorld extends Game {
         Sonic sonic = new Sonic();
         sonic.setup(g2);
     }
+    
     public void generate(Graphics2D g2) {
         if(groundTiles.size() < 33) {//limits how many tiles are created (don't want to constantly create tile objects = lag
             //Sending X,Y and angles of tiles I want to create to method
-            createTile(0,799,444+150,16,16,45,1);
-            createTile(0,856,386+150,16,16,45,1);
-            createTile(0,912,327+150,16,16,45,1);
-            createTile(0,975,326+150,16,16,0,1);
-            createTile(0,1032,327+150,16,16,45,0);
-            createTile(0,1100,383+150,16,16,0,1);
-            createTile(0,0,664,1400,32,0,1);   
-            createTile(0,0,472,16,48,0,1);
-            createTile(0,1525,600,16,16,0,1);
-            createTile(0,100,300,16,16,0,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,799,444+150,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,856,386+150,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,912,327+150,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,975,326+150,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1032,327+150,0);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1100,383+150,1);  
+            createTile(GRD_SONICHOUSE_WOODPLANK,0,472,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,0,536,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,0,600,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1525,600,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,100,300,1);
+            for(int i = 0; i < 25; i ++) {
+                createTile(GRD_SONICHOUSE_WOODPLANK,0+(i*64),664,1);     
+            }
+            
         }
         if(objects.isEmpty()) {
             getObject();
         }
         generateEverything = 1;
     }
-    public void createTile(int id, int xRef, int yRef, int length, int width, int angleOfTile, int direction) {//Actually creates the Tile Objects and adds it to the arrayList
-        groundTiles.add(new Ground(id,xRef,yRef,length,width, angleOfTile, direction));                
+    public void createTile(GroundType groundType, int xRef, int yRef,int direction) {//Actually creates the Tile Objects and adds it to the arrayList
+        groundTiles.add(new Ground(groundType,xRef,yRef,direction));                
     }
     public void createMonitor(MonitorType monitorType, int layer, int xRef, int yRef) {
         objects.add(new Monitor(monitorType, layer,xRef, yRef));
@@ -178,5 +179,32 @@ public class OverWorld extends Game {
         if(e.getKeyCode() == e.VK_C) {
             saveCurrentRoom(0);
         }
+    }
+    class LoadObject implements Runnable {
+        private String currentLine;
+        private boolean isDone;
+        public LoadObject(String currentLine) {
+            this.currentLine = currentLine;
+            this.isDone = false;
+        }
+        public synchronized void run() {
+            if(!isDone) {
+                String [] line = currentLine.split(" ");
+                if(line[0].equals(String.valueOf(currentArea))) {
+                    if(line[1].equals("Monitor:")) {
+                        createMonitor(MonitorType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                    }
+                    else if(line[1].equals("NPC:")) {
+                        createNPC(NPCType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                    }
+                    else if(line[1].equals("Sign:")) {
+                        createSign(SignType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                    }    
+                }    
+            }           
+            isDone = true;
+            System.out.println(""+Thread.currentThread().getName()+ "isDone: "+ isDone);
+        }
+        
     }
 }

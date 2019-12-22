@@ -33,7 +33,6 @@ public class NPC extends OverWorld implements DefaultObject {
     private Image npcPicture;
     private boolean right;
     private boolean ground;
-    private boolean stopAdd;
     private ArrayList<String> splitDescription;
     private String description;
     private OverWorld overworld = new OverWorld();
@@ -43,8 +42,7 @@ public class NPC extends OverWorld implements DefaultObject {
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
-        this.currentSection = -3;
-        this.stopAdd = false;        
+        this.currentSection = -3;     
         this.splitDescription = new ArrayList<String>();
         this.right = false;
         this.ground = false;

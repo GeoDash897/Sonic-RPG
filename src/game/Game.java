@@ -13,8 +13,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:11/29/19
 */
@@ -24,8 +26,10 @@ public class Game extends JFrame implements KeyListener, ActionListener {
     private static int high;
     private static boolean debug;
     private static boolean loadTempSave = false;
+    private static ArrayList<Thread> objectThreads = new ArrayList<Thread>();
     public static Font debugStat;
     public static Font dialog;
+    private File temp;
 /***********************************************************/
     public Game() {//constructor for JPanel
         add(new JP());
@@ -50,8 +54,8 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             ge.registerFont(dialog);
         } catch (FontFormatException | IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        createTempSave();       
+        } 
+        ImageIO.setUseCache(false);
     }//close main
 /***********************************************************/
     public class JP extends JPanel {//start JPanel CLass
@@ -68,16 +72,21 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             g2.setFont(debugStat);
             g2.setColor(Color.CYAN);
             OverWorld overWorld = new OverWorld();//creates object OverWorld (which in turn creates everything else)
-            if(loadTempSave) {
-                overWorld.standard(g2);    
+            if(!loadTempSave) {
+                createTempSave(); 
+            }
+            if(loadTempSave) {    
+                objectThreads.removeAll(objectThreads);
+                overWorld.standard(g2);                                       
             } 
+            temp.deleteOnExit();
             super.paintComponent(g2);//allows for painting and
             repaint();
         } 
     }
-    public static void createTempSave() {
+    public void createTempSave() {
         File local = new File("src/game/Area1.txt");
-        File temp = new File("src/game/TempSave.txt");
+        temp = new File("src/game/TempSave.txt");
         try {
             if(!temp.exists()) {
                 temp.createNewFile();
@@ -86,8 +95,15 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
             String currentLine = br.readLine();
             while(currentLine != null) {
-                bw.write(currentLine);
-                bw.newLine();
+                System.out.println(""+currentLine);
+                Thread line = new Thread(new CopyFile(bw,currentLine));
+                line.start();
+                try {
+                    line.join();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                }                
+                objectThreads.add(line);               
                 currentLine = br.readLine();
             }
             bw.flush();
@@ -170,7 +186,35 @@ public class Game extends JFrame implements KeyListener, ActionListener {
         }
     }//end keypressed
 /***********************************************************/
-    
+    class CopyFile implements Runnable {
+        private boolean isDone;
+        private BufferedWriter bw;
+        private String currentLine;
+        public CopyFile(BufferedWriter bw, String currentLine) {
+            this.isDone = false;
+            this.bw = bw;
+            this.currentLine = currentLine;
+        }
+        @Override
+        public synchronized void run() {
+            while(!isDone) {
+                try {   
+                    if(currentLine != null) {
+                        bw.write(currentLine);
+                        bw.newLine();    
+                    }
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }     
+                isDone = true;             
+            }
+            if(isDone) {
+                System.out.println(""+Thread.currentThread().getName()+ " is done");
+            }
+                       
+        }
+    }
 }//close program
 
 

@@ -81,11 +81,11 @@ public class OverWorldAction extends Sonic {
     private Inventory inventory;
     @Override
     public void standard(Graphics2D g2) {  
-        /*try {
+        try {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
             Logger.getLogger(OverWorldAction.class.getName()).log(Level.SEVERE, null, ex);
-        }*/  
+        }
         yDrawCenterSonic = ySpriteCenterSonic + 20;     
         /*Controls how Sonic senses the ground:
         1. bLCollide & bRCollide are true - ground is true (Sonic is on the ground and is not near ledge, so ledge = -1)
@@ -128,8 +128,8 @@ public class OverWorldAction extends Sonic {
         }
         topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//Creates the topLeft and topRight sensors (don't change like the       
         topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do) 
-        checkPowerUp();
         collisionCheck(g2);//Checks for collisions, gets and uses information from tiles
+        checkPowerUp();       
         //Controls gravity + xSpeed and ySpeed when Sonic is not on ground
         intersectDefaultObject(g2);
         if(!ground) {           
@@ -531,7 +531,7 @@ public class OverWorldAction extends Sonic {
             rightPress = 0;
             waitTimer = 0;
         }
-        if(Math.abs(xMiddleLeft - sign.getXRef()) <= 50 && Math.abs(groundSpeed) == 0 && checkForXPressOnce() 
+        if(Math.abs(xMiddleLeft - sign.getXRef()) <= 65 && Math.abs(groundSpeed) == 0 && checkForXPressOnce() 
                 && ground && jump == 0 && duck == 0 && spindash == 0) {
             sign.increaseCurrentSection();
         }

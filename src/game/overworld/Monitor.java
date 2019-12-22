@@ -10,6 +10,10 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -26,7 +30,7 @@ public class Monitor extends OverWorld implements DefaultObject {
     private Rectangle hitBox;
     private Image monitorPicture;
     private boolean ground;
-    private boolean observable = false;
+    private boolean loadFile;
     private OverWorld overworld = new OverWorld();
     private Sonic sonic = new Sonic();
     Monitor(MonitorType monitorType, int layer, int xRef, int yRef) {
@@ -36,15 +40,19 @@ public class Monitor extends OverWorld implements DefaultObject {
         this.xRef = xRef;
         this.yRef = yRef;
         this.ground = false;
+        this.loadFile = false;
     }
     @Override
     public void create() {
-        if(monitorType == MonitorType.MONITOR_RING) {
-            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor.gif");
+        if(!loadFile) {
+            if(monitorType == MonitorType.MONITOR_RING) {
+                monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor 2.png");
+            }
+            if(monitorType == MonitorType.MONITOR_SPEED) {
+                monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor 1.png");
+            }    
         }
-        if(monitorType == MonitorType.MONITOR_SPEED) {
-            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor 1.png");
-        }
+        loadFile = true;
         length = 27;
         width = 32;
     }

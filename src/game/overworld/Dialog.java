@@ -6,7 +6,6 @@
 package game.overworld;
 
 import static game.Game.dialog;
-import game.sonic.OverWorldAction;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
