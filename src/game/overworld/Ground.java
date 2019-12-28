@@ -79,15 +79,6 @@ public class Ground extends OverWorld {
     public void draw(Graphics2D g2) {
         g2.setColor(Color.BLACK);
         g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
-        /*if(angle == 0) {
-            g2.fillRect(xRef,yRef,length*4,width*4);     
-        }
-        else {
-            for(int i = 0; i < 16; i ++) {
-                g2.setColor(Color.black);
-                g2.fillRect((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4));
-            } 
-        }*/
     }
     public int getXRef() {
         return xRef;

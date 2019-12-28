@@ -60,19 +60,21 @@ public class Monitor extends OverWorld implements DefaultObject {
     @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(monitorPicture, xRef, yRef, length*4, width*4, this);
-        //g2.fillRect(xRef, yRef, length*4, width*4);
     }
     @Override
     public void action() {
         hitBox = new Rectangle(xRef, yRef, length*4, width*4);
         for(Ground var : overworld.getGroundArrayList()) {
-            if(hitBox.intersects(var.getPixelBox(0))) {
+            if(hitBox.intersects(var.getPixelBox(0))) {       
+                if((yRef+(width*4)) > var.getYRef()) {
+                    yRef = var.getYRef()-(width*4);
+                }
                 ground = true;
             }
         }
-        if(ground == false) {
-            yRef += 16;
-        }     
+        if(!ground) {
+            yRef+=16;
+        }
     }
     @Override
     public void interactWithSonic(Rectangle sensor) {

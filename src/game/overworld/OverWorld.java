@@ -11,6 +11,7 @@ import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
 import game.overworld.NPC.NPCType;
 import game.overworld.Monitor.MonitorType;
 import game.overworld.Sign.SignType;
+import game.overworld.Spring.SpringType;
 import game.sonic.*;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -22,8 +23,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
@@ -114,9 +113,9 @@ public class OverWorld extends Game {
             create.draw(g2);    
         }
         for(DefaultObject create : objects) {
-            create.create();
-            create.draw(g2);
+            create.create();           
             create.action();
+            create.draw(g2);
         }
         g2.drawString(""+currentArea,300,200);
         g2.drawString("size of object array: "+objects.size(),300,325);
@@ -133,8 +132,8 @@ public class OverWorld extends Game {
             createTile(GRD_SONICHOUSE_WOODPLANK,975,326+150,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1032,327+150,0);
             createTile(GRD_SONICHOUSE_WOODPLANK,1100,383+150,1);  
-            createTile(GRD_SONICHOUSE_WOODPLANK,0,472,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,0,536,1);
+            //createTile(GRD_SONICHOUSE_WOODPLANK,0,472,1);
+            //createTile(GRD_SONICHOUSE_WOODPLANK,0,536,1);
             createTile(GRD_SONICHOUSE_WOODPLANK,0,600,1);
             createTile(GRD_SONICHOUSE_WOODPLANK,1525,600,1);
             createTile(GRD_SONICHOUSE_WOODPLANK,100,300,1);
@@ -159,6 +158,9 @@ public class OverWorld extends Game {
     }
     public void createNPC(NPCType npcType, int layer, int xRef,int yRef) {
         objects.add(new NPC(npcType,layer,xRef,yRef));
+    }
+    public void createSpring(SpringType springType, int layer, int xRef,int yRef) {
+        objects.add(new Spring(springType,layer,xRef,yRef));
     }
     public ArrayList<Ground> getGroundArrayList() {
         return groundTiles;
@@ -199,7 +201,10 @@ public class OverWorld extends Game {
                     }
                     else if(line[1].equals("Sign:")) {
                         createSign(SignType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
-                    }    
+                    } 
+                    else if(line[1].equals("Spring:")) {
+                        createSpring(SpringType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                    } 
                 }    
             }           
             isDone = true;
