@@ -82,6 +82,7 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             temp.deleteOnExit();
             super.paintComponent(g2);//allows for painting and
             repaint();
+            System.out.println("This is a test");
         } 
     }
     public void createTempSave() {
@@ -95,7 +96,6 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
             String currentLine = br.readLine();
             while(currentLine != null) {
-                System.out.println(""+currentLine);
                 Thread line = new Thread(new CopyFile(bw,currentLine));
                 line.start();
                 try {
@@ -210,7 +210,6 @@ public class Game extends JFrame implements KeyListener, ActionListener {
                 isDone = true;             
             }
             if(isDone) {
-                System.out.println(""+Thread.currentThread().getName()+ " is done");
             }
                        
         }

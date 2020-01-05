@@ -10,10 +10,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 /**
  *
@@ -65,12 +61,14 @@ public class Monitor extends OverWorld implements DefaultObject {
     public void action() {
         hitBox = new Rectangle(xRef, yRef, length*4, width*4);
         for(Ground var : overworld.getGroundArrayList()) {
-            if(hitBox.intersects(var.getPixelBox(0))) {       
-                if((yRef+(width*4)) > var.getYRef()) {
-                    yRef = var.getYRef()-(width*4);
-                }
-                ground = true;
-            }
+            for(Rectangle temp : var.getPixelBoxes()) {
+                if(hitBox.intersects(temp)) {       
+                    if((yRef+(width*4)) > var.getYRef()) {
+                        yRef = var.getYRef()-(width*4);
+                    }
+                    ground = true;
+                }    
+            }          
         }
         if(!ground) {
             yRef+=16;

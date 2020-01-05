@@ -58,12 +58,14 @@ public class Spring extends OverWorld implements DefaultObject {
     public void action() {
         hitBox = new Rectangle(xRef+85, yRef+141, 128, 64);
         for(Ground var : overworld.getGroundArrayList()) {
-            if(hitBox.intersects(var.getPixelBox(0))) {       
-                if(yRef+205 > var.getYRef()) {
-                    yRef = var.getYRef()-205;
-                }
-                ground = true;
-            }
+            for(Rectangle temp : var.getPixelBoxes()) {
+                if(hitBox.intersects(temp)) {       
+                    if(yRef+205 > var.getYRef()) {
+                        yRef = var.getYRef()-205;
+                    }
+                    ground = true;
+                }    
+            }          
         }
         if(!ground) {
             yRef+=16;

@@ -6,6 +6,8 @@
 package game.overworld;
 import game.Game;
 import game.overworld.Ground.GroundType;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_BIGWOODPLANK;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
 import game.overworld.NPC.NPCType;
@@ -24,14 +26,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 /*
-    Author: GeoDash897  Date:10/5/19    Updated:10/5/19
+    Author: GeoDash897  Date:10/5/19    Updated:12/31/19
 */
 //memes
 public class OverWorld extends Game {
     private static ArrayList<Ground> groundTiles = new ArrayList<Ground>();
     private static ArrayList<DefaultObject> objects = new ArrayList<DefaultObject>();
     private static ArrayList<Thread> loadObjectThreads = new ArrayList<Thread>();
-    private static int generateEverything = 0;
+    private static boolean generateEverything = false;
     private static int currentArea = 0;
     public void getObject() {
         File file = new File("src/game/TempSave.txt");
@@ -43,8 +45,8 @@ public class OverWorld extends Game {
             String currentLine = br.readLine();
             while(currentLine != null) {
                 Thread lo = new Thread(new LoadObject(currentLine));
-                loadObjectThreads.add(lo);                
-                lo.start();          
+                lo.start();                    
+                loadObjectThreads.add(lo);
                 currentLine = br.readLine();
             }
             br.close();
@@ -85,6 +87,7 @@ public class OverWorld extends Game {
             file.delete();
             saveRoom.renameTo(new File("src/game/TempSave.txt"));
             objects.removeAll(objects);
+            groundTiles.removeAll(groundTiles);
             loadObjectThreads.removeAll(loadObjectThreads);
             if(objects.isEmpty()) {
                 if(direction == 0) {
@@ -93,7 +96,7 @@ public class OverWorld extends Game {
                 else {
                     currentArea++;    
                 }               
-                generateEverything = 0;
+                generateEverything = false;
             }
         }
         catch(IOException e) {
@@ -101,51 +104,50 @@ public class OverWorld extends Game {
         }
     }
     public void standard(Graphics2D g2) {
-        if(generateEverything == 0) {
+        for(int i = 0; i < objects.size(); i++) {
+            g2.drawString(objects.get(i).toString(),500, 100+(25*i));
+        }
+        if(generateEverything == false) {
             //Music.playTestAreaTheme(1, 0);    
         }      
-        if(generateEverything == 0) {
+        if(generateEverything == false) {
             generate(g2);
         }
-        Collections.sort(objects,DefaultObject.defaultObjectCompareLayer);
-        for(Ground create : groundTiles) {
-            create.create(); //Creates the Rectangle hitboxes 
-            create.draw(g2);    
-        }
-        for(DefaultObject create : objects) {
-            create.create();           
-            create.action();
-            create.draw(g2);
-        }
-        g2.drawString(""+currentArea,300,200);
-        g2.drawString("size of object array: "+objects.size(),300,325);
-        Sonic sonic = new Sonic();
-        sonic.setup(g2);
+        else if(generateEverything == true) {
+            Collections.sort(objects,DefaultObject.defaultObjectCompareLayer);
+            for(Ground create : groundTiles) {
+                create.create(); //Creates the Rectangle hitboxes 
+                create.draw(g2);    
+            }
+            for(DefaultObject create : objects) {
+                create.create();           
+                create.action();
+                create.draw(g2);
+            }
+            g2.drawString(""+currentArea,300,200);
+            g2.drawString("size of object array: "+objects.size(),300,325);
+            Sonic sonic = new Sonic();
+            sonic.setup(g2);    
+        }      
     }
     
-    public void generate(Graphics2D g2) {
-        if(groundTiles.size() < 33) {//limits how many tiles are created (don't want to constantly create tile objects = lag
-            //Sending X,Y and angles of tiles I want to create to method
-            createTile(GRD_SONICHOUSE_WOODSLOPE,799,444+150,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,856,386+150,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,912,327+150,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,975,326+150,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1032,327+150,0);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1100,383+150,1);  
-            //createTile(GRD_SONICHOUSE_WOODPLANK,0,472,1);
-            //createTile(GRD_SONICHOUSE_WOODPLANK,0,536,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,0,600,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1525,600,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,100,300,1);
-            for(int i = 0; i < 25; i ++) {
-                createTile(GRD_SONICHOUSE_WOODPLANK,0+(i*64),664,1);     
-            }
-            
-        }
+    public void generate(Graphics2D g2) {    
         if(objects.isEmpty()) {
             getObject();
         }
-        generateEverything = 1;
+        if(currentArea == 0) {
+            for(int i = 0; i < 11; i ++) {
+                createTile(GRD_SONICHOUSE_WOODPLANK,0,-36+(i*64),1);
+            }
+            for(int i = 0; i < 24; i ++) {
+                createTile(GRD_SONICHOUSE_WOODPLANK,64+(i*64),0,1);
+            }
+            createTile(GRD_SONICHOUSE_BIGWOODPLANK,0,664,1);           
+            createTile(GRD_SONICHOUSE_SONICBED,64,525,1);
+
+        }         
+        System.out.println("Everything has been generated");
+        generateEverything = true;
     }
     public void createTile(GroundType groundType, int xRef, int yRef,int direction) {//Actually creates the Tile Objects and adds it to the arrayList
         groundTiles.add(new Ground(groundType,xRef,yRef,direction));                
@@ -171,7 +173,10 @@ public class OverWorld extends Game {
     public int getGroupInArray(int index) {
         return objects.get(index).getGroup();
     }
-    public void removeObject(int index) {
+    public static void addObject(DefaultObject object) {
+        objects.add(object);
+    }
+    public static void removeObject(int index) {
         objects.remove(index);
     }
     public void keyPressed(KeyEvent e) {
@@ -185,31 +190,55 @@ public class OverWorld extends Game {
     class LoadObject implements Runnable {
         private String currentLine;
         private boolean isDone;
+        private String name;
         public LoadObject(String currentLine) {
             this.currentLine = currentLine;
             this.isDone = false;
+            this.name = "Memes";
         }
+        @Override
         public synchronized void run() {
             if(!isDone) {
                 String [] line = currentLine.split(" ");
                 if(line[0].equals(String.valueOf(currentArea))) {
                     if(line[1].equals("Monitor:")) {
                         createMonitor(MonitorType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        name = "Monitor In Room Thread";
                     }
                     else if(line[1].equals("NPC:")) {
                         createNPC(NPCType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        name = "NPC In Room Thread";
                     }
                     else if(line[1].equals("Sign:")) {
                         createSign(SignType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        name = "Sign In Room Thread";
                     } 
                     else if(line[1].equals("Spring:")) {
                         createSpring(SpringType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        name = "Spring In Room Thread";
                     } 
-                }    
-            }           
+                }
+                else if(!line[0].equals(String.valueOf(currentArea))) {
+                    if(line[1].equals("Monitor:")) {
+                        name = "Monitor Not In Room Thread";
+                    }
+                    else if(line[1].equals("NPC:")) {
+                        name = "NPC Not In Room Thread";
+                    }
+                    else if(line[1].equals("Sign:")) {
+                        name = "Sign Not In Room Thread";
+                    } 
+                    else if(line[1].equals("Spring:")) {
+                        name = "Spring Not In Room Thread";
+                    } 
+                }
+            }        
             isDone = true;
-            System.out.println(""+Thread.currentThread().getName()+ "isDone: "+ isDone);
+            System.out.println(""+toString()+ " isDone: "+ isDone);
         }
-        
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 }

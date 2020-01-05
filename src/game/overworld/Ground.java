@@ -42,7 +42,8 @@ public class Ground extends OverWorld {
                 length = 16;
                 width = 16;
                 angle = 0;
-                groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic House Wood Plank_1.png");
+                setBlock();
+                groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Wood Tile Middle_1.png");
             }
             else if(groundType == GroundType.GRD_SONICHOUSE_WOODSLOPE) {
                 length = 16;
@@ -55,29 +56,78 @@ public class Ground extends OverWorld {
                 }
                 angle = 45;           
             }    
-        }
-        loadFile = true;
-        if(angle == 0) {               
-            heightValues.add(width);
-            pixelBoxes.add(new Rectangle(xRef,yRef,length*4,width*4));   
-        }
-        else if(angle == 45) {
-            if(direction == 0) {
-                for(int i = 0; i < 16; i++ ) {                
-                    heightValues.add(16-i);
-                    pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
-                }  
+            else if(groundType == GroundType.GRD_SONICHOUSE_BIGWOODPLANK) {
+                length = 480;
+                width = 16;
+                angle = 0;
+                setBlock();
             }
-            else if(direction == 1) {                   
-              for(int i = 0; i < 16; i++ ) {                
-                heightValues.add(i);
-                pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
-                }  
-            }                      
+            else if(groundType == GroundType.GRD_SONICHOUSE_SONICBED) {
+                length = 64;
+                width = 34;
+                angle = 0;
+                groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic's Bed.png");
+                setSonicBedHeightValues();
+            }
+            if(angle == 45) {
+                if(direction == 0) {
+                    for(int i = 0; i < 16; i++ ) {                
+                        heightValues.add(16-i);
+                        pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
+                    }  
+                }
+                else if(direction == 1) {                   
+                    for(int i = 0; i < 16; i++ ) {                
+                        heightValues.add(i);
+                        pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
+                    }  
+                }                      
+            }
+        }
+        loadFile = true;       
+    }
+    private void setBlock() {
+        for(int i = 0; i < length; i ++) {
+            heightValues.add(width);
+            pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
+        }
+    }
+    private void setSonicBedHeightValues() {
+        heightValues.add(32);
+        heightValues.add(32);
+        heightValues.add(34);
+        heightValues.add(34);
+        heightValues.add(32);
+        heightValues.add(32);
+        heightValues.add(24);
+        heightValues.add(24);
+        heightValues.add(24);
+        heightValues.add(24);
+        heightValues.add(24);
+        heightValues.add(24);
+        heightValues.add(22);
+        heightValues.add(22);
+        heightValues.add(20);
+        heightValues.add(20);
+        heightValues.add(22);
+        heightValues.add(22);
+        heightValues.add(20);
+        heightValues.add(20);
+        for(int i = 0; i < 38; i ++) {
+            heightValues.add(22);    
+        }
+        heightValues.add(20);
+        heightValues.add(20);
+        heightValues.add(18);
+        heightValues.add(18);
+        heightValues.add(16);       
+        heightValues.add(16);
+        for(int i = 0; i < heightValues.size(); i++) {
+            pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+(width*4)-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
         }
     }
     public void draw(Graphics2D g2) {
-        g2.setColor(Color.BLACK);
+        g2.setColor(Color.BLACK);      
         g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
     }
     public int getXRef() {
@@ -95,6 +145,12 @@ public class Ground extends OverWorld {
     public int getLength() {
         return length;
     }
+    public int getWidth() {
+        return width;
+    }
+    public ArrayList<Integer> getHeightValues() {
+        return heightValues;
+    }
     public Rectangle getPixelBox(int selection) {
         return pixelBoxes.get(selection);
     }
@@ -106,6 +162,8 @@ public class Ground extends OverWorld {
     }
     public enum GroundType {
         GRD_SONICHOUSE_WOODPLANK,
-        GRD_SONICHOUSE_WOODSLOPE
+        GRD_SONICHOUSE_WOODSLOPE,
+        GRD_SONICHOUSE_BIGWOODPLANK,
+        GRD_SONICHOUSE_SONICBED
     }
 }
