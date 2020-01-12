@@ -34,7 +34,7 @@ public class OverWorld extends Game {
     private static ArrayList<DefaultObject> objects = new ArrayList<DefaultObject>();
     private static ArrayList<Thread> loadObjectThreads = new ArrayList<Thread>();
     private static boolean generateEverything = false;
-    private static int currentArea = 0;
+    private static int currentRoom = 0;
     public void getObject() {
         File file = new File("src/game/TempSave.txt");
         try {
@@ -55,7 +55,7 @@ public class OverWorld extends Game {
             e.printStackTrace();
         }
     }
-    public void saveCurrentRoom(int direction) {
+    public static void saveCurrentRoom(int direction) {
         File file = new File("src/game/TempSave.txt");
         File saveRoom = new File("src/game/saveRoomTemp.txt");
         try {
@@ -68,14 +68,14 @@ public class OverWorld extends Game {
             String currentLine = br.readLine();
             while(currentLine != null) {
                 String [] cLArray = currentLine.split(" ");
-                if(!cLArray[0].equals(""+currentArea)) {
+                if(!cLArray[0].equals(""+currentRoom)) {
                     sortObject.add(String.join(" ", cLArray));
                 }
                 currentLine = br.readLine();
             }        
             br.close();
             for(DefaultObject temp : objects) {
-                sortObject.add(currentArea+" "+temp.toString());
+                sortObject.add(currentRoom+" "+temp.toString());
             }
             Collections.sort(sortObject);
             for(String temp : sortObject) {
@@ -91,10 +91,10 @@ public class OverWorld extends Game {
             loadObjectThreads.removeAll(loadObjectThreads);
             if(objects.isEmpty()) {
                 if(direction == 0) {
-                    currentArea--;
+                    currentRoom--;
                 }
                 else {
-                    currentArea++;    
+                    currentRoom++;    
                 }               
                 generateEverything = false;
             }
@@ -124,7 +124,7 @@ public class OverWorld extends Game {
                 create.action();
                 create.draw(g2);
             }
-            g2.drawString(""+currentArea,300,200);
+            g2.drawString(""+currentRoom,300,200);
             g2.drawString("size of object array: "+objects.size(),300,325);
             Sonic sonic = new Sonic();
             sonic.setup(g2);    
@@ -135,7 +135,7 @@ public class OverWorld extends Game {
         if(objects.isEmpty()) {
             getObject();
         }
-        if(currentArea == 0) {
+        if(currentRoom == 0) {
             for(int i = 0; i < 11; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,0,-36+(i*64),1);
             }
@@ -200,7 +200,7 @@ public class OverWorld extends Game {
         public synchronized void run() {
             if(!isDone) {
                 String [] line = currentLine.split(" ");
-                if(line[0].equals(String.valueOf(currentArea))) {
+                if(line[0].equals(String.valueOf(currentRoom))) {
                     if(line[1].equals("Monitor:")) {
                         createMonitor(MonitorType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
                         name = "Monitor In Room Thread";
@@ -218,7 +218,7 @@ public class OverWorld extends Game {
                         name = "Spring In Room Thread";
                     } 
                 }
-                else if(!line[0].equals(String.valueOf(currentArea))) {
+                else if(!line[0].equals(String.valueOf(currentRoom))) {
                     if(line[1].equals("Monitor:")) {
                         name = "Monitor Not In Room Thread";
                     }

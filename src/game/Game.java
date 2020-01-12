@@ -82,7 +82,6 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             temp.deleteOnExit();
             super.paintComponent(g2);//allows for painting and
             repaint();
-            System.out.println("This is a test");
         } 
     }
     public void createTempSave() {

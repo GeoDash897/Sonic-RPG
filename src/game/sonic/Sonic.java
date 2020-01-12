@@ -43,10 +43,6 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
             animation.standard(g2,owa.getXCenterSonic(),owa.getYCenterSonic()); 
             owa.standard(g2);
         }
-        if(Game.getDebug()) {
-            g2.setColor(Color.RED);
-            g2.drawString("Sonic's area: "+area+", Sonic's layer: "+layer, 75,500);
-        }
     }
     public int getAreaNumber() {
         return area;

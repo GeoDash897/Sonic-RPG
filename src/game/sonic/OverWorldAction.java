@@ -21,6 +21,7 @@ public class OverWorldAction extends Sonic {
     private static int yDrawCenterSonic; //center for drawing the picture
     private static int ySpriteCenterSonic = 495; // Center of the actual sprite (basis for positions of collision boxes
     //The X Position for the center of the actual sprite is the same as xDrawCenterSonic   
+    private static int yLastGround = 0;
     private static double groundSpeed = 0;//The actual speed that Sonic is running at (not influenced by accel, slope or anything)
     private static double angle = 0;//The angle of Sonic (influenced by the tile that Sonic is curre
     private static double xSpeed = 0;//How fast Sonic is moving left and right
@@ -72,7 +73,6 @@ public class OverWorldAction extends Sonic {
     private static Rectangle bottomRight;
     private static Rectangle middleLeft;
     private static Rectangle middleRight;
-    
     
     //Creates Animation object so Sonic's animations can be changed
     private Sonic sonic = new Sonic();
@@ -129,9 +129,10 @@ public class OverWorldAction extends Sonic {
             bottomRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic,4,84);
             middleLeft = new Rectangle(xDrawCenterSonic-40,ySpriteCenterSonic,40,4);    
             middleRight = new Rectangle(xDrawCenterSonic,ySpriteCenterSonic,44,4); 
+            topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//Creates the topLeft and topRight sensors (don't change like the       
+            topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do)     
         }
-        topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//Creates the topLeft and topRight sensors (don't change like the       
-        topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do) 
+        
         collisionCheck(g2);//Checks for collisions, gets and uses information from tiles
         checkPowerUp();       
         //Controls gravity + xSpeed and ySpeed when Sonic is not on ground
@@ -240,6 +241,7 @@ public class OverWorldAction extends Sonic {
         g2.drawString("collideWithSlope: "+collideWithSlope,75,475);
         g2.drawString("mLCollide: "+mLCollide,75,500);
         g2.drawString("mRCollide: "+mRCollide,75,525);
+        g2.drawString("yLastGround: "+yLastGround,75,600);
         //Variables that have to do with Sonic's animations:
         g2.setColor(Color.GREEN);
         g2.drawString("angle: "+angle, 400, 75);
@@ -259,10 +261,6 @@ public class OverWorldAction extends Sonic {
     }
     public void drawCollisionBoxes(Graphics2D g2) {
         //Draws rectangles themselves
-        g2.setColor(Color.blue);
-        g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//topLeft       
-        g2.setColor(Color.green);
-        g2.fillRect(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//topRight
         if(collideWithSlope == 0 && ground) {
             g2.setColor(Color.red);
             g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic,4,84);//bottomLeft    
@@ -284,6 +282,12 @@ public class OverWorldAction extends Sonic {
             g2.fillRect(xDrawCenterSonic,ySpriteCenterSonic,44,4);//middleRight
         }
         else if(!ground) {
+            if(ySpeed < 0 || Math.abs(xSpeed) > Math.abs(ySpeed)) {
+                g2.setColor(Color.blue);
+                g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//topLeft       
+                g2.setColor(Color.green);
+                g2.fillRect(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//topRight
+            }
             g2.setColor(Color.red);
             g2.fillRect(xDrawCenterSonic-36,ySpriteCenterSonic,4,84);//bottomLeft    
             g2.setColor(Color.yellow);
@@ -455,7 +459,7 @@ public class OverWorldAction extends Sonic {
                 groundSpeed -= SLOPEROLLDOWN*(Math.sin(angle));       
             }
                
-        }    
+        }           
         //Sets Sonic's groundSpeed when he lands on the ground after a jump
         if(jump == 2 && angle < 45) {
             groundSpeed = xSpeed;
@@ -470,35 +474,78 @@ public class OverWorldAction extends Sonic {
         }            
         //Controls collisions with the middle sensors
         for(Ground checkBoundary: overworld.getGroundArrayList()) {
-            checkSideCollision(false,middleLeft,checkBoundary.getPixelBox(checkBoundary.getPixelBoxes().size()-1));//false = coming from left, true = coming from right
-            if(mLCollide == 1) {
+            if(middleLeft.intersects(checkBoundary.getPixelBox(checkBoundary.getPixelBoxes().size()-1))) {
+                if(xSpeed < 0) {
+                    spindashCharge = 0;
+                    groundSpeed = 0;
+                    xSpeed = 0;                    
+                }
+                mLCollide = 1;
                 break;
+            }
+            else {
+                mLCollide = 0;
             }
         }
         for(Ground checkBoundary: overworld.getGroundArrayList()) {         
-            checkSideCollision(true,middleRight,checkBoundary.getPixelBox(0));//false = coming from left, true = coming from right
-            if(mRCollide == 1) {
+            if(middleLeft.intersects(checkBoundary.getPixelBox(0))) {
+                if(xSpeed > 0) {
+                    spindashCharge = 0;
+                    groundSpeed = 0;
+                    xSpeed = 0;                    
+                }
+                mRCollide = 1;
                 break;
             }
+            else {
+                mRCollide = 0;
+            }
         }
+        if(ySpeed < 0) {
+            for(Ground tile : overworld.getGroundArrayList()) {
+                for(Rectangle temp : tile.getPixelBoxes()) {
+                    if(topLeft.intersects(temp)) {
+                        if(jump == 1) {
+                            ySpeed = 1;
+                            jump = 2;    
+                        }
+                        break;
+                    }   
+                }
+            }
+            for(Ground tile : overworld.getGroundArrayList()) {
+                for(Rectangle temp : tile.getPixelBoxes()) {
+                    if(topRight.intersects(temp)) {
+                        if(jump == 1) {
+                            ySpeed = 1;
+                            jump = 2;    
+                        }
+                        break;
+                    }   
+                }
+            }
+        }  
         setSonicLedge(flatBoxRect);
     }
     public void setSonicPosition(int pixelyL, int pixelyR, double angleL, double angleR, int collideWithSlopeL, int collideWithSlopeR) {//Method that sets Sonic's correct position and angle
          //Changes Sonic's yPosition based on the heights of the pixels that each of the bottom sensors get
-        if(pixelyR > pixelyL && pixelyL != 0 && pixelyR != 0) {//If pixelyR is greater than pixelyL (meaning that it is lower on the screen)
+        if(pixelyR > pixelyL && pixelyL != 0 && pixelyR != 0 && ground) {//If pixelyR is greater than pixelyL (meaning that it is lower on the screen)
             //set Sonic's yPosition based on pixelyL + use angleL for angle
             collideWithSlope = collideWithSlopeL;
-            ySpriteCenterSonic = pixelyL - 80;//Changes Sonic's yPosition   
+            yLastGround = pixelyL;
+            ySpriteCenterSonic = pixelyL - 80;//Changes Sonic's yPosition             
             angle = angleL;
         } 
-        else if(pixelyL > pixelyR && pixelyL != 0 && pixelyR != 0) {//If pixelyL is greater than pixelyL (meaning that it is lower on the screen)
+        else if(pixelyL > pixelyR && pixelyL != 0 && pixelyR != 0 && ground) {//If pixelyL is greater than pixelyL (meaning that it is lower on the screen)
             collideWithSlope = collideWithSlopeR;
             //set Sonic's yPosition based on pixelyR + use angleR for angle
-            ySpriteCenterSonic = pixelyR - 80;//Changes Sonic's yPosition   
+            yLastGround = pixelyR;
+            ySpriteCenterSonic = pixelyR - 80;//Changes Sonic's yPosition 
             angle = angleR;
         }  
         if(pixelyL == pixelyR && ground) {//If they are equal, angle is 0 (since Sonic is on flat ground)
             angle = 0;
+            yLastGround = pixelyR;
         }
     }
     public void setSonicLedge(Rectangle flatBoxRect) {//Sets the ledges of the tile that Sonic is currently standing on 
@@ -648,7 +695,7 @@ public class OverWorldAction extends Sonic {
                     OverWorld.removeObject(index);
                 }
             }
-        }
+        }      
         setSonicPosition(pixelyL, pixelyR, angleL, angleR,0,0);
         setSonicLedge(flatBoxRect);
         if(duck == 0) {
@@ -667,9 +714,6 @@ public class OverWorldAction extends Sonic {
                 }
                 mLCollide = 1;
             }
-            else {
-                mLCollide = 0;
-            }
         }
         if(right) {
             if(sensor.intersects(collidingObject)) {
@@ -679,9 +723,6 @@ public class OverWorldAction extends Sonic {
                     xSpeed = 0;                    
                 }
                 mRCollide = 1;
-            }
-            else {
-                mRCollide = 0;
             }
         }
     }
@@ -855,12 +896,18 @@ public class OverWorldAction extends Sonic {
                 //and is not ducking (since that will cause sonic to spindash), jump
                 jump = 1;
             }
-            if(jump == 1) {//Controls jump
+            if(jump == 1 && ySpriteCenterSonic > yLastGround-400) {//Controls jump
                 duck = 0;
                 spindashCharge = 0;
                 ySpeed = -JUMP;  
                 ground = false;   
-            }                
+            }
+             if(jump == 1 && ySpriteCenterSonic < yLastGround-390) {
+                if(ySpeed < -4) {
+                    ySpeed = -4;
+                }
+                jump = 2;
+            }
         }     
         else if(spindash == 1) {//If spindash == 1 (is charging), increase spindashCharge with everyPress
             if(zPressTimer == 1) {
