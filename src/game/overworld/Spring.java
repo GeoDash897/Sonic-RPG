@@ -15,7 +15,7 @@ import java.awt.Toolkit;
  * @author GeoSonicDash
  */
 public class Spring extends OverWorld implements DefaultObject {
-    private int group = 3;
+    private String group;
     private SpringType springType;
     private int xRef;
     private int yRef;
@@ -99,7 +99,8 @@ public class Spring extends OverWorld implements DefaultObject {
         return temp;
     }
     @Override
-    public int getGroup() {
+    public String getGroup() {
+        group = String.valueOf(springType).substring(0,String.valueOf(springType).indexOf("_"));
         return group;
     }
 

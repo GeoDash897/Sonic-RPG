@@ -18,7 +18,7 @@ public interface DefaultObject {
     void draw(Graphics2D g2);
     void action();
     void interactWithSonic(Rectangle sensor);
-    int getGroup();
+    String getGroup();
     int getXRef();
     int getYRef();
     int getLength();

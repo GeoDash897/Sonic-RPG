@@ -16,7 +16,7 @@ import java.awt.Toolkit;
  * @author GeoSonicDash
  */
 public class Monitor extends OverWorld implements DefaultObject {
-    private int group; 
+    private String group; 
     private MonitorType monitorType;
     private int xRef;
     private int yRef;
@@ -30,7 +30,6 @@ public class Monitor extends OverWorld implements DefaultObject {
     private OverWorld overworld = new OverWorld();
     private Sonic sonic = new Sonic();
     public Monitor(MonitorType monitorType, int layer, int xRef, int yRef) {
-        group = 1;
         this.monitorType = monitorType;
         this.layer = layer;
         this.xRef = xRef;
@@ -84,7 +83,8 @@ public class Monitor extends OverWorld implements DefaultObject {
         }
     }
     @Override
-    public int getGroup() {
+    public String getGroup() {
+        group = String.valueOf(monitorType).substring(0,String.valueOf(monitorType).indexOf("_"));
         return group;
     }
     public MonitorType getMonitorType() { 

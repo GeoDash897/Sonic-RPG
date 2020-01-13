@@ -16,7 +16,7 @@ import java.awt.Rectangle;
  * @author GeoSonicDash
  */
 public class Sign extends OverWorld implements DefaultObject {
-    private int group;
+    private String group;
     private SignType signType;
     private int xRef;
     private int yRef;
@@ -31,7 +31,6 @@ public class Sign extends OverWorld implements DefaultObject {
     private Image xKey;
     private String description;
     public Sign(SignType signType, int layer, int xRef, int yRef) {
-        group = 0;
         this.signType = signType;
         this.layer = layer;
         this.xRef = xRef;
@@ -78,7 +77,8 @@ public class Sign extends OverWorld implements DefaultObject {
     public void interactWithSonic(Rectangle sensor) {
     }
     @Override
-    public int getGroup() {
+    public String getGroup() {
+        group = String.valueOf(signType).substring(0,String.valueOf(signType).indexOf("_"));
         return group;
     }
     public SignType getSignType() {

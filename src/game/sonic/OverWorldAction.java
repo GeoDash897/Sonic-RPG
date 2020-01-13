@@ -566,16 +566,16 @@ public class OverWorldAction extends Sonic {
         int index = 0;
         for(int i = 0; i < currentRoom.getDefaultObjectArrayList().size(); i++) {
             switch (currentRoom.getGroupInArray(index)) {
-                case 0:
+                case "SIGN":
                     intersectWithSign(currentRoom.getDefaultObjectArrayList().get(i),g2);
                     break;
-                case 1:
+                case "MONITOR":
                     intersectWithMonitor(currentRoom.getDefaultObjectArrayList().get(i),index);
                     break;
-                case 2:
+                case "NPC":
                     intersectWithNPC(currentRoom.getDefaultObjectArrayList().get(i),g2);           
                     break;
-                case 3:
+                case "SPRING":
                     intersectWithSpring(currentRoom.getDefaultObjectArrayList().get(i));
                 default:
                     break;

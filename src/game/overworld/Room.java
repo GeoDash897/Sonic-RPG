@@ -39,12 +39,19 @@ public class Room {
             createTile(GRD_SONICHOUSE_BIGWOODPLANK,0,664,1);           
             createTile(GRD_SONICHOUSE_SONICBED,64,525,1);
         }
+        else if(roomType == RoomType.ROOM_SONIC_TEST) {
+            for(int i = 0; i < 20; i ++ ) {
+                createTile(GRD_SONICHOUSE_BIGWOODPLANK,0,664,1);
+            }
+        }
         if(objects.isEmpty()) {
             objects = slo.getObject(roomType);
         }
-        System.out.println("size of groundTiles arrayList:"+ groundTiles.size());
     }
     public void runRoom(Graphics2D g2) {
+        for(int i = 0; i < objects.size(); i++) {
+            g2.drawString(objects.get(i).toString(),500, 100+(25*i));
+        }
         Collections.sort(objects,DefaultObject.defaultObjectCompareLayer);
         for(Ground create : groundTiles) {
             create.create(); //Creates the Rectangle hitboxes 
@@ -55,6 +62,7 @@ public class Room {
             create.action();
             create.draw(g2);
         }
+        g2.drawString("size of groundTiles array: "+groundTiles.size(),300,300);
         g2.drawString("size of object array: "+objects.size(),300,325);
     }
     public void saveRoom() {
@@ -69,7 +77,7 @@ public class Room {
     public ArrayList<DefaultObject> getDefaultObjectArrayList() {
         return objects;
     }
-    public int getGroupInArray(int index) {
+    public String getGroupInArray(int index) {
         return objects.get(index).getGroup();
     }
     public void addObject(DefaultObject add) {
@@ -82,6 +90,7 @@ public class Room {
         return roomType;
     }
     public enum RoomType {
-        ROOM_SONIC_HOUSE
+        ROOM_SONIC_HOUSE,
+        ROOM_SONIC_TEST
     };
 }

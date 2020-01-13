@@ -11,6 +11,7 @@ import game.overworld.Monitor;
 import game.overworld.NPC;
 import game.overworld.OverWorld;
 import game.overworld.Room.RoomType;
+import static game.overworld.Room.RoomType.ROOM_SONIC_TEST;
 import game.overworld.Sign;
 import game.overworld.Spring;
 import java.io.BufferedReader;
@@ -29,7 +30,7 @@ import java.util.Collections;
 public class SaveLoadObjects {
     private ArrayList<DefaultObject> objects = new ArrayList<DefaultObject>();
     public ArrayList<DefaultObject> getObject(RoomType roomType) {
-        File file = new File("src/game/TempSave.txt");
+        File file = new File("src/game/Area1.txt");
         try {
             if(!file.exists()) {
                 file.createNewFile();
@@ -82,11 +83,11 @@ public class SaveLoadObjects {
             saveRoom.renameTo(new File("src/game/TempSave.txt"));
             objects.removeAll(objects);
             roomObjects.removeAll(roomObjects);
-            groundTiles.removeAll(groundTiles);          
+            groundTiles.removeAll(groundTiles);             
         }
         catch(IOException e) {
             e.printStackTrace();
-        }
+        }        
         return roomObjects;
     }
     public void createMonitor(Monitor.MonitorType monitorType, int layer, int xRef, int yRef) {
@@ -103,7 +104,7 @@ public class SaveLoadObjects {
     }
     class LoadObject implements Runnable {
         private String currentLine;
-        private boolean isDone;
+        private volatile boolean isDone;
         private String name;
         private RoomType roomType;
         public LoadObject(String currentLine, RoomType roomType) {

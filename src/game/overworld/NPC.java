@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @author GeoSonicDash
  */
 public class NPC extends OverWorld implements DefaultObject {
-    private int group;
+    private String group;
     private NPCType npcType;
     private int xRef;
     private int yRef;
@@ -37,7 +37,6 @@ public class NPC extends OverWorld implements DefaultObject {
     private String description;
     private OverWorld overworld = new OverWorld();
     public NPC(NPCType npcType, int layer, int xRef, int yRef) {
-        group = 2;
         this.npcType = npcType;
         this.layer = layer;
         this.xRef = xRef;
@@ -99,7 +98,8 @@ public class NPC extends OverWorld implements DefaultObject {
         
     }
     @Override
-    public int getGroup() {
+    public String getGroup() {
+        group = String.valueOf(npcType).substring(0,String.valueOf(npcType).indexOf("_"));
         return group;
     }
     public NPCType getNPCType() {
