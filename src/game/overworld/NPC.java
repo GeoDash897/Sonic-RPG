@@ -81,7 +81,7 @@ public class NPC extends OverWorld implements DefaultObject {
     @Override
     public void action() {
         hitBox = new Rectangle(xRef,yRef,length*4,width*4);
-        for(Ground var : overworld.getGroundArrayList()) {
+        for(Ground var : overworld.getCurrentRoom().getGroundArrayList()) {
             if(hitBox.intersects(var.getPixelBox(0))) {       
                 if((yRef+(width*4)) > var.getYRef()) {
                     yRef = var.getYRef()-(width*4);

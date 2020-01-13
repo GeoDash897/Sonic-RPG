@@ -29,7 +29,7 @@ public class Monitor extends OverWorld implements DefaultObject {
     private boolean loadFile;
     private OverWorld overworld = new OverWorld();
     private Sonic sonic = new Sonic();
-    Monitor(MonitorType monitorType, int layer, int xRef, int yRef) {
+    public Monitor(MonitorType monitorType, int layer, int xRef, int yRef) {
         group = 1;
         this.monitorType = monitorType;
         this.layer = layer;
@@ -60,7 +60,7 @@ public class Monitor extends OverWorld implements DefaultObject {
     @Override
     public void action() {
         hitBox = new Rectangle(xRef, yRef, length*4, width*4);
-        for(Ground var : overworld.getGroundArrayList()) {
+        for(Ground var : overworld.getCurrentRoom().getGroundArrayList()) {
             for(Rectangle temp : var.getPixelBoxes()) {
                 if(hitBox.intersects(temp)) {       
                     if((yRef+(width*4)) > var.getYRef()) {

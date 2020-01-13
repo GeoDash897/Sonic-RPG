@@ -76,11 +76,14 @@ public class OverWorldAction extends Sonic {
     
     //Creates Animation object so Sonic's animations can be changed
     private Sonic sonic = new Sonic();
-    private OverWorld overworld = new OverWorld();
+    private OverWorld overworld;
+    private Room currentRoom;
     private Animation animation = new Animation();
     private Inventory inventory;
     @Override
     public void standard(Graphics2D g2) {  
+        overworld = new OverWorld();
+        currentRoom = overworld.getCurrentRoom();
         /*try {
             Thread.sleep(10);
         } catch (InterruptedException ex) {
@@ -340,7 +343,7 @@ public class OverWorldAction extends Sonic {
         int collideWithSlopeL = 0;
         int collideWithSlopeR = 0;
         int tileDirection = 0;
-        for(Ground checkBoundary: overworld.getGroundArrayList()) {
+        for(Ground checkBoundary: currentRoom.getGroundArrayList()) {
             g2.setColor(Color.red);
             g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),checkBoundary.getLength()*4,4);        
                 if(checkBoundary.getAngle() != 0) {               
@@ -391,7 +394,7 @@ public class OverWorldAction extends Sonic {
                     }
                 }             
         }
-        for(Ground checkBoundary : overworld.getGroundArrayList()) {         
+        for(Ground checkBoundary : currentRoom.getGroundArrayList()) {         
                 if(checkBoundary.getAngle() != 0) {              
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                            yBottomLeft > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//Checks if  
@@ -473,7 +476,7 @@ public class OverWorldAction extends Sonic {
             }          
         }            
         //Controls collisions with the middle sensors
-        for(Ground checkBoundary: overworld.getGroundArrayList()) {
+        for(Ground checkBoundary: currentRoom.getGroundArrayList()) {
             if(middleLeft.intersects(checkBoundary.getPixelBox(checkBoundary.getPixelBoxes().size()-1))) {
                 if(xSpeed < 0) {
                     spindashCharge = 0;
@@ -487,7 +490,7 @@ public class OverWorldAction extends Sonic {
                 mLCollide = 0;
             }
         }
-        for(Ground checkBoundary: overworld.getGroundArrayList()) {         
+        for(Ground checkBoundary: currentRoom.getGroundArrayList()) {         
             if(middleLeft.intersects(checkBoundary.getPixelBox(0))) {
                 if(xSpeed > 0) {
                     spindashCharge = 0;
@@ -502,7 +505,7 @@ public class OverWorldAction extends Sonic {
             }
         }
         if(ySpeed < 0) {
-            for(Ground tile : overworld.getGroundArrayList()) {
+            for(Ground tile : currentRoom.getGroundArrayList()) {
                 for(Rectangle temp : tile.getPixelBoxes()) {
                     if(topLeft.intersects(temp)) {
                         if(jump == 1) {
@@ -513,7 +516,7 @@ public class OverWorldAction extends Sonic {
                     }   
                 }
             }
-            for(Ground tile : overworld.getGroundArrayList()) {
+            for(Ground tile : currentRoom.getGroundArrayList()) {
                 for(Rectangle temp : tile.getPixelBoxes()) {
                     if(topRight.intersects(temp)) {
                         if(jump == 1) {
@@ -561,19 +564,19 @@ public class OverWorldAction extends Sonic {
     }
      public void intersectDefaultObject(Graphics2D g2) {//Checks if Sonic is interacting with an object (not ground)
         int index = 0;
-        for(int i = 0; i < overworld.getDefaultObjectArrayList().size(); i++) {
-            switch (overworld.getGroupInArray(index)) {
+        for(int i = 0; i < currentRoom.getDefaultObjectArrayList().size(); i++) {
+            switch (currentRoom.getGroupInArray(index)) {
                 case 0:
-                    intersectWithSign(overworld.getDefaultObjectArrayList().get(i),g2);
+                    intersectWithSign(currentRoom.getDefaultObjectArrayList().get(i),g2);
                     break;
                 case 1:
-                    intersectWithMonitor(overworld.getDefaultObjectArrayList().get(i),index);
+                    intersectWithMonitor(currentRoom.getDefaultObjectArrayList().get(i),index);
                     break;
                 case 2:
-                    intersectWithNPC(overworld.getDefaultObjectArrayList().get(i),g2);           
+                    intersectWithNPC(currentRoom.getDefaultObjectArrayList().get(i),g2);           
                     break;
                 case 3:
-                    intersectWithSpring(overworld.getDefaultObjectArrayList().get(i));
+                    intersectWithSpring(currentRoom.getDefaultObjectArrayList().get(i));
                 default:
                     break;
             }
@@ -675,7 +678,7 @@ public class OverWorldAction extends Sonic {
                 else if(jump == 2 || duck == 2) {
                     ySpeed = -ySpeed;
                     monitor.interactWithSonic(bottomLeft);
-                    OverWorld.removeObject(index);
+                    currentRoom.removeObject(index);
                 }
             }
         }
@@ -692,7 +695,7 @@ public class OverWorldAction extends Sonic {
                 else if(jump == 2 || duck == 2) {
                     ySpeed = -ySpeed;
                     monitor.interactWithSonic(bottomRight);
-                    OverWorld.removeObject(index);
+                    currentRoom.removeObject(index);
                 }
             }
         }      
