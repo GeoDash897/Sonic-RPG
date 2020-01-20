@@ -15,7 +15,7 @@ import java.awt.Toolkit;
  *
  * @author GeoSonicDash
  */
-public class Monitor extends OverWorld implements DefaultObject {
+public class Monitor extends OverWorld implements DefaultObject{
     private String group; 
     private MonitorType monitorType;
     private int xRef;

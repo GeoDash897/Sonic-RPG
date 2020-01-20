@@ -40,6 +40,9 @@ public class OverWorld extends Game {
         System.out.println("Everything has been generated");
         generateEverything = true;
     }
+    public ArrayList<Room> getRoomsArrayList() {
+        return rooms;
+    }
     public Room getCurrentRoom() {
         for(int i = 0; i < rooms.size(); i ++) {
             if(rooms.get(i).getRoomType() == currentRoom) {
@@ -50,6 +53,7 @@ public class OverWorld extends Game {
     }
     public static void setCurrentRoomType(RoomType newRoom) {
         currentRoom = newRoom;
+        OverWorldAction.setSPRoomSwitch(newRoom);
     }
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == e.VK_ENTER) {

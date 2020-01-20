@@ -9,11 +9,10 @@ import game.overworld.DefaultObject;
 import game.overworld.Ground;
 import game.overworld.Monitor;
 import game.overworld.NPC;
-import game.overworld.OverWorld;
 import game.overworld.Room.RoomType;
-import static game.overworld.Room.RoomType.ROOM_SONIC_TEST;
 import game.overworld.Sign;
 import game.overworld.Spring;
+import game.overworld.Warp;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,7 +29,7 @@ import java.util.Collections;
 public class SaveLoadObjects {
     private ArrayList<DefaultObject> objects = new ArrayList<DefaultObject>();
     public ArrayList<DefaultObject> getObject(RoomType roomType) {
-        File file = new File("src/game/Area1.txt");
+        File file = new File("src/game/TempSave.txt");
         try {
             if(!file.exists()) {
                 file.createNewFile();
@@ -102,6 +101,9 @@ public class SaveLoadObjects {
     public void createSpring(Spring.SpringType springType, int layer, int xRef,int yRef) {
         objects.add(new Spring(springType,layer,xRef,yRef));
     }
+    public void createWarp(Warp.WarpType warpType, int layer, int xRef, int yRef) {
+        objects.add(new Warp(warpType, layer, xRef, yRef));
+    }
     class LoadObject implements Runnable {
         private String currentLine;
         private volatile boolean isDone;
@@ -133,7 +135,11 @@ public class SaveLoadObjects {
                     else if(line[1].equals("Spring:")) {
                         createSpring(Spring.SpringType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
                         name = "Spring In Room Thread";
-                    } 
+                    }
+                    else if(line[1].equals("Warp:")) {
+                        createWarp(Warp.WarpType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        name = "Warp In Room Thread";
+                    }
                 }
                 else if(!line[0].equals(String.valueOf(roomType))) {
                     if(line[1].equals("Monitor:")) {
@@ -148,6 +154,9 @@ public class SaveLoadObjects {
                     else if(line[1].equals("Spring:")) {
                         name = "Spring Not In Room Thread";
                     } 
+                    else if(line[1].equals("Warp:")) {
+                        name = "Warp Not In Room Thread";
+                    }
                 }
             }        
             isDone = true;

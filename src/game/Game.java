@@ -73,14 +73,13 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             g2.setColor(Color.CYAN);
             OverWorld overWorld = new OverWorld();//creates object OverWorld (which in turn creates everything else)
             if(!loadTempSave) {
-                //createTempSave(); 
-                loadTempSave = true;
+                createTempSave(); 
             }
             if(loadTempSave) {    
                 objectThreads.removeAll(objectThreads);
                 overWorld.standard(g2);                                       
             } 
-            //temp.deleteOnExit();
+            temp.deleteOnExit();
             super.paintComponent(g2);//allows for painting and
             repaint();
         } 

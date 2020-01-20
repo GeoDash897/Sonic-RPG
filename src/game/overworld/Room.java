@@ -40,9 +40,7 @@ public class Room {
             createTile(GRD_SONICHOUSE_SONICBED,64,525,1);
         }
         else if(roomType == RoomType.ROOM_SONIC_TEST) {
-            for(int i = 0; i < 20; i ++ ) {
-                createTile(GRD_SONICHOUSE_BIGWOODPLANK,0,664,1);
-            }
+            createTile(GRD_SONICHOUSE_BIGWOODPLANK,0,664,1);          
         }
         if(objects.isEmpty()) {
             objects = slo.getObject(roomType);

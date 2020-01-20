@@ -7,6 +7,7 @@ package game.sonic;
 
 import game.Game;
 import game.overworld.*;
+import game.overworld.Room.RoomType;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -318,6 +319,10 @@ public class OverWorldAction extends Sonic {
         g2.setColor(Color.red);
         g2.fillRect(xDrawCenterSonic,ySpriteCenterSonic,4,4);
     }
+    public static void setSPRoomSwitch(RoomType newRoom) {
+        xDrawCenterSonic = 200;
+        ySpriteCenterSonic = 575;
+    }
     public void checkPowerUp() {
         if(sonic.getOWPowerUp() == 1) {
             ACCELERATION = 0.09375;
@@ -577,11 +582,18 @@ public class OverWorldAction extends Sonic {
                     break;
                 case "SPRING":
                     intersectWithSpring(currentRoom.getDefaultObjectArrayList().get(i));
+                case "WARP":
+                    intersectWithWarp(currentRoom.getDefaultObjectArrayList().get(i));    
                 default:
                     break;
             }
             index++;
         }
+    }
+    public void intersectWithWarp(DefaultObject var) {
+        Warp warp = (Warp) var;
+        warp.interactWithSonic(middleRight);
+        
     }
     public void intersectWithSpring(DefaultObject var) {
         Spring spring = (Spring) var;
@@ -684,7 +696,7 @@ public class OverWorldAction extends Sonic {
         }
         if(bottomRight.intersects(monitor.getHitBox())) {
             if(ySpeed >= 0) {//Checks for collision if Sonic is falling/on the ground and not when he is jumping
-                if(jump == 0 && duck == 0) {
+                if(jump == 0 && duck != 2) {
                     bRCollide = 1;     
                     ySpeed = 0;
                     collideWithSlope = 0; 

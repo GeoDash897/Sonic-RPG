@@ -18,7 +18,7 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class NPC extends OverWorld implements DefaultObject {
+public class NPC extends OverWorld implements DefaultObject{
     private String group;
     private NPCType npcType;
     private int xRef;
