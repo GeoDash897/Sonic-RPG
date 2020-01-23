@@ -30,6 +30,7 @@ public class Game extends JFrame implements KeyListener, ActionListener {
     public static Font debugStat;
     public static Font dialog;
     private File temp;
+    private PlayerInput playerInput = new PlayerInput();
 /***********************************************************/
     public Game() {//constructor for JPanel
         add(new JP());
@@ -70,7 +71,8 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             RenderingHints rh = new RenderingHints(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_SPEED);
             g2.setRenderingHints(rh);
             g2.setFont(debugStat);
-            g2.setColor(Color.CYAN);
+            g2.setColor(Color.CYAN);           
+            playerInput.standard(g2);
             OverWorld overWorld = new OverWorld();//creates object OverWorld (which in turn creates everything else)
             if(!loadTempSave) {
                 createTempSave(); 
@@ -121,12 +123,10 @@ public class Game extends JFrame implements KeyListener, ActionListener {
         debug = !debug;
     }
     public void getPressInput(KeyEvent e) {
-        Sonic sonic = new Sonic();
-        sonic.keyPressed(e);      
+        playerInput.keyPressed(e);      
     }
     public void getReleasedInput(KeyEvent e) {
-        Sonic sonic = new Sonic();
-        sonic.keyReleased(e);     
+        playerInput.keyReleased(e);     
     }
     public void actionPerformed(ActionEvent e) {
     

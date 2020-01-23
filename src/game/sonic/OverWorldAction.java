@@ -6,12 +6,12 @@
 package game.sonic;
 
 import game.Game;
+import game.PlayerInput;
 import game.overworld.*;
 import game.overworld.Room.RoomType;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 
 /**
  *
@@ -40,13 +40,6 @@ public class OverWorldAction extends Sonic {
     private static double spindashCharge = 0;//Controls how fast Sonic moves in the xSpeed after being released from the spindash
     private static boolean springAnimation = false;
     private static int waitTimer = 0;//Increases when no keys are being pressed, when it equals a certain number, Sonic's waiting animation plays
-    private static int leftPress = 0;//Set to 1 when the left key is pressed
-    private static int rightPress = 0;//Likewise for right
-    private static int downPress = 0;//Likewise for down
-    private static int zPress = 0;//Likewise for Z key
-    private static int zPressTimer = 0;//Increases when the Z key is pressed, used to calculate presses of a key
-    private static int xPress = 0;
-    private static int xPressTimer = 0;
     //Physic variables
     private static double AIR = 0.09375;
     private static double GRAVITY = 0.21875;
@@ -159,24 +152,27 @@ public class OverWorldAction extends Sonic {
             jump = 0;
         } 
         //After checking all of the collisions and performing gravity, now calculate friction (decreasing groundSpeed if no keys are pressed)
-        if((leftPress == 0 && rightPress == 0 && angle == 0 && zPress == 0 && ground) || (Math.abs(groundSpeed) > 0 && duck > 0)) {
+        if((!PlayerInput.getLeftPress() && !PlayerInput.getRightPress() && angle == 0 && !PlayerInput.getZPress() && ground) || (Math.abs(groundSpeed) > 0 && duck > 0)) {
             groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
         } 
         //Controls key presses (left, right, down, Z and X)
-        if(rightPress == 1) {
+        if(PlayerInput.getRightPress()) {
             rightPress();
         }
-        if(leftPress == 1) {
+        if(PlayerInput.getLeftPress()) {
             leftPress();
         }
-        if(downPress == 1 && spindash == 0) {
+        if(PlayerInput.getDownPress() && spindash == 0) {
             downPress();
         }
-        if(zPress == 1) {
+        if(PlayerInput.getZPress()) {
             zPress();
         }   
-        if(xPress == 1) {
-            xPress();
+        if(!PlayerInput.getZPress()) {
+            zReleased();
+        }
+        if(!PlayerInput.getDownPress()) {
+            downReleased();
         }
         //If Sonic is rolling and the abs of his groundSpeed (since he has to be on the ground) is < 1 (basically stopped), set it to 0 
         //(Sonic is now standing)
@@ -186,7 +182,7 @@ public class OverWorldAction extends Sonic {
             }
         }
         //Controls spindashing 
-        if(downPress == 1 && zPress == 1 && groundSpeed == 0 && ledge == -1 && ground && jump == 0 && spindash == 0) {//Sets spindash state
+        if(PlayerInput.getDownPress() && PlayerInput.getZPress() && groundSpeed == 0 && ledge == -1 && ground && jump == 0 && spindash == 0) {//Sets spindash state
             spindash = 1;
         }
         if(spindashCharge > 0.01) {//Constantly subtract from spindashCharge (so when Sonic is released from spindash, he can return to zero
@@ -253,13 +249,6 @@ public class OverWorldAction extends Sonic {
         g2.drawString("direction: "+animation.getDirection(), 400, 125);
         //Variables that have to with input (checking how long a button is pressed, when a button is pressed, etc):
         g2.setColor(Color.PINK);
-        g2.drawString("leftPress: "+leftPress,600,75);
-        g2.drawString("rightPress: "+rightPress,600,100);
-        g2.drawString("downPress: "+downPress,600,125);
-        g2.drawString("zPress: "+zPress,600,150);
-        g2.drawString("zPressTimer: "+zPressTimer,600,175); 
-        g2.drawString("xPress: "+xPress,600,200);  
-        g2.drawString("xPressTimer: "+xPressTimer,600,225);
         g2.drawString("owPowerUp: "+sonic.getOWPowerUp(),600,250);
         drawCollisionBoxes(g2);  
     }
@@ -558,11 +547,11 @@ public class OverWorldAction extends Sonic {
     }
     public void setSonicLedge(Rectangle flatBoxRect) {//Sets the ledges of the tile that Sonic is currently standing on 
         //Controls ledges (when Sonic is near a ledge or not)      
-        if(xDrawCenterSonic > (int) flatBoxRect.getX()+68 && bRCollide == 0 && bLCollide == 1 && leftPress == 0 && rightPress == 0 && groundSpeed == 0 && angle == 0) {
+        if(xDrawCenterSonic > (int) flatBoxRect.getX()+68 && bRCollide == 0 && bLCollide == 1 && !PlayerInput.getLeftPress() && !PlayerInput.getRightPress() && groundSpeed == 0 && angle == 0) {
             duck = 0;
             ledge = 1;
         }
-        else if(xDrawCenterSonic < (int) flatBoxRect.getX()-4 && bRCollide == 1 && bLCollide == 0 && leftPress == 0 && rightPress == 0 && groundSpeed == 0 && angle ==  0) {
+        else if(xDrawCenterSonic < (int) flatBoxRect.getX()-4 && bRCollide == 1 && bLCollide == 0 && !PlayerInput.getLeftPress() && !PlayerInput.getRightPress() && groundSpeed == 0 && angle ==  0) {
             duck = 0;
             ledge = 0;
         }
@@ -632,11 +621,11 @@ public class OverWorldAction extends Sonic {
         sign.drawXKey(g2, middleRight);
         if(sign.getCurrentSection() != -3) {
             observe = true;
-            leftPress = 0;
-            rightPress = 0;
+            PlayerInput.setLeftPress(false);
+            PlayerInput.setRightPress(false);
             waitTimer = 0;
         }
-        if(Math.abs(xMiddleLeft - sign.getXRef()) <= 65 && Math.abs(groundSpeed) == 0 && checkForXPressOnce() 
+        if(Math.abs(xMiddleLeft - sign.getXRef()) <= 65 && Math.abs(groundSpeed) == 0 && PlayerInput.checkForXPressOnce() 
                 && ground && jump == 0 && duck == 0 && spindash == 0) {
             sign.increaseCurrentSection();
         }
@@ -654,11 +643,11 @@ public class OverWorldAction extends Sonic {
         npc.drawXKey(g2, middleRight);
         if(npc.getCurrentSection() != -3) {
             observe = true;
-            leftPress = 0;
-            rightPress = 0;
+            PlayerInput.setLeftPress(false);
+            PlayerInput.setRightPress(false);
             waitTimer = 0;
         }
-        if(Math.abs(xMiddleLeft - npc.getXRef()) <= 50 && Math.abs(groundSpeed) == 0 && checkForXPressOnce() 
+        if(Math.abs(xMiddleLeft - npc.getXRef()) <= 50 && Math.abs(groundSpeed) == 0 && PlayerInput.checkForXPressOnce() 
                 && ground && jump == 0 && duck == 0 && spindash == 0) {
             npc.increaseCurrentSection();
         }
@@ -744,7 +733,7 @@ public class OverWorldAction extends Sonic {
     public void changeAnimation() {
         if(!springAnimation) {
            //Controls waiting animation
-            if(rightPress == 0 && leftPress == 0 && groundSpeed == 0 && ground == true && ledge == -1 && duck == 0 && spindash == 0) {
+            if(!PlayerInput.getRightPress() && !PlayerInput.getLeftPress() && groundSpeed == 0 && ground == true && ledge == -1 && duck == 0 && spindash == 0) {
                 //If no keys are pressed and Sonic is not moving on ground (groundSpeed == 0), increase waitTimer
                 waitTimer++;
                 //Depending on how long the keys aren't pressed, a certain animation plays
@@ -771,12 +760,12 @@ public class OverWorldAction extends Sonic {
                 waitTimer = 0;
             }
             //Controls when Sonic's walking animation plays
-            if((groundSpeed > 0 && groundSpeed < 6 && rightPress == 1 && mRCollide == 0 && jump == 0) || (groundSpeed > 0 && groundSpeed < 6 && rightPress == 0 && leftPress == 0 && mRCollide == 0 && jump == 0 && duck == 0)) {  
+            if((groundSpeed > 0 && groundSpeed < 6 && PlayerInput.getRightPress() && mRCollide == 0 && jump == 0) || (groundSpeed > 0 && groundSpeed < 6 && !PlayerInput.getRightPress() && !PlayerInput.getLeftPress() && mRCollide == 0 && jump == 0 && duck == 0)) {  
                 if(animation.getAnimationNumber() != 2) {
                     animation.setAnimationNumber(2);    
                 }                         
             }
-            else if((groundSpeed < 0 && groundSpeed > -6 && leftPress == 1 && mLCollide == 0 && jump == 0) || (groundSpeed < 0 && groundSpeed > -6 && rightPress == 0 && leftPress == 0 && mLCollide == 0 && jump == 0 && duck == 0)) {  
+            else if((groundSpeed < 0 && groundSpeed > -6 && PlayerInput.getLeftPress() && mLCollide == 0 && jump == 0) || (groundSpeed < 0 && groundSpeed > -6 && !PlayerInput.getRightPress() && !PlayerInput.getLeftPress() && mLCollide == 0 && jump == 0 && duck == 0)) {  
                 if(animation.getAnimationNumber() != 2) {
                     animation.setAnimationNumber(2);    
                 }                         
@@ -905,7 +894,6 @@ public class OverWorldAction extends Sonic {
     }
     public void zPress() {//zPressTimer is used for variables that increase everytime the key is pressed (so it won't increase while the 
         //button is held) - used for mashing the button
-        zPressTimer++;
         if(spindash == 0) {
             if(jump == 0 && ground && duck != 1) {//If Sonic is on the ground, is not currently jumping or falling from jump (jumped already)
                 //and is not ducking (since that will cause sonic to spindash), jump
@@ -925,20 +913,26 @@ public class OverWorldAction extends Sonic {
             }
         }     
         else if(spindash == 1) {//If spindash == 1 (is charging), increase spindashCharge with everyPress
-            if(zPressTimer == 1) {
+            if(PlayerInput.checkForZPressOnce()) {
                 spindashCharge++;    
             }           
         }
     }
-    public void xPress() {
-        xPressTimer++;
-    }
-    public boolean checkForXPressOnce() {
-        boolean check = false;
-        if(xPress == 1 && xPressTimer < 1) {
-            check = true;
+    public void zReleased() {
+        if(ySpeed < -4) {
+            ySpeed = -4;
         }
-        return check;
+        if(jump == 1) {
+            jump = 2;
+        }
+    }
+    public void downReleased() {
+        if(duck == 1) {
+            duck = 0;
+        }
+        if(spindash == 1) {
+            spindash = 0;
+        }
     }
     public int getXCenterSonic() {
         return xDrawCenterSonic;
@@ -949,67 +943,4 @@ public class OverWorldAction extends Sonic {
     public void setObserve(boolean set) {
         observe = set;
     }
-    @Override
-    public void keyReleased(KeyEvent e) {
-        //Gets key inputs when keys are pressed
-        if(e.getKeyCode() == e.VK_RIGHT) {
-            rightPress = 0;
-        }
-        if(e.getKeyCode() == e.VK_LEFT) {
-            leftPress = 0;
-        }
-        if(e.getKeyCode() == e.VK_DOWN) {
-            if(duck == 1) {
-                duck = 0;
-            }
-            downPress = 0;
-            if(spindash == 1) {
-                spindash = 0;
-            }
-        }
-        if(e.getKeyCode() == e.VK_Z) {  
-            zPressTimer = 0;
-            if(ySpeed < -4) {
-                ySpeed = -4;
-            }
-            if(jump == 1) {
-                jump = 2;
-            }
-            zPress = 0;
-        }
-        if(e.getKeyCode() == e.VK_X) {
-            xPressTimer = 0;
-            xPress = 0;
-        }
-    }
-    @Override
-    public void keyPressed(KeyEvent e) {
-        //Gets key inputs from the different keys
-        if (e.getKeyCode() == e.VK_RIGHT && !observe) {
-            rightPress = 1;
-            leftPress = 0;
-        }
-        if (e.getKeyCode() == e.VK_LEFT && !observe) {  
-            leftPress = 1;
-            rightPress = 0;
-        }          
-        if (e.getKeyCode() == e.VK_UP ) {
-            
-        }
-        if (e.getKeyCode() == e.VK_DOWN && !observe) {
-            downPress = 1;
-        }
-        if (e.getKeyCode() == e.VK_Z && !observe) {
-            zPress = 1;
-        }
-        if (e.getKeyCode() == e.VK_X ) {
-            xPress = 1;
-        }
-        if (e.getKeyCode() == e.VK_ENTER) {
-            
-        } 
-        if (e.getKeyCode() == e.VK_ESCAPE) {
-            Game.setDebug();
-        } 
-    }//end keypressed   
 }

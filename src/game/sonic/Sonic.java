@@ -4,10 +4,8 @@
  * and open the template in the editor.
  */
 package game.sonic;
-import game.Game;
 import game.overworld.OverWorld;
 import game.items.*;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 /*
@@ -28,6 +26,7 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     private static int area = 1;
     private static int layer = 2;
     private static int owPowerUp = 0;
+    private static boolean allowInput = true;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
     private Inventory inventory;
@@ -59,62 +58,5 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     public void increaseRings(int amount) {
         rings += amount;
     }
-    @Override
-    public void getPressInput(KeyEvent e) {
-        if(!cutscene) {
-            owa = new OverWorldAction();
-            owa.keyPressed(e); 
-        }  
-    }
-    public void getReleasedInput(KeyEvent e) {
-        if(!cutscene) {
-            owa = new OverWorldAction();
-            owa.keyReleased(e); 
-        }     
-    }
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == e.VK_RIGHT ) {
-            getReleasedInput(e);
-        }
-        if (e.getKeyCode() == e.VK_LEFT ) {           
-            getReleasedInput(e);
-        }
-        if (e.getKeyCode() == e.VK_DOWN) {           
-            getReleasedInput(e);
-        }
-        if (e.getKeyCode() == e.VK_Z ) {           
-            getReleasedInput(e);
-        }
-        if (e.getKeyCode() == e.VK_X) {           
-            getReleasedInput(e);
-        }
-    }
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == e.VK_RIGHT ) {
-            getPressInput(e);
-        }
-        if (e.getKeyCode() == e.VK_LEFT ) {           
-            getPressInput(e);
-        }          
-        if (e.getKeyCode() == e.VK_UP ) {
-            getPressInput(e);
-        }
-        if (e.getKeyCode() == e.VK_DOWN) {
-            getPressInput(e);
-        }
-        if (e.getKeyCode() == e.VK_Z ) {
-            getPressInput(e);
-        }
-        if (e.getKeyCode() == e.VK_X ) {
-            getPressInput(e);  
-        }
-        if (e.getKeyCode() == e.VK_ENTER) {
-            
-        } 
-        if (e.getKeyCode() == e.VK_ESCAPE) {
-            getPressInput(e);
-        }
-    }//end keypressed
+
 }
