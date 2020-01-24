@@ -5,6 +5,7 @@
  */
 package game;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -24,8 +25,14 @@ public class PlayerInput implements KeyListener {
     private static boolean allowInput = true;
     private static boolean cutscene = false;
     public void standard(Graphics2D g2) {
-        g2.drawString("zPress: "+zPress,1000,500);
-        g2.drawString("zPressTimer: "+zPressTimer,1000,525);
+        g2.setColor(Color.cyan);
+        g2.drawString("leftPress: "+leftPress,1000,500);
+        g2.drawString("rightPress: "+rightPress,1000,525);
+        g2.drawString("downPress: "+downPress,1000,550);
+        g2.drawString("zPress: "+zPress,1000,575);
+        g2.drawString("zPressTimer: "+zPressTimer,1000,600);
+        g2.drawString("xPress: "+xPress,1000,625);
+        g2.drawString("xPressTimer: "+xPressTimer,1000,650);
         if(zPress) {
             zPressTimer++;
         }

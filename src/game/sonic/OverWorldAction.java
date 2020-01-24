@@ -156,22 +156,22 @@ public class OverWorldAction extends Sonic {
             groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);
         } 
         //Controls key presses (left, right, down, Z and X)
-        if(PlayerInput.getRightPress()) {
+        if(PlayerInput.getRightPress() && !observe) {
             rightPress();
         }
-        if(PlayerInput.getLeftPress()) {
+        if(PlayerInput.getLeftPress() && !observe) {
             leftPress();
         }
-        if(PlayerInput.getDownPress() && spindash == 0) {
+        if(PlayerInput.getDownPress() && spindash == 0 && !observe) {
             downPress();
         }
-        if(PlayerInput.getZPress()) {
+        if(PlayerInput.getZPress() && !observe) {
             zPress();
         }   
-        if(!PlayerInput.getZPress()) {
+        if(!PlayerInput.getZPress() && !observe) {
             zReleased();
         }
-        if(!PlayerInput.getDownPress()) {
+        if(!PlayerInput.getDownPress() && !observe) {
             downReleased();
         }
         //If Sonic is rolling and the abs of his groundSpeed (since he has to be on the ground) is < 1 (basically stopped), set it to 0 
