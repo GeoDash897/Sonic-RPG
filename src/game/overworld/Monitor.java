@@ -51,7 +51,6 @@ public class Monitor extends OverWorld implements DefaultObject{
         length = 27;
         width = 32;
     }
-
     @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(monitorPicture, xRef, yRef, length*4, width*4, this);

@@ -35,7 +35,6 @@ public class Warp extends OverWorld implements DefaultObject {
             hitBox = new Rectangle(xRef,yRef,25,1080);
         }
     }
-
     @Override
     public void draw(Graphics2D g2) {
         g2.setColor(Color.red);
