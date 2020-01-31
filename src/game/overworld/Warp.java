@@ -21,12 +21,14 @@ public class Warp extends OverWorld implements DefaultObject {
     private int xRef;
     private int yRef;
     private Rectangle hitBox;
-    private OverWorld overWorld = new OverWorld();
-    public Warp(WarpType warpType, int layer, int xRef, int yRef) {
+    private OverWorld overworld;
+    public Warp(OverWorld overworld, WarpType warpType, int layer, int xRef, int yRef) {
+        this.overworld = overworld;
         this.warpType = warpType;
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
+        create();
     }
     
     @Override
@@ -48,11 +50,11 @@ public class Warp extends OverWorld implements DefaultObject {
 
     @Override
     public void interactWithSonic(Rectangle sensor) {
-        int positionOfCurrentRoom = overWorld.getRoomsArrayList().indexOf(overWorld.getCurrentRoom());
+        int positionOfCurrentRoom = overworld.getRoomsArrayList().indexOf(overworld.getCurrentRoom());
         if(sensor.intersects(hitBox)) {
             if(warpType == WarpType.WARP_NEXTROOM_FULL) {
-                if(overWorld.getRoomsArrayList().get(positionOfCurrentRoom+1) != null) {
-                    OverWorld.setCurrentRoomType(overWorld.getRoomsArrayList().get(positionOfCurrentRoom+1).getRoomType());
+                if(overworld.getRoomsArrayList().get(positionOfCurrentRoom+1) != null) {
+                    OverWorld.setCurrentRoomType(overworld.getRoomsArrayList().get(positionOfCurrentRoom+1).getRoomType());
                 }
             }    
         }        

@@ -35,8 +35,8 @@ public class OverWorld extends Game {
         }      
     }   
     public void generate(Graphics2D g2) {      
-        rooms.add(new Room(ROOM_SONIC_HOUSE));
-        rooms.add(new Room(ROOM_SONIC_TEST));
+        rooms.add(new Room(this, ROOM_SONIC_HOUSE));
+        rooms.add(new Room(this,ROOM_SONIC_TEST));
         System.out.println("Everything has been generated");
         generateEverything = true;
     }

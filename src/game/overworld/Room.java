@@ -22,8 +22,10 @@ public class Room {
     private ArrayList<Ground> groundTiles;
     private ArrayList<DefaultObject> objects;
     private SaveLoadObjects slo = new SaveLoadObjects();
-    public Room(RoomType roomType) {
-        this.roomType = roomType;
+    private OverWorld overworld;
+    public Room(OverWorld overworld, RoomType roomType) {
+        this.overworld = overworld;
+        this.roomType = roomType;       
         groundTiles = new ArrayList<Ground>();
         objects = new ArrayList<DefaultObject>();
         createRoom();
@@ -43,7 +45,7 @@ public class Room {
             createTile(GRD_SONICHOUSE_BIGWOODPLANK,0,664,1);          
         }
         if(objects.isEmpty()) {
-            objects = slo.getObject(roomType);
+            objects = slo.getObject(overworld, roomType);
         }
     }
     public void runRoom(Graphics2D g2) {
@@ -55,10 +57,9 @@ public class Room {
             create.create(); //Creates the Rectangle hitboxes 
             create.draw(g2);    
         }
-        for(DefaultObject create : objects) {
-            create.create();           
-            create.action();
-            create.draw(g2);
+        for(DefaultObject obj : objects) {       
+            obj.action();
+            obj.draw(g2);
         }
         g2.drawString("size of groundTiles array: "+groundTiles.size(),300,300);
         g2.drawString("size of object array: "+objects.size(),300,325);

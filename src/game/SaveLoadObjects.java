@@ -9,6 +9,7 @@ import game.overworld.DefaultObject;
 import game.overworld.Ground;
 import game.overworld.Monitor;
 import game.overworld.NPC;
+import game.overworld.OverWorld;
 import game.overworld.Room.RoomType;
 import game.overworld.Sign;
 import game.overworld.Spring;
@@ -28,7 +29,7 @@ import java.util.Collections;
  */
 public class SaveLoadObjects {
     private ArrayList<DefaultObject> objects = new ArrayList<DefaultObject>();
-    public ArrayList<DefaultObject> getObject(RoomType roomType) {
+    public ArrayList<DefaultObject> getObject(OverWorld overworld, RoomType roomType) {
         File file = new File("src/game/TempSave.txt");
         try {
             if(!file.exists()) {
@@ -37,7 +38,7 @@ public class SaveLoadObjects {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String currentLine = br.readLine();
             while(currentLine != null) {
-                Thread lo = new Thread(new SaveLoadObjects.LoadObject(currentLine, roomType));
+                Thread lo = new Thread(new SaveLoadObjects.LoadObject(currentLine, overworld, roomType));
                 lo.start();                    
                 //loadObjectThreads.add(lo);
                 currentLine = br.readLine();
@@ -89,28 +90,30 @@ public class SaveLoadObjects {
         }        
         return roomObjects;
     }
-    public void createMonitor(Monitor.MonitorType monitorType, int layer, int xRef, int yRef) {
-        objects.add(new Monitor(monitorType, layer,xRef, yRef));
+    public void createMonitor(OverWorld overworld, Monitor.MonitorType monitorType, int layer, int xRef, int yRef) {
+        objects.add(new Monitor(overworld, monitorType, layer,xRef, yRef));
     }
-    public void createSign(Sign.SignType signType, int layer, int xRef, int yRef) {
-        objects.add(new Sign(signType, layer, xRef, yRef));
+    public void createSign(OverWorld overworld, Sign.SignType signType, int layer, int xRef, int yRef) {
+        objects.add(new Sign(overworld, signType, layer, xRef, yRef));
     }
-    public void createNPC(NPC.NPCType npcType, int layer, int xRef,int yRef) {
-        objects.add(new NPC(npcType,layer,xRef,yRef));
+    public void createNPC(OverWorld overworld, NPC.NPCType npcType, int layer, int xRef,int yRef) {
+        objects.add(new NPC(overworld, npcType,layer,xRef,yRef));
     }
-    public void createSpring(Spring.SpringType springType, int layer, int xRef,int yRef) {
-        objects.add(new Spring(springType,layer,xRef,yRef));
+    public void createSpring(OverWorld overworld, Spring.SpringType springType, int layer, int xRef,int yRef) {
+        objects.add(new Spring(overworld, springType,layer,xRef,yRef));
     }
-    public void createWarp(Warp.WarpType warpType, int layer, int xRef, int yRef) {
-        objects.add(new Warp(warpType, layer, xRef, yRef));
+    public void createWarp(OverWorld overworld, Warp.WarpType warpType, int layer, int xRef, int yRef) {
+        objects.add(new Warp(overworld, warpType, layer, xRef, yRef));
     }
     class LoadObject implements Runnable {
         private String currentLine;
         private volatile boolean isDone;
         private String name;
         private RoomType roomType;
-        public LoadObject(String currentLine, RoomType roomType) {
+        private OverWorld overworld;
+        public LoadObject(String currentLine, OverWorld overworld, RoomType roomType) {
             this.currentLine = currentLine;
+            this.overworld = overworld;
             this.isDone = false;
             this.name = "Memes";
             this.roomType = roomType;
@@ -121,23 +124,23 @@ public class SaveLoadObjects {
                 String [] line = currentLine.split(" ");
                 if(line[0].equals(String.valueOf(roomType))) {
                     if(line[1].equals("Monitor:")) {
-                        createMonitor(Monitor.MonitorType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        createMonitor(overworld, Monitor.MonitorType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
                         name = "Monitor In Room Thread";
                     }
                     else if(line[1].equals("NPC:")) {
-                        createNPC(NPC.NPCType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        createNPC(overworld, NPC.NPCType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
                         name = "NPC In Room Thread";
                     }
                     else if(line[1].equals("Sign:")) {
-                        createSign(Sign.SignType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        createSign(overworld, Sign.SignType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
                         name = "Sign In Room Thread";
                     } 
                     else if(line[1].equals("Spring:")) {
-                        createSpring(Spring.SpringType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        createSpring(overworld, Spring.SpringType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
                         name = "Spring In Room Thread";
                     }
                     else if(line[1].equals("Warp:")) {
-                        createWarp(Warp.WarpType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
+                        createWarp(overworld, Warp.WarpType.valueOf(line[2]),Integer.valueOf(line[3]),Integer.valueOf(line[4]),Integer.valueOf(line[5]));
                         name = "Warp In Room Thread";
                     }
                 }

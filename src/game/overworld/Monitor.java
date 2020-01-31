@@ -26,28 +26,25 @@ public class Monitor extends OverWorld implements DefaultObject{
     private Rectangle hitBox;
     private Image monitorPicture;
     private boolean ground;
-    private boolean loadFile;
-    private OverWorld overworld = new OverWorld();
+    private OverWorld overworld;
     private Sonic sonic = new Sonic();
-    public Monitor(MonitorType monitorType, int layer, int xRef, int yRef) {
+    public Monitor(OverWorld overworld, MonitorType monitorType, int layer, int xRef, int yRef) {
+        this.overworld = overworld;
         this.monitorType = monitorType;
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
         this.ground = false;
-        this.loadFile = false;
+        create();
     }
     @Override
     public void create() {
-        if(!loadFile) {
-            if(monitorType == MonitorType.MONITOR_RING) {
-                monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor 2.png");
-            }
-            if(monitorType == MonitorType.MONITOR_SPEED) {
-                monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor 1.png");
-            }    
+        if(monitorType == MonitorType.MONITOR_RING) {
+            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor 2.png");
         }
-        loadFile = true;
+        if(monitorType == MonitorType.MONITOR_SPEED) {
+            monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor 1.png");
+        }    
         length = 27;
         width = 32;
     }

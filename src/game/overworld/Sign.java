@@ -30,12 +30,15 @@ public class Sign extends OverWorld implements DefaultObject {
     private Image signPicture;
     private Image xKey;
     private String description;
-    public Sign(SignType signType, int layer, int xRef, int yRef) {
+    private OverWorld overworld;
+    public Sign(OverWorld overworld, SignType signType, int layer, int xRef, int yRef) {
+        this.overworld = overworld;
         this.signType = signType;
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
-        this.currentSection = -3;       
+        this.currentSection = -3;
+        create();
     }
     @Override
     public void create() {

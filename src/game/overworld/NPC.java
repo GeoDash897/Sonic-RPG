@@ -35,8 +35,9 @@ public class NPC extends OverWorld implements DefaultObject{
     private boolean ground;
     private ArrayList<String> splitDescription;
     private String description;
-    private OverWorld overworld = new OverWorld();
-    public NPC(NPCType npcType, int layer, int xRef, int yRef) {
+    private OverWorld overworld;
+    public NPC(OverWorld overworld, NPCType npcType, int layer, int xRef, int yRef) {
+        this.overworld = overworld;
         this.npcType = npcType;
         this.layer = layer;
         this.xRef = xRef;
@@ -45,6 +46,7 @@ public class NPC extends OverWorld implements DefaultObject{
         this.splitDescription = new ArrayList<String>();
         this.right = false;
         this.ground = false;
+        create();
     }
     @Override
     public void create() {

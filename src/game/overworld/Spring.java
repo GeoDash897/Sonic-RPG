@@ -26,14 +26,16 @@ public class Spring extends OverWorld implements DefaultObject {
     private boolean ground;
     private Rectangle hitBox;
     private Image springPicture;
-    private OverWorld overworld = new OverWorld();
-    public Spring(SpringType springType, int layer, int xRef, int yRef) {
+    private OverWorld overworld;
+    public Spring(OverWorld overworld, SpringType springType, int layer, int xRef, int yRef) {
+        this.overworld = overworld;
         this.springType = springType;
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
         this.ground = false;
         this.springAnimationTimer = 0;
+        create();
     }
     @Override
     public void create() {
