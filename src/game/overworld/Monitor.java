@@ -27,6 +27,7 @@ public class Monitor extends OverWorld implements DefaultObject{
     private Image monitorPicture;
     private boolean ground;
     private OverWorld overworld;
+    private Room currentRoom;
     private Sonic sonic = new Sonic();
     public Monitor(OverWorld overworld, MonitorType monitorType, int layer, int xRef, int yRef) {
         this.overworld = overworld;
@@ -39,6 +40,7 @@ public class Monitor extends OverWorld implements DefaultObject{
     }
     @Override
     public void create() {
+        currentRoom = overworld.getCurrentRoom();
         if(monitorType == MonitorType.MONITOR_RING) {
             monitorPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Ring Monitor 2.png");
         }
@@ -76,6 +78,11 @@ public class Monitor extends OverWorld implements DefaultObject{
         } 
         else if(monitorType == MonitorType.MONITOR_SPEED) {
             sonic.changeOWPowerUp(1);    
+        }
+        for(int i = 0; i < currentRoom.getPictureArrayList().size(); i++) {
+            if(this.equals(currentRoom.getPictureArrayList().get(i))) {
+                currentRoom.removePicture(i);
+            }
         }
     }
     @Override

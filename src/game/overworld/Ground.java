@@ -16,19 +16,20 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class Ground extends OverWorld {
+public class Ground extends OverWorld implements DefaultObject {
     private GroundType groundType;
     private int xRef;
     private int yRef;
     private int length;
     private int width;
+    private int layer;
     private int angle;
     private int direction;
     private boolean loadFile;
     private Image groundPicture;
     private ArrayList<Integer> heightValues = new ArrayList<Integer>();
     private ArrayList<Rectangle> pixelBoxes = new ArrayList<Rectangle>();
-    public Ground(GroundType groundType ,int xRef, int yRef, int direction) {
+    public Ground(GroundType groundType ,int layer, int xRef, int yRef, int direction) {
         this.groundType = groundType;
         this.xRef = xRef;
         this.yRef = yRef;
@@ -159,6 +160,31 @@ public class Ground extends OverWorld {
     }
     public ArrayList<Rectangle> getPixelBoxes() {
         return pixelBoxes;
+    }
+
+    @Override
+    public void action() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void interactWithSonic(Rectangle sensor) {
+        
+    }
+
+    @Override
+    public String getGroup() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getLayer() {
+        return layer;
+    }
+
+    @Override
+    public Rectangle getHitBox() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     public enum GroundType {
         GRD_SONICHOUSE_WOODPLANK,

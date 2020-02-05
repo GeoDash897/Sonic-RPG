@@ -91,19 +91,29 @@ public class SaveLoadObjects {
         return roomObjects;
     }
     public void createMonitor(OverWorld overworld, Monitor.MonitorType monitorType, int layer, int xRef, int yRef) {
-        objects.add(new Monitor(overworld, monitorType, layer,xRef, yRef));
+        Monitor monitor = new Monitor(overworld, monitorType,layer,xRef, yRef);
+        objects.add(monitor);
+        overworld.getCurrentRoom().addPicture(monitor);
     }
     public void createSign(OverWorld overworld, Sign.SignType signType, int layer, int xRef, int yRef) {
-        objects.add(new Sign(overworld, signType, layer, xRef, yRef));
+        Sign sign = new Sign(overworld, signType, layer, xRef, yRef);
+        objects.add(sign);
+        overworld.getCurrentRoom().addPicture(sign);
     }
     public void createNPC(OverWorld overworld, NPC.NPCType npcType, int layer, int xRef,int yRef) {
-        objects.add(new NPC(overworld, npcType,layer,xRef,yRef));
+        NPC npc = new NPC(overworld, npcType,layer,xRef,yRef);
+        objects.add(npc);
+        overworld.getCurrentRoom().addPicture(npc);
     }
     public void createSpring(OverWorld overworld, Spring.SpringType springType, int layer, int xRef,int yRef) {
-        objects.add(new Spring(overworld, springType,layer,xRef,yRef));
+        Spring spring = new Spring(overworld, springType,layer,xRef,yRef);
+        objects.add(spring);
+        overworld.getCurrentRoom().addPicture(spring);
     }
     public void createWarp(OverWorld overworld, Warp.WarpType warpType, int layer, int xRef, int yRef) {
-        objects.add(new Warp(overworld, warpType, layer, xRef, yRef));
+        Warp warp = new Warp(overworld, warpType,layer, xRef, yRef);
+        objects.add(warp);
+        overworld.getCurrentRoom().addPicture(warp);
     }
     class LoadObject implements Runnable {
         private String currentLine;
