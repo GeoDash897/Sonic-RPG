@@ -16,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class Ground extends OverWorld implements DefaultObject, Picture {
+public class Ground extends OverWorld implements Picture {
     private GroundType groundType;
     private int xRef;
     private int yRef;
@@ -138,11 +138,9 @@ public class Ground extends OverWorld implements DefaultObject, Picture {
     public void draw(Graphics2D g2) {  
         g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
     }
-    @Override
     public int getXRef() {
         return xRef;
     }
-    @Override
     public int getYRef() {
         return yRef;
     }
@@ -152,13 +150,23 @@ public class Ground extends OverWorld implements DefaultObject, Picture {
     public int getDirection() {
         return direction;
     }
-    @Override
     public int getLength() {
         return length;
     }
     @Override
     public int getWidth() {
         return width;
+    }
+    @Override
+    public int getLayer() {
+        return layer;
+    }
+    public boolean isSameLayer(int otherLayer) {
+        return otherLayer == this.layer;
+    }
+    @Override
+    public String toString() {
+        return "GroundType:"+groundType.toString()+", Layer: "+layer;
     }
     public ArrayList<Integer> getHeightValues() {
         return heightValues;
@@ -171,36 +179,7 @@ public class Ground extends OverWorld implements DefaultObject, Picture {
     }
     public ArrayList<Rectangle> getPixelBoxes() {
         return pixelBoxes;
-    }
-
-    @Override
-    public void action() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void interactWithSonic(Rectangle sensor) {
-        
-    }
-
-    @Override
-    public String getGroup() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getLayer() {
-        return layer;
-    }
-
-    @Override
-    public Rectangle getHitBox() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    @Override
-    public String toString() {
-        return "GroundType:"+groundType.toString()+", Layer: "+layer;
-    }
+    }   
     public enum GroundType {
         GRD_SONICHOUSE_WOODPLANK,
         GRD_SONICHOUSE_WOODSLOPE,

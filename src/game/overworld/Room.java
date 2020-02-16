@@ -36,15 +36,15 @@ public class Room {
     }
     private void createRoom() {
         if(roomType == RoomType.ROOM_SONIC_HOUSE) {
-            /*for(int i = 0; i < 11; i ++) {
+            for(int i = 0; i < 11; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0,-36+(i*64),1);
             }
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,64+(i*64),0,1);
-            }*/
+            }
             createTile(GRD_SONICHOUSE_BIGWOODPLANK,1,0,664,1);           
             createTile(GRD_SONICHOUSE_SONICBED,1,64,525,1);
-            createTile(GRD_SONICHOUSE_FOREGPILLAR, 0, 800, 400, 1);
+            createTile(GRD_SONICHOUSE_FOREGPILLAR, 2, 800, 400, 1);
         }
         else if(roomType == RoomType.ROOM_SONIC_TEST) {
             createTile(GRD_SONICHOUSE_BIGWOODPLANK,1,0,664,1);          
@@ -56,17 +56,11 @@ public class Room {
     public void runRoom(Graphics2D g2) {
         for(int i = 0; i < objects.size(); i++) {
             g2.drawString(objects.get(i).toString(),500, 100+(25*i));
-        }
-        Collections.sort(pictures,Picture.pictureCompareLayer);
+        }       
         for(DefaultObject obj : objects) {       
             obj.action();
-        }   
-        for(int i = 0; i < pictures.size(); i++) {
-            g2.setColor(Color.BLACK);
-            g2.drawString(""+pictures.get(i).toString(),200,300+(i*25));          
-            pictures.get(i).draw(g2);
-        }
-        
+        }          
+        Draw.drawInLayers(g2, pictures);
     }
     public void saveRoom() {
         slo.saveCurrentRoom(roomType, groundTiles, objects);

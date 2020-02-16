@@ -308,7 +308,6 @@ public class OverWorldAction extends Sonic {
     }
     public static void setSPRoomSwitch(RoomType newRoom) {
         xDrawCenterSonic = 200;
-        ySpriteCenterSonic = 575;
     }
     public void checkPowerUp() {
         if(sonic.getOWPowerUp() == 1) {
@@ -338,7 +337,7 @@ public class OverWorldAction extends Sonic {
         for(Ground checkBoundary: currentRoom.getGroundArrayList()) {
             g2.setColor(Color.red);
             g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),checkBoundary.getLength()*4,4);        
-                if(checkBoundary.getLayer() == sonic.getLayer() && checkBoundary.getAngle() != 0) {               
+                if(checkBoundary.isSameLayer(sonic.getLayer()) && checkBoundary.getAngle() != 0) {               
                     if(xBottomRight >= checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                     yBottomRight >= checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()){//Checks if  
                         //bottomRight sensor is with 64x64 tile (before calculations) and the tile is a slope
@@ -361,7 +360,7 @@ public class OverWorldAction extends Sonic {
                         bRCollide = 0;
                     }        
                 }                                                         
-                else if(checkBoundary.getLayer() == sonic.getLayer() && checkBoundary.getAngle() == 0) {
+                else if(checkBoundary.isSameLayer(sonic.getLayer()) && checkBoundary.getAngle() == 0) {
                     if(xBottomRight > checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                         yBottomRight > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//checks if bottomRight sensor is 
                         //within tile (the +100 is to extend the tiles range downward since the sensors are lower than the tile's range when Sonic
@@ -387,7 +386,7 @@ public class OverWorldAction extends Sonic {
                 }             
         }
         for(Ground checkBoundary : currentRoom.getGroundArrayList()) {         
-                if(checkBoundary.getLayer() == sonic.getLayer() && checkBoundary.getAngle() != 0) {              
+                if(checkBoundary.isSameLayer(sonic.getLayer()) && checkBoundary.getAngle() != 0) {              
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                            yBottomLeft > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//Checks if  
                         //bottomRight sensor is with 64x64 tile (before calculations) and the tile is a slope
@@ -410,7 +409,7 @@ public class OverWorldAction extends Sonic {
                         bLCollide = 0;
                     }
                 }
-                else if(checkBoundary.getLayer() == sonic.getLayer() && checkBoundary.getAngle() == 0) {
+                else if(checkBoundary.isSameLayer(sonic.getLayer()) && checkBoundary.getAngle() == 0) {
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                         yBottomLeft > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//checks if bottomRight sensor is 
                         //within tile (the +100 is to extend the tiles range downward since the sensors are lower than the tile's range when Sonic
@@ -469,7 +468,7 @@ public class OverWorldAction extends Sonic {
         }            
         //Controls collisions with the middle sensors
         for(Ground checkBoundary: currentRoom.getGroundArrayList()) {
-            if(checkBoundary.getLayer() == sonic.getLayer() && middleLeft.intersects(checkBoundary.getPixelBox(checkBoundary.getPixelBoxes().size()-1))) {
+            if(checkBoundary.isSameLayer(sonic.getLayer()) && middleLeft.intersects(checkBoundary.getPixelBox(checkBoundary.getPixelBoxes().size()-1))) {
                 if(xSpeed < 0) {
                     spindashCharge = 0;
                     groundSpeed = 0;
@@ -483,7 +482,7 @@ public class OverWorldAction extends Sonic {
             }
         }
         for(Ground checkBoundary: currentRoom.getGroundArrayList()) {         
-            if(checkBoundary.getLayer() == sonic.getLayer() && middleRight.intersects(checkBoundary.getPixelBox(0))) {
+            if(checkBoundary.isSameLayer(sonic.getLayer()) && middleRight.intersects(checkBoundary.getPixelBox(0))) {
                 if(xSpeed > 0) {
                     spindashCharge = 0;
                     groundSpeed = 0;
@@ -498,7 +497,7 @@ public class OverWorldAction extends Sonic {
         }
         if(ySpeed < 0) {
             for(Ground tile : currentRoom.getGroundArrayList()) {
-                if(tile.getLayer() == sonic.getLayer()) {
+                if(tile.isSameLayer(sonic.getLayer())) {
                     for(Rectangle temp : tile.getPixelBoxes()) {
                         if(topLeft.intersects(temp)) {
                             if(jump == 1) {
@@ -511,7 +510,7 @@ public class OverWorldAction extends Sonic {
                 }               
             }
             for(Ground tile : currentRoom.getGroundArrayList()) {
-                if(tile.getLayer() == sonic.getLayer()) {
+                if(tile.isSameLayer(sonic.getLayer())) {
                     for(Rectangle temp : tile.getPixelBoxes()) {
                         if(topRight.intersects(temp)) {
                             if(jump == 1) {

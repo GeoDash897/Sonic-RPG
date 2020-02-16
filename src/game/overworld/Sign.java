@@ -117,6 +117,10 @@ public class Sign implements DefaultObject, Picture {
     public Rectangle getHitBox() {
         return hitBox;
     }
+    @Override
+    public boolean isSameLayer(int otherLayer) {
+        return otherLayer == this.layer;
+    }
     public int getCurrentSection() {
         return currentSection;
     }

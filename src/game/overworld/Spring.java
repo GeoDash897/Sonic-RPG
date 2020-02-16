@@ -61,14 +61,16 @@ public class Spring implements DefaultObject, Picture {
     public void action() {
         hitBox = new Rectangle(xRef+85, yRef+141, 128, 64);
         for(Ground var : overworld.getCurrentRoom().getGroundArrayList()) {
-            for(Rectangle temp : var.getPixelBoxes()) {
-                if(hitBox.intersects(temp)) {       
-                    if(yRef+205 > var.getYRef()) {
-                        yRef = var.getYRef()-205;
-                    }
-                    ground = true;
-                }    
-            }          
+            if(var.isSameLayer(this.layer)) {
+                for(Rectangle temp : var.getPixelBoxes()) {
+                    if(hitBox.intersects(temp)) {       
+                        if(yRef+205 > var.getYRef()) {
+                            yRef = var.getYRef()-205;
+                        }
+                        ground = true;
+                    }    
+                }     
+            }                    
         }
         if(!ground) {
             yRef+=16;
@@ -137,6 +139,11 @@ public class Spring implements DefaultObject, Picture {
     public Rectangle getHitBox() {
         return hitBox;
     }
+    @Override
+    public boolean isSameLayer(int otherLayer) {
+        return otherLayer == this.layer;
+    }
+    @Override
     public String toString() {
         return "Spring: "+springType+" "+layer+" "+xRef+" "+yRef;
     }

@@ -58,14 +58,16 @@ public class Monitor implements Picture,DefaultObject {
     public void action() {
         hitBox = new Rectangle(xRef, yRef, length*4, width*4);
         for(Ground var : currentRoom.getGroundArrayList()) {
-            for(Rectangle temp : var.getPixelBoxes()) {
-                if(hitBox.intersects(temp)) {       
-                    if((yRef+(width*4)) > var.getYRef()) {
-                        yRef = var.getYRef()-(width*4);
-                    }
-                    ground = true;
-                }    
-            }          
+            if(var.isSameLayer(this.layer)) {
+                for(Rectangle temp : var.getPixelBoxes()) {
+                    if(hitBox.intersects(temp)) {       
+                        if((yRef+(width*4)) > var.getYRef()) {
+                            yRef = var.getYRef()-(width*4);
+                        }
+                        ground = true;
+                    }    
+                }            
+            }             
         }
         if(!ground) {
             yRef+=16;
@@ -119,6 +121,10 @@ public class Monitor implements Picture,DefaultObject {
     @Override
     public Rectangle getHitBox() {
         return hitBox;
+    }
+    @Override
+    public boolean isSameLayer(int otherLayer) {
+        return otherLayer == this.layer;
     }
     @Override
     public String toString() {

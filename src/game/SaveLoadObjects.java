@@ -50,7 +50,7 @@ public class SaveLoadObjects {
         }
         return objects;
     }
-    public ArrayList<DefaultObject> saveCurrentRoom(RoomType roomType,ArrayList<Ground> groundTiles, ArrayList<DefaultObject> roomObjects) {
+    public void saveCurrentRoom(RoomType roomType,ArrayList<Ground> groundTiles, ArrayList<DefaultObject> roomObjects) {
         File file = new File("src/game/TempSave.txt");
         File saveRoom = new File("src/game/saveRoomTemp.txt");
         try {
@@ -80,15 +80,11 @@ public class SaveLoadObjects {
             bw.flush();
             bw.close();
             file.delete();
-            saveRoom.renameTo(new File("src/game/TempSave.txt"));
-            objects.removeAll(objects);
-            roomObjects.removeAll(roomObjects);
-            groundTiles.removeAll(groundTiles);             
+            saveRoom.renameTo(new File("src/game/TempSave.txt"));          
         }
         catch(IOException e) {
             e.printStackTrace();
         }        
-        return roomObjects;
     }
     public void createMonitor(OverWorld overworld, Monitor.MonitorType monitorType, int layer, int xRef, int yRef) {
         Monitor monitor = new Monitor(overworld, monitorType,layer,xRef, yRef);

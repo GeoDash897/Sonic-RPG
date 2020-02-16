@@ -5,7 +5,6 @@
  */
 package game.overworld;
 
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.Comparator;
 
@@ -23,6 +22,7 @@ public interface DefaultObject {
     int getLength();
     int getWidth();
     int getLayer();
+    boolean isSameLayer(int otherLayer);
     Rectangle getHitBox();
     public static Comparator<DefaultObject> defaultObjectCompareLayer = new Comparator<DefaultObject>() {
 	    //Compares Student objects based on Student's year

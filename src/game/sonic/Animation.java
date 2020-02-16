@@ -224,6 +224,9 @@ public class Animation extends Sonic implements Picture {//This will control Son
         g2.drawImage(sonicPicture,xDrawSonic,yDrawSonic,sonicWidth,sonicWidth,this);
         g2.setColor(Color.black);
     }
+    public void setaddToPictureAL(boolean set) {
+        addToPictureAL = set;
+    }
     public int getAnimationNumber() {
         return animationNumber;
     }

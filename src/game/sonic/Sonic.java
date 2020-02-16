@@ -41,6 +41,9 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
             owa.standard(g2);
         }
     }
+    public void addToPictureALAgain() {
+        animation.setaddToPictureAL(false);
+    }
     public int getAreaNumber() {
         return area;
     }

@@ -55,7 +55,7 @@ public class Warp implements DefaultObject, Picture {
         if(sensor.intersects(hitBox)) {
             if(warpType == WarpType.WARP_NEXTROOM_FULL) {
                 if(overworld.getRoomsArrayList().get(positionOfCurrentRoom+1) != null) {
-                    OverWorld.setCurrentRoomType(overworld.getRoomsArrayList().get(positionOfCurrentRoom+1).getRoomType());
+                    overworld.setCurrentRoomType(overworld.getRoomsArrayList().get(positionOfCurrentRoom+1).getRoomType());
                 }
             }    
         }        
@@ -89,10 +89,13 @@ public class Warp implements DefaultObject, Picture {
     public int getLayer() {
         return layer;
     }
-
     @Override
     public Rectangle getHitBox() {
         return hitBox;
+    }
+    @Override
+    public boolean isSameLayer(int otherLayer) {
+        return otherLayer == this.layer;
     }
     @Override
     public String toString() {

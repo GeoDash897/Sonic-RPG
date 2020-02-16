@@ -84,12 +84,14 @@ public class NPC implements DefaultObject, Picture {
     public void action() {
         hitBox = new Rectangle(xRef,yRef,length*4,width*4);
         for(Ground var : currentRoom.getGroundArrayList()) {
-            if(hitBox.intersects(var.getPixelBox(0))) {       
-                if((yRef+(width*4)) > var.getYRef()) {
-                    yRef = var.getYRef()-(width*4);
-                }
-                ground = true;
-            }
+            if(var.isSameLayer(this.layer)) {
+                if(hitBox.intersects(var.getPixelBox(0))) {       
+                    if((yRef+(width*4)) > var.getYRef()) {
+                        yRef = var.getYRef()-(width*4);
+                    }
+                    ground = true;
+                }    
+            }           
         }
         if(!ground) {
             yRef+=16;
@@ -136,6 +138,10 @@ public class NPC implements DefaultObject, Picture {
     @Override
     public Rectangle getHitBox() {
         return hitBox;
+    }
+    @Override
+    public boolean isSameLayer(int otherLayer) {
+        return otherLayer == this.layer;
     }
     @Override
     public String toString() {

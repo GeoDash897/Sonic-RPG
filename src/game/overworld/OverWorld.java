@@ -20,6 +20,7 @@ public class OverWorld extends Game {
     private static ArrayList<Room> rooms = new ArrayList<Room>();
     private static boolean generateEverything = false;
     private static RoomType currentRoom = ROOM_SONIC_HOUSE;
+    private Sonic sonic;
     public void standard(Graphics2D g2) {
         if(generateEverything == false) {
             //Music.playTestAreaTheme(1, 0);    
@@ -30,7 +31,7 @@ public class OverWorld extends Game {
         else if(generateEverything == true) {
             getCurrentRoom().runRoom(g2);
             g2.drawString(""+currentRoom,300,200);
-            Sonic sonic = new Sonic();
+            sonic = new Sonic();
             sonic.setup(g2,this);
         }      
     }   
@@ -51,8 +52,11 @@ public class OverWorld extends Game {
         }
         return null;
     }
-    public static void setCurrentRoomType(RoomType newRoom) {
+    public void setCurrentRoomType(RoomType newRoom) {
+        getCurrentRoom().saveRoom();
         currentRoom = newRoom;
+        sonic = new Sonic();
+        sonic.addToPictureALAgain();
         OverWorldAction.setSPRoomSwitch(newRoom);
     }
     public void keyPressed(KeyEvent e) {
