@@ -14,7 +14,7 @@ import java.awt.Toolkit;
  *
  * @author GeoSonicDash
  */
-public class Spring extends OverWorld implements DefaultObject {
+public class Spring implements DefaultObject, Picture {
     private String group;
     private SpringType springType;
     private int xRef;
@@ -27,6 +27,7 @@ public class Spring extends OverWorld implements DefaultObject {
     private Rectangle hitBox;
     private Image springPicture;
     private OverWorld overworld;
+    private Room currentRoom;
     public Spring(OverWorld overworld, SpringType springType, int layer, int xRef, int yRef) {
         this.overworld = overworld;
         this.springType = springType;
@@ -39,6 +40,7 @@ public class Spring extends OverWorld implements DefaultObject {
     }
     @Override
     public void create() {
+        currentRoom = overworld.getCurrentRoom();
         if(springType == SpringType.SPRING_YELLOWUP) {
             springPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Yellow Spring Up_1.png");
         }
@@ -51,9 +53,8 @@ public class Spring extends OverWorld implements DefaultObject {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(springPicture, xRef, yRef, length*4, width*4,this);
-        //g2.fillRect(xRef+85, yRef+141, 128, 64);
-        g2.drawString(""+springAnimationTimer,1000,300);
+        g2.drawImage(springPicture, xRef, yRef, length*4, width*4,overworld);
+        g2.drawString("springAnimationTimer:"+springAnimationTimer,1000,300);
     }
 
     @Override
@@ -83,12 +84,13 @@ public class Spring extends OverWorld implements DefaultObject {
         }
         else if(springAnimationTimer == 25) {
             springAnimationTimer = 0;
+            if(springType == SpringType.SPRING_YELLOWUP) {
+                springPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Yellow Spring Up_1.png");
+            }
+            else if(springType == SpringType.SPRING_REDUP) {
+                springPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Red Spring Up_1.png");
+            }
         }
-    }
-
-    @Override
-    public void interactWithSonic(Rectangle sensor) {
-        springAnimationTimer = 1;
     }
     public int getSpringJumpValue() {
         int temp = 0;
@@ -100,10 +102,10 @@ public class Spring extends OverWorld implements DefaultObject {
         }
         return temp;
     }
-    @Override
     public String getGroup() {
         group = String.valueOf(springType).substring(0,String.valueOf(springType).indexOf("_"));
         return group;
+        
     }
 
     @Override
@@ -137,6 +139,11 @@ public class Spring extends OverWorld implements DefaultObject {
     }
     public String toString() {
         return "Spring: "+springType+" "+layer+" "+xRef+" "+yRef;
+    }
+
+    @Override
+    public void interactWithSonic(Rectangle sensor) {
+        springAnimationTimer = 1;
     }
     public enum SpringType {
         SPRING_YELLOWUP,

@@ -31,7 +31,7 @@ public class OverWorld extends Game {
             getCurrentRoom().runRoom(g2);
             g2.drawString(""+currentRoom,300,200);
             Sonic sonic = new Sonic();
-            sonic.setup(g2);
+            sonic.setup(g2,this);
         }      
     }   
     public void generate(Graphics2D g2) {      

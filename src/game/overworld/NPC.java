@@ -18,7 +18,7 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class NPC extends OverWorld implements DefaultObject{
+public class NPC implements DefaultObject, Picture {
     private String group;
     private NPCType npcType;
     private int xRef;
@@ -36,6 +36,7 @@ public class NPC extends OverWorld implements DefaultObject{
     private ArrayList<String> splitDescription;
     private String description;
     private OverWorld overworld;
+    private Room currentRoom;
     public NPC(OverWorld overworld, NPCType npcType, int layer, int xRef, int yRef) {
         this.overworld = overworld;
         this.npcType = npcType;
@@ -50,6 +51,7 @@ public class NPC extends OverWorld implements DefaultObject{
     }
     @Override
     public void create() {
+        currentRoom = overworld.getCurrentRoom();
         if(npcType == NPCType.NPC_SKELETON) {
             length = 30;
             width = 48;
@@ -74,15 +76,14 @@ public class NPC extends OverWorld implements DefaultObject{
             else if(right) {
                 npcPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Skeleton.png");
             }
-            g2.drawImage(npcPicture,xRef, yRef, length*4, width*4,this);
-            //g2.fillRect(xRef, yRef, length*4, width*4);
+            g2.drawImage(npcPicture,xRef, yRef, length*4, width*4,overworld);
         }
     }
 
     @Override
     public void action() {
         hitBox = new Rectangle(xRef,yRef,length*4,width*4);
-        for(Ground var : overworld.getCurrentRoom().getGroundArrayList()) {
+        for(Ground var : currentRoom.getGroundArrayList()) {
             if(hitBox.intersects(var.getPixelBox(0))) {       
                 if((yRef+(width*4)) > var.getYRef()) {
                     yRef = var.getYRef()-(width*4);

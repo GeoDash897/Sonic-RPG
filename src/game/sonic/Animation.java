@@ -5,6 +5,9 @@
  */
 package game.sonic;
 
+import game.overworld.OverWorld;
+import game.overworld.Picture;
+import game.overworld.Room;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -13,7 +16,9 @@ import java.awt.Toolkit;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
-public class Animation extends Sonic {//This will control Sonic's animations
+public class Animation extends Sonic implements Picture {//This will control Sonic's animations
+    private static int xDrawSonic;
+    private static int yDrawSonic;
     private static int animationTimer = 1;
     private static int animationNumber = 0;
     private static int animationReset = 0;
@@ -23,11 +28,17 @@ public class Animation extends Sonic {//This will control Sonic's animations
     private static int numberOfFrames = 0;
     private static int resetAnimationFrame = 1;
     private static int resetAnimationTimer = 0;
-    public static int direction = 1;
+    private static boolean addToPictureAL = false;
+    private static int direction = 1;
     private static Image sonicPicture;
-    public void standard(Graphics2D g2, int xCenterSonic, int yCenterSonic) {
-        int xDrawSonic = xCenterSonic - 144;
-        int yDrawSonic = yCenterSonic - 144;
+    public void standard(Graphics2D g2, Room currentRoom, int xCenterSonic, int yCenterSonic) {
+        if(!addToPictureAL) {
+            System.out.println("Code Ran Here");
+            currentRoom.addPicture(this);
+            addToPictureAL = true;
+        }
+        xDrawSonic = xCenterSonic - 144;
+        yDrawSonic = yCenterSonic - 144;
         switch (animationNumber) {
             case 0:              
                 animationTimerFrameSet = 10;
@@ -196,10 +207,7 @@ public class Animation extends Sonic {//This will control Sonic's animations
         if(animationTimer >= (animationTimerFrameSet*numberOfFrames)) {
             animationFrame = resetAnimationFrame;
             animationTimer = resetAnimationTimer;
-        }                    
-        g2.drawImage(sonicPicture,xDrawSonic,yDrawSonic,sonicWidth,sonicWidth,this);
-        g2.setColor(Color.black);
-        
+        }                            
     }
     public void setAnimationNumber(int newAnimation) {
         animationNumber = newAnimation;
@@ -210,6 +218,11 @@ public class Animation extends Sonic {//This will control Sonic's animations
             animationReset = 1;
         }
         System.out.println("Changed animation to "+newAnimation);
+    }
+    @Override
+    public void draw(Graphics2D g2) {
+        g2.drawImage(sonicPicture,xDrawSonic,yDrawSonic,sonicWidth,sonicWidth,this);
+        g2.setColor(Color.black);
     }
     public int getAnimationNumber() {
         return animationNumber;
@@ -224,6 +237,5 @@ public class Animation extends Sonic {//This will control Sonic's animations
     public String toString() {
         return "Sonic is playing animationNumber "+animationNumber+"; Current Frame: "+animationFrame+", Current AnimationTimer: "+
                 animationTimer;
-    }
-    
+    }    
 }

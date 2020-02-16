@@ -5,7 +5,6 @@
  */
 package game.overworld;
 
-import game.sonic.OverWorldAction;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -14,7 +13,7 @@ import java.awt.Rectangle;
  *
  * @author GeoSonicDash
  */
-public class Warp extends OverWorld implements DefaultObject {
+public class Warp implements DefaultObject, Picture {
     String group;
     private WarpType warpType;
     private int layer;
@@ -22,6 +21,7 @@ public class Warp extends OverWorld implements DefaultObject {
     private int yRef;
     private Rectangle hitBox;
     private OverWorld overworld;
+    private Room currentRoom;
     public Warp(OverWorld overworld, WarpType warpType, int layer, int xRef, int yRef) {
         this.overworld = overworld;
         this.warpType = warpType;
@@ -33,6 +33,7 @@ public class Warp extends OverWorld implements DefaultObject {
     
     @Override
     public void create() {
+        currentRoom = overworld.getCurrentRoom();
         if(warpType == WarpType.WARP_NEXTROOM_FULL) {
             hitBox = new Rectangle(xRef,yRef,25,1080);
         }
@@ -50,7 +51,7 @@ public class Warp extends OverWorld implements DefaultObject {
 
     @Override
     public void interactWithSonic(Rectangle sensor) {
-        int positionOfCurrentRoom = overworld.getRoomsArrayList().indexOf(overworld.getCurrentRoom());
+        int positionOfCurrentRoom = overworld.getRoomsArrayList().indexOf(currentRoom);
         if(sensor.intersects(hitBox)) {
             if(warpType == WarpType.WARP_NEXTROOM_FULL) {
                 if(overworld.getRoomsArrayList().get(positionOfCurrentRoom+1) != null) {
@@ -80,7 +81,10 @@ public class Warp extends OverWorld implements DefaultObject {
     public int getLength() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    @Override
+    public int getWidth() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     @Override
     public int getLayer() {
         return layer;

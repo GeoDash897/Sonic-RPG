@@ -6,8 +6,8 @@
 package game.sonic;
 import game.overworld.OverWorld;
 import game.items.*;
+import game.overworld.Room;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
@@ -24,22 +24,20 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     private static int defense;
     private static int speed;
     private static int area = 1;
-    private static int layer = 2;
+    private static int layer = 1;
     private static int owPowerUp = 0;
     private static boolean allowInput = true;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
-    private Inventory inventory;
-    private OverWorldAction owa;
-    private Animation animation;
-    public void setup(Graphics2D g2) {
+    private static OverWorldAction owa;
+    private static Animation animation;
+    private static Room currentRoom;
+    public void setup(Graphics2D g2, OverWorld overworld) {
         owa = new OverWorldAction();
-        inventory = new Inventory();
-        inventory.addItem(new Potion());
-        inventory.drawItem(0, g2);
         animation =  new Animation();
+        currentRoom = overworld.getCurrentRoom();
         if(!cutscene) {
-            animation.standard(g2,owa.getXCenterSonic(),owa.getYCenterSonic()); 
+            animation.standard(g2,currentRoom,owa.getXCenterSonic(),owa.getYCenterSonic()); 
             owa.standard(g2);
         }
     }
@@ -58,5 +56,4 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     public void increaseRings(int amount) {
         rings += amount;
     }
-
 }

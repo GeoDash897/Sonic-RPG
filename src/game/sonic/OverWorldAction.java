@@ -70,13 +70,12 @@ public class OverWorldAction extends Sonic {
     
     //Creates Animation object so Sonic's animations can be changed
     private Sonic sonic = new Sonic();
-    private OverWorld overworld;
+    private OverWorld overworld = new OverWorld();
     private Room currentRoom;
     private Animation animation = new Animation();
     private Inventory inventory;
     @Override
-    public void standard(Graphics2D g2) {  
-        overworld = new OverWorld();
+    public void standard(Graphics2D g2) {        
         currentRoom = overworld.getCurrentRoom();
         /*try {
             Thread.sleep(10);
@@ -202,8 +201,7 @@ public class OverWorldAction extends Sonic {
                 groundSpeed = 8 + (Math.floor(spindashCharge) / 2); //this would be negative if the character were facing left, of course    
             }           
         }        
-        if(springAnimation && ground) {
-            groundSpeed = 0;
+        if(springAnimation && ground) {            
             springAnimation = false;
         }
         //Animations:
@@ -340,7 +338,7 @@ public class OverWorldAction extends Sonic {
         for(Ground checkBoundary: currentRoom.getGroundArrayList()) {
             g2.setColor(Color.red);
             g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),checkBoundary.getLength()*4,4);        
-                if(checkBoundary.getAngle() != 0) {               
+                if(checkBoundary.getLayer() == sonic.getLayer() && checkBoundary.getAngle() != 0) {               
                     if(xBottomRight >= checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                     yBottomRight >= checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()){//Checks if  
                         //bottomRight sensor is with 64x64 tile (before calculations) and the tile is a slope
@@ -363,7 +361,7 @@ public class OverWorldAction extends Sonic {
                         bRCollide = 0;
                     }        
                 }                                                         
-                else if(checkBoundary.getAngle() == 0) {
+                else if(checkBoundary.getLayer() == sonic.getLayer() && checkBoundary.getAngle() == 0) {
                     if(xBottomRight > checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                         yBottomRight > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//checks if bottomRight sensor is 
                         //within tile (the +100 is to extend the tiles range downward since the sensors are lower than the tile's range when Sonic
@@ -389,7 +387,7 @@ public class OverWorldAction extends Sonic {
                 }             
         }
         for(Ground checkBoundary : currentRoom.getGroundArrayList()) {         
-                if(checkBoundary.getAngle() != 0) {              
+                if(checkBoundary.getLayer() == sonic.getLayer() && checkBoundary.getAngle() != 0) {              
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                            yBottomLeft > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//Checks if  
                         //bottomRight sensor is with 64x64 tile (before calculations) and the tile is a slope
@@ -412,7 +410,7 @@ public class OverWorldAction extends Sonic {
                         bLCollide = 0;
                     }
                 }
-                else if(checkBoundary.getAngle() == 0) {
+                else if(checkBoundary.getLayer() == sonic.getLayer() && checkBoundary.getAngle() == 0) {
                     if(xBottomLeft > checkBoundary.getXRef() && xBottomLeft < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                         yBottomLeft > checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()) {//checks if bottomRight sensor is 
                         //within tile (the +100 is to extend the tiles range downward since the sensors are lower than the tile's range when Sonic
@@ -471,7 +469,7 @@ public class OverWorldAction extends Sonic {
         }            
         //Controls collisions with the middle sensors
         for(Ground checkBoundary: currentRoom.getGroundArrayList()) {
-            if(middleLeft.intersects(checkBoundary.getPixelBox(checkBoundary.getPixelBoxes().size()-1))) {
+            if(checkBoundary.getLayer() == sonic.getLayer() && middleLeft.intersects(checkBoundary.getPixelBox(checkBoundary.getPixelBoxes().size()-1))) {
                 if(xSpeed < 0) {
                     spindashCharge = 0;
                     groundSpeed = 0;
@@ -485,7 +483,7 @@ public class OverWorldAction extends Sonic {
             }
         }
         for(Ground checkBoundary: currentRoom.getGroundArrayList()) {         
-            if(middleLeft.intersects(checkBoundary.getPixelBox(0))) {
+            if(checkBoundary.getLayer() == sonic.getLayer() && middleRight.intersects(checkBoundary.getPixelBox(0))) {
                 if(xSpeed > 0) {
                     spindashCharge = 0;
                     groundSpeed = 0;
@@ -500,25 +498,29 @@ public class OverWorldAction extends Sonic {
         }
         if(ySpeed < 0) {
             for(Ground tile : currentRoom.getGroundArrayList()) {
-                for(Rectangle temp : tile.getPixelBoxes()) {
-                    if(topLeft.intersects(temp)) {
-                        if(jump == 1) {
-                            ySpeed = 1;
-                            jump = 2;    
-                        }
-                        break;
-                    }   
-                }
+                if(tile.getLayer() == sonic.getLayer()) {
+                    for(Rectangle temp : tile.getPixelBoxes()) {
+                        if(topLeft.intersects(temp)) {
+                            if(jump == 1) {
+                                ySpeed = 1;
+                                jump = 2;    
+                            }
+                            break;
+                        }   
+                    }    
+                }               
             }
             for(Ground tile : currentRoom.getGroundArrayList()) {
-                for(Rectangle temp : tile.getPixelBoxes()) {
-                    if(topRight.intersects(temp)) {
-                        if(jump == 1) {
-                            ySpeed = 1;
-                            jump = 2;    
-                        }
-                        break;
-                    }   
+                if(tile.getLayer() == sonic.getLayer()) {
+                    for(Rectangle temp : tile.getPixelBoxes()) {
+                        if(topRight.intersects(temp)) {
+                            if(jump == 1) {
+                                ySpeed = 1;
+                                jump = 2;    
+                            }
+                            break;
+                        }   
+                    }    
                 }
             }
         }  
@@ -571,8 +573,10 @@ public class OverWorldAction extends Sonic {
                     break;
                 case "SPRING":
                     intersectWithSpring(currentRoom.getDefaultObjectArrayList().get(i));
+                    break;
                 case "WARP":
-                    intersectWithWarp(currentRoom.getDefaultObjectArrayList().get(i));    
+                    intersectWithWarp(currentRoom.getDefaultObjectArrayList().get(i));
+                    break;
                 default:
                     break;
             }
@@ -586,31 +590,28 @@ public class OverWorldAction extends Sonic {
     }
     public void intersectWithSpring(DefaultObject var) {
         Spring spring = (Spring) var;
-        if(bottomLeft.intersects(spring.getHitBox())) {
+        checkSideCollision(false,middleLeft,spring.getHitBox());
+        checkSideCollision(true,middleRight,spring.getHitBox());
+        if(bottomLeft.intersects(spring.getHitBox()) && !middleRight.intersects(spring.getHitBox()) && !middleLeft.intersects(spring.getHitBox())) {
             if(ySpeed >= 0) {//Checks for collision if Sonic is falling/on the ground and not when he is jumping 
                 spindashCharge = 0;       
                 spring.interactWithSonic(bottomLeft);
-                ySpeed = spring.getSpringJumpValue();
                 jump = 0;
-                if(ySpeed < 0) {
-                    springAnimation = true;
-                }
-                
+                springAnimation = true;
+                groundSpeed = 0;
+                ySpeed = spring.getSpringJumpValue();
             }
         }
-        if(bottomRight.intersects(spring.getHitBox())) {
+        if(bottomRight.intersects(spring.getHitBox()) && !middleRight.intersects(spring.getHitBox()) && !middleLeft.intersects(spring.getHitBox())) {
             if(ySpeed >= 0) {//Checks for collision if Sonic is falling/on the ground and not when he is jumping         
                 spindashCharge = 0;
                 spring.interactWithSonic(bottomRight);
-                ySpeed = spring.getSpringJumpValue();
                 jump = 0;
-                if(ySpeed < 0) {
-                    springAnimation = true;
-                }
+                springAnimation = true;
+                groundSpeed = 0;
+                ySpeed = spring.getSpringJumpValue();
             }
         }
-        checkSideCollision(false,middleLeft,spring.getHitBox());
-        checkSideCollision(true,middleRight,spring.getHitBox());
     }
     public void intersectWithSign(DefaultObject var, Graphics2D g2) {
         int xMiddleLeft = (int) middleLeft.getX();//gets the x position of bottomLeft
@@ -712,9 +713,9 @@ public class OverWorldAction extends Sonic {
         if(!right) {
             if(sensor.intersects(collidingObject)) {
                 if(xSpeed < 0) {
+                    xSpeed = 0;
                     spindashCharge = 0;
-                    groundSpeed = 0;
-                    xSpeed = 0;                    
+                    groundSpeed = 0;                                       
                 }
                 mLCollide = 1;
             }
@@ -722,9 +723,9 @@ public class OverWorldAction extends Sonic {
         if(right) {
             if(sensor.intersects(collidingObject)) {
                 if(xSpeed > 0) {
+                    xSpeed = 0;
                     spindashCharge = 0;
-                    groundSpeed = 0;
-                    xSpeed = 0;                    
+                    groundSpeed = 0;                                        
                 }
                 mRCollide = 1;
             }
@@ -895,7 +896,7 @@ public class OverWorldAction extends Sonic {
     public void zPress() {//zPressTimer is used for variables that increase everytime the key is pressed (so it won't increase while the 
         //button is held) - used for mashing the button
         if(spindash == 0) {
-            if(jump == 0 && ground && duck != 1) {//If Sonic is on the ground, is not currently jumping or falling from jump (jumped already)
+            if(jump == 0 && ground && duck != 1 && !springAnimation) {//If Sonic is on the ground, is not currently jumping or falling from jump (jumped already)
                 //and is not ducking (since that will cause sonic to spindash), jump
                 jump = 1;
             }
@@ -919,7 +920,7 @@ public class OverWorldAction extends Sonic {
         }
     }
     public void zReleased() {
-        if(ySpeed < -4) {
+        if(ySpeed < -4 && !springAnimation) {
             ySpeed = -4;
         }
         if(jump == 1) {

@@ -15,7 +15,7 @@ import java.awt.Rectangle;
  *
  * @author GeoSonicDash
  */
-public class Sign extends OverWorld implements DefaultObject {
+public class Sign implements DefaultObject, Picture {
     private String group;
     private SignType signType;
     private int xRef;
@@ -31,6 +31,7 @@ public class Sign extends OverWorld implements DefaultObject {
     private Image xKey;
     private String description;
     private OverWorld overworld;
+    private Room currentRoom;
     public Sign(OverWorld overworld, SignType signType, int layer, int xRef, int yRef) {
         this.overworld = overworld;
         this.signType = signType;
@@ -42,6 +43,7 @@ public class Sign extends OverWorld implements DefaultObject {
     }
     @Override
     public void create() {
+        currentRoom = overworld.getCurrentRoom();
         if(signType == SignType.SIGN_STDUKEDESERT) {
             //insert picture here later
             length = 16;

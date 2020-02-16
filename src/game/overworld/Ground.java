@@ -16,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class Ground extends OverWorld implements DefaultObject {
+public class Ground extends OverWorld implements DefaultObject, Picture {
     private GroundType groundType;
     private int xRef;
     private int yRef;
@@ -27,18 +27,20 @@ public class Ground extends OverWorld implements DefaultObject {
     private int direction;
     private boolean loadFile;
     private Image groundPicture;
-    private ArrayList<Integer> heightValues = new ArrayList<Integer>();
-    private ArrayList<Rectangle> pixelBoxes = new ArrayList<Rectangle>();
+    private ArrayList<Integer> heightValues;
+    private ArrayList<Rectangle> pixelBoxes;
     public Ground(GroundType groundType ,int layer, int xRef, int yRef, int direction) {
         this.groundType = groundType;
+        this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
         this.direction = direction;
-        this.loadFile = false;
+        this.heightValues = new ArrayList<Integer>();
+        this.pixelBoxes = new ArrayList<Rectangle>();
+        create();
     }
     public void create() {
         //0 = left, 1 = right
-        if(!loadFile) {
             if(groundType == GroundType.GRD_SONICHOUSE_WOODPLANK) {
                 length = 16;
                 width = 16;
@@ -70,6 +72,13 @@ public class Ground extends OverWorld implements DefaultObject {
                 groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic's Bed.png");
                 setSonicBedHeightValues();
             }
+            else if(groundType == GroundType.GRD_SONICHOUSE_FOREGPILLAR) {
+                length = 16;
+                width = 320;
+                angle = 0;
+                groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Pillar.png");
+                setBlock();
+            }
             if(angle == 45) {
                 if(direction == 0) {
                     for(int i = 0; i < 16; i++ ) {                
@@ -83,14 +92,12 @@ public class Ground extends OverWorld implements DefaultObject {
                         pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
                     }  
                 }                      
-            }
-        }
-        loadFile = true;       
+            }      
     }
     private void setBlock() {
         for(int i = 0; i < length; i ++) {
             heightValues.add(width);
-            pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
+            pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+(width*4)-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
         }
     }
     private void setSonicBedHeightValues() {
@@ -127,13 +134,15 @@ public class Ground extends OverWorld implements DefaultObject {
             pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+(width*4)-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
         }
     }
-    public void draw(Graphics2D g2) {
-        g2.setColor(Color.BLACK);      
+    @Override
+    public void draw(Graphics2D g2) {  
         g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
     }
+    @Override
     public int getXRef() {
         return xRef;
     }
+    @Override
     public int getYRef() {
         return yRef;
     }
@@ -143,9 +152,11 @@ public class Ground extends OverWorld implements DefaultObject {
     public int getDirection() {
         return direction;
     }
+    @Override
     public int getLength() {
         return length;
     }
+    @Override
     public int getWidth() {
         return width;
     }
@@ -186,10 +197,15 @@ public class Ground extends OverWorld implements DefaultObject {
     public Rectangle getHitBox() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    @Override
+    public String toString() {
+        return "GroundType:"+groundType.toString()+", Layer: "+layer;
+    }
     public enum GroundType {
         GRD_SONICHOUSE_WOODPLANK,
         GRD_SONICHOUSE_WOODSLOPE,
         GRD_SONICHOUSE_BIGWOODPLANK,
-        GRD_SONICHOUSE_SONICBED
+        GRD_SONICHOUSE_SONICBED,
+        GRD_SONICHOUSE_FOREGPILLAR
     }
 }

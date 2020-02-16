@@ -15,7 +15,7 @@ import java.awt.Toolkit;
  *
  * @author GeoSonicDash
  */
-public class Monitor extends OverWorld implements DefaultObject{
+public class Monitor implements Picture,DefaultObject {
     private String group; 
     private MonitorType monitorType;
     private int xRef;
@@ -52,12 +52,12 @@ public class Monitor extends OverWorld implements DefaultObject{
     }
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(monitorPicture, xRef, yRef, length*4, width*4, this);
+        g2.drawImage(monitorPicture, xRef, yRef, length*4, width*4, overworld);
     }
     @Override
     public void action() {
         hitBox = new Rectangle(xRef, yRef, length*4, width*4);
-        for(Ground var : overworld.getCurrentRoom().getGroundArrayList()) {
+        for(Ground var : currentRoom.getGroundArrayList()) {
             for(Rectangle temp : var.getPixelBoxes()) {
                 if(hitBox.intersects(temp)) {       
                     if((yRef+(width*4)) > var.getYRef()) {
