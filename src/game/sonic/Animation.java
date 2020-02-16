@@ -8,6 +8,7 @@ package game.sonic;
 import game.overworld.OverWorld;
 import game.overworld.Picture;
 import game.overworld.Room;
+import static game.sonic.Animation.SonicAnimation.ANIMATION_SONIC_STAND;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -20,7 +21,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
     private static int xDrawSonic;
     private static int yDrawSonic;
     private static int animationTimer = 1;
-    private static int animationNumber = 0;
+    private static SonicAnimation animationNumber = SonicAnimation.ANIMATION_SONIC_STAND;
     private static int animationReset = 0;
     private static int animationFrame = 1;
     private static int sonicWidth = 288;
@@ -40,7 +41,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
         xDrawSonic = xCenterSonic - 144;
         yDrawSonic = yCenterSonic - 144;
         switch (animationNumber) {
-            case 0:              
+            case ANIMATION_SONIC_STAND:              
                 animationTimerFrameSet = 10;
                 numberOfFrames = 1;
                 resetAnimationFrame = 1;
@@ -52,7 +53,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Wait_"+animationFrame+".png");
                 }   
                 break;
-            case 1:               
+            case ANIMATION_SONIC_WAIT:               
                 animationTimerFrameSet = 30;
                 numberOfFrames = 6;
                 resetAnimationFrame = 5;
@@ -64,7 +65,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Wait_"+animationFrame+".png");
                 }   
                 break;
-            case 2:               
+            case ANIMATION_SONIC_WALK:               
                 animationTimerFrameSet = 30;
                 numberOfFrames = 8;
                 resetAnimationFrame = 1;
@@ -76,7 +77,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Walk_"+animationFrame+".png"); 
                 }               
                 break;
-            case 3:               
+            case ANIMATION_SONIC_RUN:               
                 animationTimerFrameSet = 15;
                 numberOfFrames = 4;
                 resetAnimationFrame = 1;
@@ -88,21 +89,21 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Run_"+animationFrame+".png");
                 }   
                 break;
-            case 4:               
+            case ANIMATION_SONIC_TRIPA_LEFT:               
                 animationTimerFrameSet = 25;
                 numberOfFrames = 3;
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Trip A_"+animationFrame+".png");
                 break;
-            case 5:               
+            case ANIMATION_SONIC_TRIPA_RIGHT:               
                 animationTimerFrameSet = 25;
                 numberOfFrames = 3;
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Trip A_"+animationFrame+".png");
                 break;
-            case 7:              
+            case ANIMATION_SONIC_JUMP:              
                 animationTimerFrameSet = 10;
                 numberOfFrames = 8;
                 resetAnimationFrame = 1;
@@ -114,7 +115,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Jump_"+animationFrame+".png");
                 }
                 break;
-            case 8:
+            case ANIMATION_SONIC_DUCK:
                 animationTimerFrameSet = 50;
                 numberOfFrames = 2;
                 resetAnimationFrame = 2;
@@ -126,7 +127,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Duck_"+animationFrame+".png");
                 }
                 break;
-            case 9:
+            case ANIMATION_SONIC_SKID:
                 animationTimerFrameSet = 10;
                 numberOfFrames = 1;
                 resetAnimationFrame = 1;
@@ -138,7 +139,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Skid_"+animationFrame+".png");
                 }
                 break;
-            case 10:
+            case ANIMATION_SONIC_SPINDASH:
                 animationTimerFrameSet = 20;
                 numberOfFrames = 6;
                 resetAnimationFrame = 1;
@@ -150,7 +151,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Spindash_"+animationFrame+".png");
                 }
                 break;
-            case 11:
+            case ANIMATION_SONIC_SLEEP:
                 animationTimerFrameSet = 50;
                 numberOfFrames = 4;
                 resetAnimationFrame = 4;
@@ -162,21 +163,21 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Sleep_"+animationFrame+".png");
                 }
                 break;
-            case 13:                
+            case ANIMATION_SONIC_PUSH_LEFT:                
                 animationTimerFrameSet = 40;
                 numberOfFrames = 4;
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Push_"+animationFrame+".png");
                 break;
-            case 14:               
+            case ANIMATION_SONIC_PUSH_RIGHT:               
                 animationTimerFrameSet = 40;
                 numberOfFrames = 4;
                 resetAnimationFrame = 1;
                 resetAnimationTimer = 1;
                 sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Push_"+animationFrame+".png");
                 break;
-            case 15:               
+            case ANIMATION_SONIC_SPRING:               
                 animationTimerFrameSet = 10;
                 numberOfFrames = 1;
                 resetAnimationFrame = 1;
@@ -188,7 +189,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Spring_"+animationFrame+".png");
                 }                
                 break;
-            case 16:               
+            case ANIMATION_SONIC_BATTLE_IDLE:               
                 animationTimerFrameSet = 30;
                 numberOfFrames = 30;
                 resetAnimationFrame = 1;
@@ -198,7 +199,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
             default:
                 break;
         }
-        if(animationNumber != 0) {
+        if(animationNumber != ANIMATION_SONIC_STAND) {
             animationTimer++;            
         }
         if(animationTimer%animationTimerFrameSet == 0) {
@@ -209,7 +210,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
             animationTimer = resetAnimationTimer;
         }                            
     }
-    public void setAnimationNumber(int newAnimation) {
+    public void setSonicAnimation(SonicAnimation newAnimation) {
         animationNumber = newAnimation;
         animationReset = 0;
         if(animationReset == 0) {
@@ -227,7 +228,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
     public void setaddToPictureAL(boolean set) {
         addToPictureAL = set;
     }
-    public int getAnimationNumber() {
+    public SonicAnimation getAnimationNumber() {
         return animationNumber;
     }
     public int getDirection() {
@@ -240,5 +241,22 @@ public class Animation extends Sonic implements Picture {//This will control Son
     public String toString() {
         return "Sonic is playing animationNumber "+animationNumber+"; Current Frame: "+animationFrame+", Current AnimationTimer: "+
                 animationTimer;
-    }    
+    }  
+    public enum SonicAnimation {
+        ANIMATION_SONIC_STAND,
+        ANIMATION_SONIC_WAIT,
+        ANIMATION_SONIC_WALK,
+        ANIMATION_SONIC_RUN,
+        ANIMATION_SONIC_TRIPA_LEFT,
+        ANIMATION_SONIC_TRIPA_RIGHT,
+        ANIMATION_SONIC_JUMP,
+        ANIMATION_SONIC_DUCK,
+        ANIMATION_SONIC_SKID,
+        ANIMATION_SONIC_SPINDASH,
+        ANIMATION_SONIC_SLEEP,
+        ANIMATION_SONIC_PUSH_LEFT,
+        ANIMATION_SONIC_PUSH_RIGHT,
+        ANIMATION_SONIC_SPRING,
+        ANIMATION_SONIC_BATTLE_IDLE
+    }
 }
