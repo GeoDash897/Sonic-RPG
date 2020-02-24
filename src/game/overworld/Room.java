@@ -10,10 +10,9 @@ import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_BIGWOODPLANK;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_FOREGPILLAR;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
-import java.awt.Color;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  *
@@ -29,9 +28,9 @@ public class Room {
     public Room(OverWorld overworld, RoomType roomType) {
         this.overworld = overworld;
         this.roomType = roomType;       
-        groundTiles = new ArrayList<Ground>();
-        objects = new ArrayList<DefaultObject>();
-        pictures = new ArrayList<Picture>();
+        this.groundTiles = new ArrayList<Ground>();
+        this.objects = new ArrayList<DefaultObject>();
+        this.pictures = new ArrayList<Picture>();
         createRoom();
     }
     private void createRoom() {
@@ -44,7 +43,8 @@ public class Room {
             }
             createTile(GRD_SONICHOUSE_BIGWOODPLANK,1,0,664,1);           
             createTile(GRD_SONICHOUSE_SONICBED,1,64,525,1);
-            createTile(GRD_SONICHOUSE_FOREGPILLAR, 2, 800, 400, 1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 575, 580, 1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 637, 520, 1);
         }
         else if(roomType == RoomType.ROOM_SONIC_TEST) {
             createTile(GRD_SONICHOUSE_BIGWOODPLANK,1,0,664,1);          

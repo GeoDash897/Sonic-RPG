@@ -136,7 +136,10 @@ public class Ground extends OverWorld implements Picture {
     }
     @Override
     public void draw(Graphics2D g2) {  
-        g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
+        for(Rectangle temp : pixelBoxes) {
+            g2.draw(temp);
+        }
+        //g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
     }
     public int getXRef() {
         return xRef;
