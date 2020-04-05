@@ -7,12 +7,12 @@ package game.overworld;
 
 import game.SaveLoadObjects;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_BIGWOODPLANK;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_FOREGPILLAR;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -21,13 +21,15 @@ import java.util.ArrayList;
 public class Room {
     RoomType roomType;
     private ArrayList<Ground> groundTiles;
+    private ArrayList<Map<Integer, Ground>> groundGrid;
     private ArrayList<DefaultObject> objects;
     private ArrayList<Picture> pictures;
     private SaveLoadObjects slo = new SaveLoadObjects();
     private OverWorld overworld;
     public Room(OverWorld overworld, RoomType roomType) {
         this.overworld = overworld;
-        this.roomType = roomType;       
+        this.roomType = roomType;   
+        this.groundGrid = new ArrayList<Map<Integer, Ground>>();
         this.groundTiles = new ArrayList<Ground>();
         this.objects = new ArrayList<DefaultObject>();
         this.pictures = new ArrayList<Picture>();
@@ -35,16 +37,26 @@ public class Room {
     }
     private void createRoom() {
         if(roomType == RoomType.ROOM_SONIC_HOUSE) {
-            for(int i = 0; i < 11; i ++) {
-                createTile(GRD_SONICHOUSE_WOODPLANK,1,0,-36+(i*64),1);
-            }
             for(int i = 0; i < 24; i ++) {
-                createTile(GRD_SONICHOUSE_WOODPLANK,1,64+(i*64),0,1);
+                createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),0,1);
             }
-            createTile(GRD_SONICHOUSE_BIGWOODPLANK,1,0,664,1);           
-            createTile(GRD_SONICHOUSE_SONICBED,1,64,525,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 575, 580, 1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 637, 520, 1);
+            for(int i = 0; i < 11; i ++) {
+                createTile(GRD_SONICHOUSE_WOODPLANK,1,0,0+(i*64),1);
+            }  
+            for(int i = 0; i < 24; i ++) {
+                createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),704,1);
+            }    
+            for(int i = 0; i < 24; i ++) {
+                createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),768,1);
+            }
+            //createTile(GRD_SONICHOUSE_SONICBED,1,64,525,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 576, 640, 1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 640, 576, 1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 704, 512, 1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,576,704,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,640,640,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,704,576,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,768,512,1);
         }
         else if(roomType == RoomType.ROOM_SONIC_TEST) {
             createTile(GRD_SONICHOUSE_BIGWOODPLANK,1,0,664,1);          
@@ -54,9 +66,9 @@ public class Room {
         }
     }
     public void runRoom(Graphics2D g2) {
-        for(int i = 0; i < objects.size(); i++) {
+        /*for(int i = 0; i < objects.size(); i++) {
             g2.drawString(objects.get(i).toString(),500, 100+(25*i));
-        }       
+        } */    
         for(DefaultObject obj : objects) {       
             obj.action();
         }          
@@ -66,9 +78,18 @@ public class Room {
         slo.saveCurrentRoom(roomType, groundTiles, objects);
     }
     public void createTile(Ground.GroundType groundType, int layer, int xRef, int yRef,int direction) {//Actually creates the Tile Objects and adds it to the arrayList
+        int xIndex = xRef/64;
+        int yIndex = yRef/64;
         Ground ground = new Ground(groundType,layer,xRef,yRef,direction);
+        if(xIndex > groundGrid.size()-1) {//X Plane
+            groundGrid.add(new HashMap<Integer, Ground>());
+        }
+        groundGrid.get(xIndex).put(yIndex, ground);//Y Plane
         groundTiles.add(ground);  
         pictures.add(ground);
+    }
+    public ArrayList<Map<Integer, Ground>> getGroundGridArrayList() {
+        return groundGrid;
     }
     public ArrayList<Ground> getGroundArrayList() {
         return groundTiles;

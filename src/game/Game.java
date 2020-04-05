@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:11/29/19
 */
@@ -56,7 +55,6 @@ public class Game extends JFrame implements KeyListener, ActionListener {
         } catch (FontFormatException | IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         } 
-        ImageIO.setUseCache(false);
     }//close main
 /***********************************************************/
     public class JP extends JPanel {//start JPanel CLass
