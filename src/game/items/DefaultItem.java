@@ -9,7 +9,7 @@ import java.awt.Image;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
-public interface DefaultItem {//This sets the default methods for every item
+public interface DefaultItem {
     public int getItemID();
     public String getName(); 
     public String getItemDescription();

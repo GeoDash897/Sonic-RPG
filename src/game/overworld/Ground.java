@@ -18,6 +18,8 @@ import java.util.ArrayList;
  */
 public class Ground extends OverWorld implements Picture {
     private GroundType groundType;
+    private int xIndex;
+    private int yIndex;
     private int xRef;
     private int yRef;
     private int length;
@@ -26,6 +28,7 @@ public class Ground extends OverWorld implements Picture {
     private int angle;
     private int direction;
     private boolean loadFile;
+    private Color boundary;
     private Image groundPicture;
     private ArrayList<Integer> heightValues;
     private ArrayList<Rectangle> pixelBoxes;
@@ -41,6 +44,12 @@ public class Ground extends OverWorld implements Picture {
     }
     public void create() {
         //0 = left, 1 = right
+            int r = (int)(Math.random() * ((255 - 0) + 1)) + 0;
+            int g = (int)(Math.random() * ((255 - 0) + 1)) + 0;
+            int b = (int)(Math.random() * ((255 - 0) + 1)) + 0;
+            xIndex = xRef/64;
+            yIndex = yRef/64;
+            boundary = new Color(r, g, b);
             if(groundType == GroundType.GRD_SONICHOUSE_WOODPLANK) {
                 length = 16;
                 width = 16;
@@ -136,9 +145,15 @@ public class Ground extends OverWorld implements Picture {
     }
     @Override
     public void draw(Graphics2D g2) {  
+        g2.setColor(Color.CYAN);
         for(Rectangle temp : pixelBoxes) {
             g2.draw(temp);
         }
+        g2.setColor(boundary);
+        g2.fillRect(xRef, yRef, 64, 4);
+        g2.fillRect(xRef, yRef+60, 64, 4);
+        g2.fillRect(xRef, yRef, 4, 64);
+        g2.fillRect(xRef+60, yRef, 4, 64);
         //g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
     }
     public int getXRef() {
@@ -167,10 +182,6 @@ public class Ground extends OverWorld implements Picture {
     public boolean isSameLayer(int otherLayer) {
         return otherLayer == this.layer;
     }
-    @Override
-    public String toString() {
-        return "GroundType:"+groundType.toString()+", Layer: "+layer;
-    }
     public ArrayList<Integer> getHeightValues() {
         return heightValues;
     }
@@ -182,7 +193,86 @@ public class Ground extends OverWorld implements Picture {
     }
     public ArrayList<Rectangle> getPixelBoxes() {
         return pixelBoxes;
-    }   
+    }
+    //Compares tiles in same column
+    public static Ground compareSCTile(int xBottomSensor, Ground tile1, Ground tile2) {
+        //Change it so it initially sets each rectangle to null, this changes if this or other is not null (and gets rect)
+        Rectangle rectTile1 = null;
+        Rectangle rectTile2 = null;
+        if(tile1 != null) {
+            int heightIndex = (int) Math.abs((xBottomSensor-tile1.getXRef())/4);
+            rectTile1 = tile1.getPixelBox(heightIndex);
+        }
+        if(tile2 != null) {
+            int heightIndex = (int) Math.abs((xBottomSensor-tile2.getXRef())/4);
+            rectTile2 = tile2.getPixelBox(heightIndex);
+        }
+        /*System.out.println("rectTile1: "+rectTile1);
+        System.out.println("rectTile2: "+rectTile2);*/
+        /*If the rectangle is null, that means that: 
+        1. the specific index of a tile (that exists) doesn't have a rectangle
+        2. the tile does not exist
+        */
+        if(rectTile1 != null && rectTile2 != null) {           
+            if((int) rectTile1.getY() < (int) rectTile2.getY()) {
+                return tile1;
+            }
+            else if((int) rectTile1.getY() > (int) rectTile2.getY()) {
+                return tile2;
+            }
+        }
+        else if(rectTile1 != null && rectTile2 == null) {
+            return tile1;
+        }
+        else if(rectTile1 == null && rectTile2 != null) {
+            return tile2;
+        }
+        return null;       
+    }
+    public static Ground compareDCTile(int xBottomLeft, int xBottomRight, Ground left, Ground right) {
+        //Change it so it initially sets each rectangle to null, this changes if this or other is not null (and gets rect)
+        Rectangle rectTile1 = null;
+        Rectangle rectTile2 = null;
+        if(left != null) {
+            int heightIndex = (int) Math.abs((xBottomLeft-left.getXRef())/4);
+            if(heightIndex == 16) {
+                heightIndex = 15;
+            }
+            rectTile1 = left.getPixelBox(heightIndex);
+        }
+         if(right != null) {
+            int heightIndex = (int) Math.abs((xBottomRight-right.getXRef())/4);
+            if(heightIndex == 16) {
+                heightIndex = 15;
+            }
+            rectTile2 = right.getPixelBox(heightIndex);
+        }
+        /*If the rectangle is null, that means that: 
+        1. the specific index of a tile (that exists) doesn't have a rectangle
+        2. the tile does not exist
+        */
+        if(rectTile1 != null && rectTile2 != null) {
+            if((int) rectTile1.getY() < (int) rectTile2.getY()) {
+                return left;
+            }
+            else {
+                return right;
+            }
+        }
+        else if(rectTile1 != null && rectTile2 == null) {
+            return left;
+        }
+        else if(rectTile1 == null && rectTile2 != null) {
+            return right;
+        }
+        else {
+            return null;
+        }    
+    }
+    @Override
+    public String toString() {
+        return "xIndex: "+xIndex+", yIndex: "+yIndex+", GroundType:"+groundType.toString()+", Layer: "+layer;
+    }
     public enum GroundType {
         GRD_SONICHOUSE_WOODPLANK,
         GRD_SONICHOUSE_WOODSLOPE,

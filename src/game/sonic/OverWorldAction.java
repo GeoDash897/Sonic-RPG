@@ -13,6 +13,7 @@ import game.sonic.Animation.SonicAnimation;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 /**
  *
@@ -41,6 +42,7 @@ public class OverWorldAction extends Sonic {
     private static double spindashCharge = 0;//Controls how fast Sonic moves in the xSpeed after being released from the spindash
     private static boolean springAnimation = false;
     private static int waitTimer = 0;//Increases when no keys are being pressed, when it equals a certain number, Sonic's waiting animation plays
+    private static boolean canMove = false;
     //Physic variables
     private static double AIR = 0.09375;
     private static double GRAVITY = 0.21875;
@@ -76,7 +78,7 @@ public class OverWorldAction extends Sonic {
     private Animation animation = new Animation();
     private Inventory inventory;
     @Override
-    public void standard(Graphics2D g2) {        
+    public void standard(Graphics2D g2) {  
         currentRoom = overworld.getCurrentRoom();
         /*try {
             Thread.sleep(10);
@@ -128,8 +130,7 @@ public class OverWorldAction extends Sonic {
             middleRight = new Rectangle(xDrawCenterSonic+4,ySpriteCenterSonic,40,4); 
             topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//Creates the topLeft and topRight sensors (don't change like the       
             topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do)     
-        }
-        
+        }      
         collisionCheck(g2);//Checks for collisions, gets and uses information from tiles
         checkPowerUp();       
         //Controls gravity + xSpeed and ySpeed when Sonic is not on ground
@@ -192,7 +193,7 @@ public class OverWorldAction extends Sonic {
         else {
             spindashCharge = 0;
         }           
-        if(spindash == 0 && spindashCharge > 0) {//Changes Sonic to rolling after he is released from the spindash and calculates his groundSpeed
+        if(mLCollide == 0 && mRCollide == 0 && spindash == 0 && spindashCharge > 0) {//Changes Sonic to rolling after he is released from the spindash and calculates his groundSpeed
             //based on how much the spindash was charged for + his direction
             duck = 2;
             if(animation.getDirection() == 0) {
@@ -201,7 +202,12 @@ public class OverWorldAction extends Sonic {
             else if(animation.getDirection() == 1) {
                 groundSpeed = 8 + (Math.floor(spindashCharge) / 2); //this would be negative if the character were facing left, of course    
             }           
-        }        
+        }  
+        else if((mLCollide == 1 || mRCollide == 1) && spindash == 0 && spindashCharge > 0){
+            spindashCharge = 0;
+            groundSpeed = 0;
+            xSpeed = 0;
+        }
         if(springAnimation && ground) {            
             springAnimation = false;
         }
@@ -337,7 +343,7 @@ public class OverWorldAction extends Sonic {
         int tileDirection = 0;
         for(Ground checkBoundary: currentRoom.getGroundArrayList()) {
             g2.setColor(Color.red);
-            g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),checkBoundary.getLength()*4,4);        
+            //g2.fillRect((int)checkBoundary.getXRef(),(int)checkBoundary.getYRef(),checkBoundary.getLength()*4,4);        
                 if(checkBoundary.isSameLayer(sonic.getLayer()) && checkBoundary.getAngle() != 0) {               
                     if(xBottomRight >= checkBoundary.getXRef() && xBottomRight < checkBoundary.getXRef()+checkBoundary.getLength()*4 && 
                     yBottomRight >= checkBoundary.getYRef() && ySpriteCenterSonic < checkBoundary.getYRef()){//Checks if  
@@ -545,7 +551,7 @@ public class OverWorldAction extends Sonic {
             angle = angleR;
         }  
         if(pixelyL == pixelyR && ground) {//If they are equal, angle is 0 (since Sonic is on flat ground)
-            angle = 0;
+            angle = 0;           
             yLastGround = pixelyR;
         }
     }
@@ -718,22 +724,22 @@ public class OverWorldAction extends Sonic {
     public void checkSideCollision(boolean right, Rectangle sensor, Rectangle collidingObject) {
         if(!right) {
             if(sensor.intersects(collidingObject)) {
+                mLCollide = 1;
                 if(xSpeed < 0) {
                     xSpeed = 0;
                     spindashCharge = 0;
                     groundSpeed = 0;                                       
                 }
-                mLCollide = 1;
             }
         }
         if(right) {
             if(sensor.intersects(collidingObject)) {
+                mRCollide = 1;
                 if(xSpeed > 0) {
                     xSpeed = 0;
                     spindashCharge = 0;
                     groundSpeed = 0;                                        
-                }
-                mRCollide = 1;
+                }   
             }
         }
     }
@@ -895,7 +901,7 @@ public class OverWorldAction extends Sonic {
         if(Math.abs(groundSpeed) < 1 && ground && ledge == -1) {
             duck = 1;
         }
-        else if(Math.abs(groundSpeed) >= 1 && ground && ledge == -1) {
+        else if(mLCollide == 0 && mRCollide == 0 && Math.abs(groundSpeed) >= 1 && ground && ledge == -1) {
             duck = 2;
         }
     }
