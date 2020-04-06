@@ -71,7 +71,7 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             g2.setRenderingHints(rh);
             g2.setFont(debugStat);
             g2.setColor(Color.CYAN);           
-            playerInput.standard(g2);//Needed for zPressTimer and xPressTimer to function (allows them to increase)
+            playerInput.standard(g2);//Needed for zPressTimer and xPressTimer to function (allows them to increase when their key is pressed)
             OverWorld overWorld = new OverWorld();//creates object OverWorld (which in turn creates everything else)
             //creates TempSave.txt- file where everything is temp. saved during gameplay
             if(!loadTempSave) {
