@@ -131,7 +131,9 @@ public class OverWorldAction extends Sonic {
             topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-80,4,80);//Creates the topLeft and topRight sensors (don't change like the       
             topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-80,4,80);//others do)     
         }      
+        //long currentTime = System.currentTimeMillis();
         collisionCheck(g2);//Checks for collisions, gets and uses information from tiles
+        //System.out.println(System.currentTimeMillis()-currentTime);
         checkPowerUp();       
         //Controls gravity + xSpeed and ySpeed when Sonic is not on ground
         intersectDefaultObject(g2);

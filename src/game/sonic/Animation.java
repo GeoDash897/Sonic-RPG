@@ -34,7 +34,6 @@ public class Animation extends Sonic implements Picture {//This will control Son
     private static Image sonicPicture;
     public void standard(Graphics2D g2, Room currentRoom, int xCenterSonic, int yCenterSonic) {
         if(!addToPictureAL) {
-            System.out.println("Code Ran Here");
             currentRoom.addPicture(this);
             addToPictureAL = true;
         }
