@@ -16,11 +16,14 @@ import java.awt.event.KeyListener;
 public class PlayerInput implements KeyListener {
     private static boolean leftPress = false;
     private static boolean rightPress = false;
+    private static boolean upPress = false;
     private static boolean downPress = false;
     private static boolean zPress = false;
     private static boolean xPress = false;
     private static int zPressTimer = 0;
+    private static int zReleaseTimer = 10;
     private static int xPressTimer = 0;
+    private static int xReleaseTimer = 10;
     private static boolean allowInput = true;
     private static boolean cutscene = false;
     
@@ -31,18 +34,43 @@ public class PlayerInput implements KeyListener {
      */
     public void standard(Graphics2D g2) {
         g2.setColor(Color.cyan);
+        g2.drawString("upPress: "+upPress,1000,475);
         g2.drawString("leftPress: "+leftPress,1000,500);
         g2.drawString("rightPress: "+rightPress,1000,525);
         g2.drawString("downPress: "+downPress,1000,550);
         g2.drawString("zPress: "+zPress,1000,575);
         g2.drawString("zPressTimer: "+zPressTimer,1000,600);
-        g2.drawString("xPress: "+xPress,1000,625);
-        g2.drawString("xPressTimer: "+xPressTimer,1000,650);
+        g2.drawString("zReleaseTimer: "+zReleaseTimer,1000,625);
+        g2.drawString("xPress: "+xPress,1000,650);
+        g2.drawString("xPressTimer: "+xPressTimer,1000,675);
+        g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,700);
         if(zPress) {
+            if(zReleaseTimer > 0) {
+                zReleaseTimer = 0;
+            }
             zPressTimer++;
         }
+        else if(!zPress) {
+            if(zPressTimer > 0) {
+                zPressTimer = 0;
+            }
+            if(zReleaseTimer < 10) {
+                zReleaseTimer++;
+            }           
+        }
         if(xPress) {
-          xPressTimer++;  
+            if(xReleaseTimer > 0) {           
+                xReleaseTimer = 0;
+            }
+            xPressTimer++;  
+        }
+        else if(!xPress) {        
+            if(xPressTimer > 0) {
+                xPressTimer = 0;
+            }
+            if(xReleaseTimer < 10){
+                xReleaseTimer++;
+            }
         }
     }
     
@@ -78,7 +106,7 @@ public class PlayerInput implements KeyListener {
      * </ul>
      */
     public static boolean getUpPress() {
-        return false;
+        return upPress;
     }
     
     /** @return 
@@ -170,7 +198,7 @@ public class PlayerInput implements KeyListener {
             rightPress = false;
         }          
         if(allowInput && e.getKeyCode() == e.VK_UP) {
-            
+            upPress = true;
         }
         if(allowInput && e.getKeyCode() == e.VK_DOWN) {
             downPress = true;
@@ -194,12 +222,14 @@ public class PlayerInput implements KeyListener {
         if(allowInput && e.getKeyCode() == e.VK_LEFT) {
             leftPress = false;
         }
+        if(allowInput && e.getKeyCode() == e.VK_UP) {
+            upPress = false;
+        }
         if(allowInput && e.getKeyCode() == e.VK_DOWN) {
             downPress = false;
         }
         if(allowInput && e.getKeyCode() == e.VK_Z) {              
-            zPress = false;  
-            zPressTimer = 0;
+            zPress = false;             
         }
         if(allowInput && e.getKeyCode() == e.VK_X) {            
             xPress = false;

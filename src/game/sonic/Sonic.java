@@ -30,15 +30,20 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
     private static OverWorldAction owa;
+    private static OWARemastered owaR;
     private static Animation animation;
     private static Room currentRoom;
     public void setup(Graphics2D g2, OverWorld overworld) {
-        owa = new OverWorldAction();
-        animation =  new Animation();
+        if(owaR == null) {
+            owaR = new OWARemastered();    
+        } 
+        if(animation == null) {
+            animation =  new Animation();    
+        }       
         currentRoom = overworld.getCurrentRoom();
         if(!cutscene) {
-            animation.standard(g2,currentRoom,owa.getXCenterSonic(),owa.getYCenterSonic()); 
-            owa.standard(g2);
+            animation.standard(g2,currentRoom,owaR.getXCenterSonic(),owaR.getYCenterSonic()); 
+            owaR.mainMethod(g2,currentRoom);
         }
     }
     public void addToPictureALAgain() {

@@ -23,11 +23,12 @@ public class Game extends JFrame implements KeyListener, ActionListener {
 //opens program
     private static boolean debug; 
     private static boolean loadTempSave = false;
-    private static ArrayList<Thread> objectThreads = new ArrayList<Thread>();
+    private static ArrayList<Thread> objectThreads;
     public static Font debugStat;
-    public static Font dialog;
+    public static Font dialog;    
     private File temp;
-    private PlayerInput playerInput = new PlayerInput();
+    private OverWorld overWorld;
+    private PlayerInput playerInput;
 /***********************************************************/
     public Game() {//constructor for JPanel
         add(new JP());
@@ -70,9 +71,14 @@ public class Game extends JFrame implements KeyListener, ActionListener {
             RenderingHints rh = new RenderingHints(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_SPEED);
             g2.setRenderingHints(rh);
             g2.setFont(debugStat);
-            g2.setColor(Color.CYAN);           
+            g2.setColor(Color.CYAN);    
+            if(playerInput == null) {
+                playerInput = new PlayerInput();
+            }
             playerInput.standard(g2);//Needed for zPressTimer and xPressTimer to function (allows them to increase when their key is pressed)
-            OverWorld overWorld = new OverWorld();//creates object OverWorld (which in turn creates everything else)
+            if(overWorld == null) {//creates object OverWorld (which in turn creates everything else)
+                overWorld = new OverWorld();
+            }            
             //creates TempSave.txt- file where everything is temp. saved during gameplay
             if(!loadTempSave) {
                 createTempSave(); 
@@ -94,6 +100,9 @@ public class Game extends JFrame implements KeyListener, ActionListener {
     public void createTempSave() {
         File local = new File("src/game/Area1.txt");
         temp = new File("src/game/TempSave.txt");
+        if(objectThreads == null) {
+            objectThreads = new ArrayList<Thread>();
+        }
         try {
             if(!temp.exists()) {
                 temp.createNewFile();
@@ -176,9 +185,12 @@ public class Game extends JFrame implements KeyListener, ActionListener {
         if (e.getKeyCode() == e.VK_LEFT ) {           
             getReleasedInput(e);
         } 
-        if (e.getKeyCode() == e.VK_DOWN ) {           
+        if (e.getKeyCode() == e.VK_UP ) {           
             getReleasedInput(e);
         }
+        if (e.getKeyCode() == e.VK_DOWN ) {           
+            getReleasedInput(e);
+        }       
         if (e.getKeyCode() == e.VK_Z ) {           
             getReleasedInput(e);
         } 

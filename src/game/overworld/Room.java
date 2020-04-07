@@ -69,9 +69,9 @@ public class Room {
             createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 576, 640, 1);
             createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 640, 576, 1);
             createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 704, 512, 1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,576,704,1);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,640,640,1);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,704,576,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,704,640,1);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,768,512,1);
         }
         else if(roomType == RoomType.ROOM_SONIC_TEST) {
