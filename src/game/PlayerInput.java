@@ -33,17 +33,19 @@ public class PlayerInput implements KeyListener {
      * @param g2 Need Graphics2D object to display variables.
      */
     public void standard(Graphics2D g2) {
-        g2.setColor(Color.cyan);
-        g2.drawString("upPress: "+upPress,1000,475);
-        g2.drawString("leftPress: "+leftPress,1000,500);
-        g2.drawString("rightPress: "+rightPress,1000,525);
-        g2.drawString("downPress: "+downPress,1000,550);
-        g2.drawString("zPress: "+zPress,1000,575);
-        g2.drawString("zPressTimer: "+zPressTimer,1000,600);
-        g2.drawString("zReleaseTimer: "+zReleaseTimer,1000,625);
-        g2.drawString("xPress: "+xPress,1000,650);
-        g2.drawString("xPressTimer: "+xPressTimer,1000,675);
-        g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,700);
+        if(Game.getDebug()) {
+            g2.setColor(Color.cyan);
+            g2.drawString("upPress: "+upPress,1000,475);
+            g2.drawString("leftPress: "+leftPress,1000,500);
+            g2.drawString("rightPress: "+rightPress,1000,525);
+            g2.drawString("downPress: "+downPress,1000,550);
+            g2.drawString("zPress: "+zPress,1000,575);
+            g2.drawString("zPressTimer: "+zPressTimer,1000,600);
+            g2.drawString("zReleaseTimer: "+zReleaseTimer,1000,625);
+            g2.drawString("xPress: "+xPress,1000,650);
+            g2.drawString("xPressTimer: "+xPressTimer,1000,675);
+            g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,700);    
+        }       
         if(zPress) {
             if(zReleaseTimer > 0) {
                 zReleaseTimer = 0;

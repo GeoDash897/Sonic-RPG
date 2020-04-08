@@ -6,7 +6,14 @@
 package game.overworld;
 
 import game.SaveLoadObjects;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_BIGWOODPLANK;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_00;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_01;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_10;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_11;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_20;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_21;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_30;
+import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_31;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
 import java.awt.Graphics2D;
@@ -65,17 +72,17 @@ public class Room {
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),768,1);
             }
-            //createTile(GRD_SONICHOUSE_SONICBED,1,64,525,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 576, 640, 1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 640, 576, 1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE, 1, 704, 512, 1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,640,640,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,704,576,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,704,640,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,768,512,1);
-        }
-        else if(roomType == RoomType.ROOM_SONIC_TEST) {
-            createTile(GRD_SONICHOUSE_BIGWOODPLANK,1,0,664,1);          
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,512,640,0);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
+            createTile(GRD_SONICHOUSE_SONICBED_00,1,896,576,1);
+            createTile(GRD_SONICHOUSE_SONICBED_01,1,896,640,1); 
+            createTile(GRD_SONICHOUSE_SONICBED_10,1,960,576,1);  
+            createTile(GRD_SONICHOUSE_SONICBED_11,1,960,640,1);
+            createTile(GRD_SONICHOUSE_SONICBED_20,1,1024,576,1);  
+            createTile(GRD_SONICHOUSE_SONICBED_21,1,1024,640,1);
+            createTile(GRD_SONICHOUSE_SONICBED_30,1,1088,576,1);
+            createTile(GRD_SONICHOUSE_SONICBED_31,1,1088,640,1);
         }
         if(objects.isEmpty()) {
             //Objects that are supposed to be in room are loaded in SaveLoadObjects and are returned in an ArrayList 
@@ -91,6 +98,11 @@ public class Room {
         /*for(int i = 0; i < objects.size(); i++) {
             g2.drawString(objects.get(i).toString(),500, 100+(25*i));
         } */    
+        for(int i = 0; i < 24; i++) {
+            for(int j = 0; j < 24; j++) {
+                g2.drawRect(0+(i*64), 0+(j*64), 64, 64);
+            }
+        }    
         for(DefaultObject obj : objects) {       
             obj.action();
         }          
@@ -121,7 +133,7 @@ public class Room {
             groundGrid.add(new HashMap<Integer, Ground>());//X Plane (tiles going across on screen)
         }
         /*Note!- an index has to already exist before a tile is created in that index. For example:
-        Let's say I wanted to create a ground Tile at 64,64. I have to make sure a HashMap exists at 64 before
+        Let's say I wanted to create a ground Tile at 64,64. I have to make sure a HashMap exists at 64 (or index 1 of ArrayList) before
         I create the tile (it will try to add the tile to a HashMap that doesn't exist*/
         groundGrid.get(xIndex).put(yIndex, ground);//Y Plane (tiles going down on screen)
         groundTiles.add(ground);  

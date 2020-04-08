@@ -44,6 +44,8 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
         if(!cutscene) {
             animation.standard(g2,currentRoom,owaR.getXCenterSonic(),owaR.getYCenterSonic()); 
             owaR.mainMethod(g2,currentRoom);
+            /*animation.standard(g2,currentRoom,owa.getXCenterSonic(),owa.getYCenterSonic()); 
+            owa.standard(g2);*/
         }
     }
     public void addToPictureALAgain() {

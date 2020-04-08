@@ -25,6 +25,7 @@ public class OWARemastered {
     private static double slope;
     private static double angle;
     private static boolean grounded;
+    private static boolean collideWithSlope;
     
     private static int direction;
     
@@ -47,7 +48,7 @@ public class OWARemastered {
         slope = 0;
         angle = 0; 
         grounded = false;
-        direction = 0;
+        collideWithSlope = false;
         
     }
     
@@ -75,7 +76,7 @@ public class OWARemastered {
         }
         else {
             xSpeed = 0;
-            ySpeed = 0;
+            ySpeed = 5;
         }
         xDrawCenterSonic += (int) xSpeed;
         ySpriteCenterSonic += (int) ySpeed;
@@ -85,7 +86,6 @@ public class OWARemastered {
         }
         
     }
-    
     private void collisionCheck(Graphics2D g2) {
         if(grounded || (ySpeed >= 0 || (Math.abs(xSpeed) > Math.abs(ySpeed)))) {
             bottomCollision(g2);    
@@ -95,30 +95,53 @@ public class OWARemastered {
     
     private void bottomCollision(Graphics2D g2) {
         int xBottomLeft = (int) bottomLeft.getX();
-        int xBottomRight = (int) bottomRight.getX();
+        int xBottomRight = (int) bottomRight.getX();  
+        int yBottomSensor = (int) (ySpriteCenterSonic+bottomRight.getHeight()+4);
+        int heightBottomLeftIndex = 0;
+        int heightBottomRightIndex = 0;
+        int pixelyL = Integer.MAX_VALUE;
+        int pixelyR = Integer.MAX_VALUE;
         g2.setColor(Color.GREEN);
         g2.fill(bottomLeft);
         g2.setColor(Color.CYAN);
         g2.fill(bottomRight);
-        Ground highLeft = getHighestSensorTile(g2,bottomLeft);
-        Ground highRight = getHighestSensorTile(g2,bottomRight);
-        Ground highest = Ground.compareDCTile(xBottomLeft, xBottomRight, highLeft, highRight);
+        Ground highLeft = getHighestSensorTile(yBottomSensor, g2,bottomLeft);
+        Ground highRight = getHighestSensorTile(yBottomSensor, g2,bottomRight);
+        //Ground highest = Ground.compareDCTile(xBottomLeft, xBottomRight, highLeft, highRight);
         g2.setColor(Color.BLACK);
         g2.drawString("highLeft: "+highLeft, 500, 100);
         g2.drawString("highRight: "+highRight, 500, 125);
+        if(highLeft != null) {
+            heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - highLeft.getXRef())/4));   
+            pixelyL = (int) highLeft.getPixelBox(heightBottomLeftIndex).getY();
+        }
+        if(highRight != null) {
+            heightBottomRightIndex = (int) Math.abs(((xBottomRight - highRight.getXRef())/4));
+            pixelyR = (int) highRight.getPixelBox(heightBottomRightIndex).getY();
+        }       
+        g2.drawString("pixelyL: "+pixelyL, 500, 150);
+        g2.drawString("pixelyR: "+pixelyR, 500, 175);
+        if(pixelyL < pixelyR) {
+            setSonicGroundStat(heightBottomLeftIndex,pixelyL, yBottomSensor, highLeft);
+        }
+        else if(pixelyR < pixelyL) {
+            setSonicGroundStat(heightBottomRightIndex,pixelyR, yBottomSensor, highRight);
+        } 
+        else if(pixelyR == pixelyL && pixelyR != Integer.MAX_VALUE) {
+            setSonicGroundStat(heightBottomRightIndex,pixelyR, yBottomSensor, highRight);
+        }
         //g2.drawString("highest: "+highest, 500, 150);
-        if(highest != null) {
+        /*if(highest != null) {
             if(highest == highLeft) {
                 int heightBottomIndex = (int) Math.abs(((xBottomLeft - highest.getXRef())/4));
                 int pixelY = (int) highest.getPixelBox(heightBottomIndex).getY();
                 g2.drawString("pixelYL: "+pixelY, 500, 175);
-                ySpriteCenterSonic = pixelY - 76;
+                setSonicGroundStat(pixelY, highest);
             }
             else if(highest == highRight) {
                 int heightBottomIndex = (int) Math.abs(((xBottomRight - highest.getXRef())/4));
                 int pixelY = (int) highest.getPixelBox(heightBottomIndex).getY();
-                g2.drawString("pixelYR: "+pixelY, 500, 200);
-                ySpriteCenterSonic = pixelY - 76;                
+                setSonicGroundStat(pixelY, highest);         
             }
             else if(highest == highLeft && highest == highRight) {
                 int heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - highest.getXRef())/4));
@@ -126,28 +149,38 @@ public class OWARemastered {
                 int pixelyL = (int) highest.getPixelBox(heightBottomLeftIndex).getY();
                 int pixelyR = (int) highest.getPixelBox(heightBottomRightIndex).getY();
                 if(pixelyL < pixelyR) {
-                    ySpriteCenterSonic = pixelyL - 76;
+                    setSonicGroundStat(pixelyL, highest);
                 }
                 else if(pixelyR < pixelyL) {
-                    ySpriteCenterSonic = pixelyR - 76;
-                }
+                    setSonicGroundStat(pixelyR, highest);
+                } 
             }       
+        }*/
+    }   
+    private void setSonicGroundStat(int heightIndex, int pixelHeight, int yBottomSensor, Ground highest) {       
+        Rectangle collideCheck = highest.getPixelBox(heightIndex);
+        if(yBottomSensor >= (int) collideCheck.getY()) {
+            ySpriteCenterSonic = pixelHeight - 76; 
+            if(highest.getAngle() != 0) {
+                collideWithSlope = true;
+            }
+            else if(highest.getAngle() == 0) {
+                collideWithSlope = false;
+            }
+            angle = highest.getAngle();    
         }
     }
-    
-    private Ground getHighestSensorTile(Graphics2D g2, Rectangle sensor) {
-        int xBottomSensor = (int) sensor.getX();
-        int yBottomSensor = (int) (sensor.getY()+sensor.getHeight());
-        
+    private Ground getHighestSensorTile(int yBottomSensor,Graphics2D g2, Rectangle sensor) {
+        int xBottomSensor = (int) sensor.getX();     
         if(sensor == bottomLeft) {
             g2.setColor(Color.MAGENTA);
             g2.fillRect(xBottomSensor,ySpriteCenterSonic+4,1,76);
-            g2.fillRect(xBottomSensor,ySpriteCenterSonic+95,1,1);
+            g2.fillRect(xBottomSensor,ySpriteCenterSonic+143,1,1);
         }
         if(sensor == bottomRight) {
             g2.setColor(Color.RED);
             g2.fillRect(xBottomSensor,ySpriteCenterSonic+4,1,76);
-            g2.fillRect(xBottomSensor,ySpriteCenterSonic+95,1,1);
+            g2.fillRect(xBottomSensor,ySpriteCenterSonic+143,1,1);
         }
         int xBottomIndex = xBottomSensor/64;
         int yBottomIndex = yBottomSensor/64;
@@ -184,6 +217,7 @@ public class OWARemastered {
         g2.drawString("xSpeed: "+xSpeed,75,200);
         g2.drawString("ySpeed: "+ySpeed,75,225);       
         g2.drawString("slope: "+slope,75,250);
+        g2.drawString("collideWithSlope: "+collideWithSlope,75,275);
         //Variables that have to do with Sonic's animations:
         g2.setColor(Color.GREEN);
         g2.drawString("angle: "+angle, 400, 75);
