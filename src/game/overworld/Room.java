@@ -16,6 +16,7 @@ import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_30;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_31;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +76,7 @@ public class Room {
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,512,640,0);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,832,640,1);
             createTile(GRD_SONICHOUSE_SONICBED_00,1,896,576,1);
             createTile(GRD_SONICHOUSE_SONICBED_01,1,896,640,1); 
             createTile(GRD_SONICHOUSE_SONICBED_10,1,960,576,1);  
@@ -98,6 +100,7 @@ public class Room {
         /*for(int i = 0; i < objects.size(); i++) {
             g2.drawString(objects.get(i).toString(),500, 100+(25*i));
         } */    
+        g2.setColor(Color.MAGENTA);
         for(int i = 0; i < 24; i++) {
             for(int j = 0; j < 24; j++) {
                 g2.drawRect(0+(i*64), 0+(j*64), 64, 64);

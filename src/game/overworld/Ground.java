@@ -231,7 +231,6 @@ public class Ground extends OverWorld implements Picture {
             for(int i = 0; i < heightValues.size(); i++) {
                 if(heightValues.get(i) <= min) {
                     min = heightValues.get(i);   
-                    System.out.print(min);
                 }
             }
             return pixelBoxes.get(minPosition);
