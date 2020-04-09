@@ -70,7 +70,12 @@ public class Ground extends OverWorld implements Picture {
                 else if(direction == 1) {
                     groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic House Wood Slope_1.png");    
                 }
-                angle = 45;           
+                if(direction == 0) {
+                    angle = -45;
+                }    
+                else if(direction == 1) {
+                    angle = 45;
+                }           
             }    
             else if(groundName.substring(0,groundName.length()-3).equals("GRD_SONICHOUSE_SONICBED")) { 
                 int part = Integer.valueOf(groundName.substring(groundName.length()-2));
@@ -80,7 +85,7 @@ public class Ground extends OverWorld implements Picture {
                 groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic's Bed.png");
                 setSonicBedHeightValues(part);
             }
-            if(angle == 45) {
+            if(Math.abs(angle) == 45) {
                 if(direction == 0) {
                     for(int i = 0; i < 16; i++ ) {                
                         heightValues.add(16-i);
@@ -97,8 +102,13 @@ public class Ground extends OverWorld implements Picture {
     }
     private void setBlock() {
         for(int i = 0; i < length; i ++) {
-            heightValues.add(width);
-            pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+(width*4)-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
+            heightValues.add(width);           
+        }
+        createPixelBoxesArrayList();
+    }
+    private void createPixelBoxesArrayList() {
+        for(int i = 0; i < heightValues.size(); i++ ) {                
+            pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
         }
     }
     private void setSonicBedHeightValues(int part) {
@@ -122,6 +132,7 @@ public class Ground extends OverWorld implements Picture {
             heightValues.add(6);
             heightValues.add(6);
             heightValues.add(6);
+            createPixelBoxesArrayList();
         }
         else if(part == 10) {
             heightValues.add(4);
@@ -140,6 +151,7 @@ public class Ground extends OverWorld implements Picture {
             heightValues.add(6);
             heightValues.add(6);
             heightValues.add(6);
+            createPixelBoxesArrayList();
         }
         else if(part == 20) {
             heightValues.add(6);
@@ -158,6 +170,7 @@ public class Ground extends OverWorld implements Picture {
             heightValues.add(6);
             heightValues.add(6);
             heightValues.add(6);
+            createPixelBoxesArrayList();
         }
         else if(part == 30) {
             heightValues.add(6);
@@ -176,9 +189,7 @@ public class Ground extends OverWorld implements Picture {
             heightValues.add(4);
             heightValues.add(3);
             heightValues.add(3);
-        }
-        for(int i = 0; i < heightValues.size(); i++ ) {                
-            pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
+            createPixelBoxesArrayList();
         }
     }
     @Override
