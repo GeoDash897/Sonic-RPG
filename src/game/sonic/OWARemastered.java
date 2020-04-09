@@ -18,6 +18,7 @@ public class OWARemastered {
     private static int xDrawCenterSonic;
     private static int yDrawCenterSonic;
     private static int ySpriteCenterSonic;
+    private static int yLastGround;
     private static double xSpeed;
     private static double ySpeed;
     private static double groundSpeed;
@@ -35,17 +36,16 @@ public class OWARemastered {
     private static int bLDistanceFromRect;
     private static int bRDistanceFromRect;
     
-    private static int direction;
-     
     private static double ACCELERATION = 0.046875;
-    private static double DECELERATION = 0.5;
+    private static double AIR = 0.09375;
+    private static double DECELERATION = 0.15;
     private static double FRICTION = 0.046875;
-    private static double TOPSPEED = 6;
-
     private static double GRAVITY = 0.21875;
+    private static double JUMP = 6.5;
     private static double SLOPE = 0.125;
     private static double SLOPEROLLUP = 0.078125;
     private static double SLOPEROLLDOWN = 0.3125;
+    private static double TOPSPEED = 6;   
     
     private static Rectangle bottomLeft;
     private static Rectangle bottomRight;
@@ -58,11 +58,13 @@ public class OWARemastered {
     private static Room currentRoom;
     private static Sonic sonic;
     
-    private static SonicState state;
+    private static JumpState jumpState;
+    private static LedgeState ledgeState;
     
     public OWARemastered() {
         xDrawCenterSonic = 1000;
         ySpriteCenterSonic = 500;
+        yLastGround = 0;
         xSpeed = 0;
         ySpeed = 0;
         groundSpeed = 0;
@@ -77,6 +79,8 @@ public class OWARemastered {
         tRCollide = false;
         bLDistanceFromRect = 0;
         bRDistanceFromRect = 0;
+        ledgeState = LedgeState.STATE_NOLEDGE;
+        jumpState = JumpState.STATE_NOJUMP;
     }
     
     public void mainMethod(Graphics2D g2, Sonic son, Room cR, Animation ani){
@@ -89,7 +93,7 @@ public class OWARemastered {
         animation = ani;
         sonic = son;
         yDrawCenterSonic = ySpriteCenterSonic + 16;
-        state = SonicState.STATE_STAND;
+        ledgeState = LedgeState.STATE_NOLEDGE;
         if(bLCollide && bRCollide) {
             grounded = true;
         }
@@ -123,13 +127,35 @@ public class OWARemastered {
             middleLeft = new Rectangle(xDrawCenterSonic-40,ySpriteCenterSonic-4,40,4);
             middleRight = new Rectangle(xDrawCenterSonic+4,ySpriteCenterSonic-4,40,4);
         }
-        if(!grounded) {
+        if(!grounded) {//Added this to reset the height of Sonic sensors if he jumps off a slope (ground == true wouldn't trigger 
+            //early) making Sonic stop earlier then he should
+            bottomLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic,4,80);    
+            bottomRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic,4,80); 
             middleLeft = new Rectangle(xDrawCenterSonic-40,ySpriteCenterSonic-4,40,4);
             middleRight = new Rectangle(xDrawCenterSonic+4,ySpriteCenterSonic-4,40,4);            
         }
         topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-84,4,80);
         topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-84,4,80);
         //Gravity code goes here
+        if(PlayerInput.getLeftPress()) {
+            leftPress();
+        }
+        else if(PlayerInput.getRightPress()) {
+            rightPress();
+        }
+        if(PlayerInput.getUpPress()) {
+            ySpeed = -3;
+        }
+        else if(PlayerInput.getDownPress()) {
+            ySpeed = 3;
+        }
+        if(PlayerInput.getZPress()) {//Jump has to be calculated before gravity is added to ySpeed
+            //I need to figure out what to do with groundSpeed when Sonic first lands from a jump
+            zPress();
+        }
+        else if(!PlayerInput.getZPress() && PlayerInput.checkZReleased()) {
+            zReleased();
+        }
         if(!grounded) {           
             if (ySpeed < 0 && ySpeed > -4)//air drag calculation
             {
@@ -147,30 +173,33 @@ public class OWARemastered {
             ySpeed = 1;
         }
         if(mLCollide || mRCollide) {
+            xSpeed = 0;
             groundSpeed = 0;
         }  
         if(grounded) {
+            /*I'm getting the correct groundSpeed when sonic first is grounded (if grounded == true and 
+            jump == STATE_JUMP_DOWN, this means that sonic just landed after a jump*/
+            if(jumpState == JumpState.STATE_JUMP_DOWN && angle < 45) {
+                groundSpeed = xSpeed;
+            }
+            else if(jumpState == JumpState.STATE_JUMP_DOWN && angle == 45) {
+                if(Math.abs(xSpeed) > ySpeed) {
+                    groundSpeed = xSpeed;    
+                }
+                else {
+                    groundSpeed = ySpeed*0.5*-Math.signum(Math.sin(angle));
+                }          
+            }
+            jumpState = JumpState.STATE_NOJUMP;
+            groundSpeed -= slope*Math.sin(angle);
+            if(!PlayerInput.getLeftPress() && !PlayerInput.getRightPress() && angle == 0) {
+                groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);    
+            }  
             /*NOTE! If you want to change groundSpeed, you have to put the code before here! (since this is 
             where groundSpeed effects xSpeed*/
             xSpeed = groundSpeed*Math.cos(angle);
             ySpeed = groundSpeed*-Math.sin(angle);
-        }   
-        if(PlayerInput.getLeftPress()) {
-            leftPress();
-        }
-        else if(PlayerInput.getRightPress()) {
-            rightPress();
-        }
-        if(PlayerInput.getUpPress()) {
-            ySpeed = -3;
-        }
-        else if(PlayerInput.getDownPress()) {
-            ySpeed = 3;
-        }
-        groundSpeed -= slope*Math.sin(angle);
-        if(!PlayerInput.getLeftPress() && !PlayerInput.getRightPress() && angle == 0) {
-            groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);    
-        }            
+        }             
         xDrawCenterSonic += (int) xSpeed;
         ySpriteCenterSonic += (int) ySpeed;
         bottomTopCheck(g2);//This needs to go after gravity is calculated (since it affects ySpeed)!
@@ -193,11 +222,11 @@ public class OWARemastered {
             }            
         }
         else if(!grounded) {
-            if(xSpeed <= Math.abs(ySpeed)) {
+            if(xSpeed < 0) {
                 sideCollision(g2, middleLeft);
             }
-            else if(-xSpeed <= Math.abs(ySpeed)) {
-                sideCollision(g2, middleLeft);
+            else if(xSpeed > 0) {
+                sideCollision(g2, middleRight);
             }
         }
     }
@@ -294,7 +323,7 @@ public class OWARemastered {
         if(grounded && xSpeed == 0 && angle == 0 && bLCollide && !bRCollide && bRDistanceFromRect >= 48) {
             if(highLeft != null) {
                 if(xDrawCenterSonic >= highLeft.getXRef()+64+4) {
-                    state = SonicState.STATE_RIGHTLEDGE;    
+                    ledgeState = LedgeState.STATE_RIGHTLEDGE;    
                 }
             }
             
@@ -302,7 +331,7 @@ public class OWARemastered {
         else if(grounded && xSpeed == 0 && angle == 0 && !bLCollide && bRCollide && bLDistanceFromRect >= 48) {
             if(highRight != null) {
                 if(xDrawCenterSonic <= highRight.getXRef()-4) {
-                    state = SonicState.STATE_LEFTLEDGE;    
+                    ledgeState = LedgeState.STATE_LEFTLEDGE;    
                 }
             }
         }          
@@ -355,6 +384,7 @@ public class OWARemastered {
         if(highest != null) {
             Rectangle collideCheck = highest.getPixelBox(heightIndex);
             if(yBottomSensor >= (int) collideCheck.getY()-32) {
+                yLastGround = pixelHeight;
                 ySpriteCenterSonic = pixelHeight - 76; 
                 angle = highest.getAngle();    
             }
@@ -426,66 +456,117 @@ public class OWARemastered {
         if(intersect != null && sonic.getLayer() == intersect.getLayer()) {
             if(sideSensor == middleLeft) {
                 Rectangle collideCheck = intersect.getPixelBox(intersect.getPixelBoxes().size()-1);
-                if(xMiddleSensor < (int) collideCheck.getX()+collideCheck.getHeight() && middleLeft.intersects(collideCheck)) {
-                    mLCollide = true;
+                if(xMiddleSensor <= (int) collideCheck.getX()+collideCheck.getHeight()+4 && middleLeft.intersects(collideCheck)) {
                     groundSpeed = 0;
+                    mLCollide = true;                   
                 }    
             }
             else if(sideSensor == middleRight) {              
                 Rectangle collideCheck = intersect.getPixelBox(0);
                 if(xMiddleSensor >= (int) collideCheck.getX() && middleRight.intersects(collideCheck)) {
-                    mRCollide = true;
-                    groundSpeed = 0;                   
+                    groundSpeed = 0; 
+                    mRCollide = true;                                     
                 }    
             }
         }
     }
     
     private void leftPress() {
-        if(groundSpeed > 0) {
-            groundSpeed -= DECELERATION;
-            if(groundSpeed <= 0) {
-                groundSpeed = -0.5;
+        if(!grounded) {
+            if(xSpeed > -4) {               
+                xSpeed -= AIR;    
+            }
+            else {
+                xSpeed = -4;
             }
         }
-        else if(groundSpeed > -TOPSPEED) {
-            groundSpeed -= ACCELERATION;
-            if(groundSpeed <= -TOPSPEED) {
-                groundSpeed = -TOPSPEED;
+        else if(grounded) {
+            if(groundSpeed > 0) {
+                groundSpeed -= DECELERATION;
+                if(groundSpeed <= 0) {
+                    groundSpeed = -0.5;
+                }
             }
-        }
+            else if(groundSpeed > -TOPSPEED) {
+                groundSpeed -= ACCELERATION;
+                if(groundSpeed <= -TOPSPEED) {
+                    groundSpeed = -TOPSPEED;
+                }
+            }    
+        }       
     }
     
     private void rightPress() {
-        if(groundSpeed < 0) {
-            groundSpeed += DECELERATION;
-            if(groundSpeed >= 0) {
-                groundSpeed = 0.5;
+        if(!grounded) {
+            if(xSpeed < 4) {               
+                xSpeed += AIR;    
+            }  
+            else {
+                xSpeed = 4;
             }
         }
-        else if(groundSpeed < TOPSPEED) {
-            groundSpeed += ACCELERATION;
-            if(groundSpeed >= TOPSPEED) {
-                groundSpeed = TOPSPEED;
+        else if(grounded) {
+            if(groundSpeed < 0) {
+                groundSpeed += DECELERATION;
+                if(groundSpeed >= 0) {
+                    groundSpeed = 0.5;
+                }
             }
-        }
+            else if(groundSpeed < TOPSPEED) {
+                groundSpeed += ACCELERATION;
+                if(groundSpeed >= TOPSPEED) {
+                    groundSpeed = TOPSPEED;
+                }
+            }    
+        }       
     }    
+    
+    private void zPress() {       
+        if(grounded && jumpState == JumpState.STATE_NOJUMP) {
+            jumpState = JumpState.STATE_JUMP_UP;
+        }
+        if(jumpState == JumpState.STATE_JUMP_UP && ySpriteCenterSonic < yLastGround-390) {
+            if(ySpeed < -4) {
+                ySpeed = -4;
+            }
+            jumpState = JumpState.STATE_JUMP_DOWN;
+        }
+        else if(jumpState == JumpState.STATE_JUMP_UP && ySpriteCenterSonic > yLastGround-400) {
+            if(angle == 0) {           
+                ySpeed = -JUMP;    
+            }      
+            else {
+                xSpeed = JUMP*Math.sin(angle);
+                ySpeed = JUMP*Math.cos(angle);
+            }
+            grounded = false;
+        } 
+    }
+    
+    private void zReleased() {
+        if(ySpeed < -4) {
+            ySpeed = -4;
+        }
+        if(jumpState == JumpState.STATE_JUMP_UP) {
+            System.out.println("Code ran here");
+            jumpState = JumpState.STATE_JUMP_DOWN;
+        }
+    }
     private void changeAnimation() {
-        if(null != state) switch (state) {
-            case STATE_STAND:
-                if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_STAND) {
-                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_STAND);
-                }   break;
-            case STATE_LEFTLEDGE:
-                if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT) {
-                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT);
-                }   break;
-            case STATE_RIGHTLEDGE:
-                if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT) {
-                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT);
-                }   break;
-            default:
-                break;
+        if(ledgeState == LedgeState.STATE_NOLEDGE) {
+            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_STAND) {
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_STAND);    
+            }    
+        }
+        if(ledgeState == LedgeState.STATE_LEFTLEDGE) {
+            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT) {
+                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT);    
+            }
+        }
+        else if(ledgeState == LedgeState.STATE_RIGHTLEDGE) {
+            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT) {
+                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT);    
+            }
         }
     }
     public int getXCenterSonic() {
@@ -518,15 +599,22 @@ public class OWARemastered {
         g2.drawString("temp: ",75,450);
         g2.drawString("bLDistanceFromRect: "+bLDistanceFromRect,75,475);
         g2.drawString("bRDistanceFromRect: "+bRDistanceFromRect,75,500);
+        g2.drawString("yLastGround: "+yLastGround,75,525);
         //Variables that have to do with Sonic's animations:
         g2.setColor(Color.GREEN);
         g2.drawString("angle: "+angle, 400, 75);
         g2.setColor(Color.ORANGE);
-        g2.drawString("Sonic's State: "+state, 75, 700);
+        g2.drawString("Sonic's Ledge State: "+ledgeState, 75, 700);
+        g2.drawString("Sonic's Jump State: "+jumpState, 75, 725);
     }
-    public enum SonicState {
-        STATE_STAND,
+    public enum LedgeState {
+        STATE_NOLEDGE,
         STATE_LEFTLEDGE,
         STATE_RIGHTLEDGE,
     } 
+    public enum JumpState {
+        STATE_NOJUMP,
+        STATE_JUMP_UP,
+        STATE_JUMP_DOWN,
+    }
 }

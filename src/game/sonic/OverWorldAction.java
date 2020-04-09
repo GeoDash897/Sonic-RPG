@@ -920,7 +920,7 @@ public class OverWorldAction extends Sonic {
                 ySpeed = -JUMP;  
                 ground = false;   
             }
-             if(jump == 1 && ySpriteCenterSonic < yLastGround-390) {
+            if(jump == 1 && ySpriteCenterSonic < yLastGround-390) {
                 if(ySpeed < -4) {
                     ySpeed = -4;
                 }

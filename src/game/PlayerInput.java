@@ -186,6 +186,13 @@ public class PlayerInput implements KeyListener {
         rightPress = set;
     }
     
+    public static boolean checkZReleased() {
+        boolean check = false;
+        if(!zPress && zPressTimer <= 1) {
+            check = true;
+        }
+        return check;
+    }
     @Override
     public void keyPressed(KeyEvent e) {/*Note!- due to the way keys are processed
         //false = not pressed, true = pressed, it is impossible to check when a 
