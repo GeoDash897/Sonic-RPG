@@ -154,12 +154,12 @@ public class OWARemastered {
             where groundSpeed effects xSpeed*/
             xSpeed = groundSpeed*Math.cos(angle);
             ySpeed = groundSpeed*-Math.sin(angle);
-        }              
-        if(PlayerInput.getRightPress()) {
-            groundSpeed = 5;
+        }   
+        if(PlayerInput.getLeftPress()) {
+            leftPress();
         }
-        else if(PlayerInput.getLeftPress()) {
-            groundSpeed = -5;
+        else if(PlayerInput.getRightPress()) {
+            rightPress();
         }
         if(PlayerInput.getUpPress()) {
             ySpeed = -3;
@@ -293,7 +293,7 @@ public class OWARemastered {
         //Get's Sonic's ledges
         if(grounded && xSpeed == 0 && angle == 0 && bLCollide && !bRCollide && bRDistanceFromRect >= 48) {
             if(highLeft != null) {
-                if(xDrawCenterSonic >= highLeft.getXRef()+highLeft.getLength()+4) {
+                if(xDrawCenterSonic >= highLeft.getXRef()+64+4) {
                     state = SonicState.STATE_RIGHTLEDGE;    
                 }
             }
@@ -441,6 +441,35 @@ public class OWARemastered {
         }
     }
     
+    private void leftPress() {
+        if(groundSpeed > 0) {
+            groundSpeed -= DECELERATION;
+            if(groundSpeed <= 0) {
+                groundSpeed = -0.5;
+            }
+        }
+        else if(groundSpeed > -TOPSPEED) {
+            groundSpeed -= ACCELERATION;
+            if(groundSpeed <= -TOPSPEED) {
+                groundSpeed = -TOPSPEED;
+            }
+        }
+    }
+    
+    private void rightPress() {
+        if(groundSpeed < 0) {
+            groundSpeed += DECELERATION;
+            if(groundSpeed >= 0) {
+                groundSpeed = 0.5;
+            }
+        }
+        else if(groundSpeed < TOPSPEED) {
+            groundSpeed += ACCELERATION;
+            if(groundSpeed >= TOPSPEED) {
+                groundSpeed = TOPSPEED;
+            }
+        }
+    }    
     private void changeAnimation() {
         if(null != state) switch (state) {
             case STATE_STAND:
