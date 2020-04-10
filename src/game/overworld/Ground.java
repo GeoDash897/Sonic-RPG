@@ -5,6 +5,7 @@
  */
 package game.overworld;
 
+import game.sonic.Sonic;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -78,12 +79,12 @@ public class Ground extends OverWorld implements Picture {
                 }           
             }    
             else if(groundName.substring(0,groundName.length()-3).equals("GRD_SONICHOUSE_SONICBED")) { 
-                int part = Integer.valueOf(groundName.substring(groundName.length()-2));
+                String part = groundName.substring(groundName.length()-2);
                 length = 16;
                 width = 16;
                 angle = 0;
-                groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic's Bed.png");
-                setSonicBedHeightValues(part);
+                groundPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic's Bed_"+part+".png");
+                setSonicBedHeightValues(Integer.valueOf(part));
             }
             if(Math.abs(angle) == 45) {
                 if(direction == 0) {
@@ -203,7 +204,7 @@ public class Ground extends OverWorld implements Picture {
         g2.fillRect(xRef, yRef+63, 64, 1);
         g2.fillRect(xRef, yRef, 1, 64);
         g2.fillRect(xRef+63, yRef, 1, 64);
-        //g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
+        g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
     }
     public int getXRef() {
         return xRef;
@@ -255,15 +256,15 @@ public class Ground extends OverWorld implements Picture {
         return pixelBoxes;
     }
     //Compares tiles in same column
-    public static Ground compareSCTile(int xBottomSensor, Ground tile1, Ground tile2) {
+    public static Ground compareSCTile(int xBottomSensor, Ground tile1, Ground tile2, Sonic sonic) {
         //Change it so it initially sets each rectangle to null, this changes if this or other is not null (and gets rect)
         Rectangle rectTile1 = null;
         Rectangle rectTile2 = null;
-        if(tile1 != null) {
+        if(tile1 != null && tile1.getLayer() == sonic.getLayer()) {
             int heightIndex = (int) Math.abs((xBottomSensor-tile1.getXRef())/4);
             rectTile1 = tile1.getPixelBox(heightIndex);    
         }
-        if(tile2 != null) {
+        if(tile2 != null && tile2.getLayer() == sonic.getLayer()) {
             int heightIndex = (int) Math.abs((xBottomSensor-tile2.getXRef())/4);
             rectTile2 = tile2.getPixelBox(heightIndex);    
         }

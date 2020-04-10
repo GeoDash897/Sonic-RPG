@@ -277,7 +277,7 @@ public class OWARemastered {
         g2.setColor(Color.BLACK);
         g2.drawString("highLeft: "+highLeft, 500, 100);
         g2.drawString("highRight: "+highRight, 500, 125);
-        if(highLeft != null && sonic.getLayer() == highLeft.getLayer()) {
+        if(highLeft != null) {
             heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - highLeft.getXRef())/4));   
             pixelyL = (int) highLeft.getPixelBox(heightBottomLeftIndex).getY();
             groundCheckL = highLeft.getPixelBox(heightBottomLeftIndex);
@@ -292,7 +292,7 @@ public class OWARemastered {
                 }
             }            
         }
-        if(highRight != null && sonic.getLayer() == highRight.getLayer()) {
+        if(highRight != null) {
             heightBottomRightIndex = (int) Math.abs(((xBottomRight - highRight.getXRef())/4));
             pixelyR = (int) highRight.getPixelBox(heightBottomRightIndex).getY();
             groundCheckR = highRight.getPixelBox(heightBottomRightIndex);
@@ -356,24 +356,24 @@ public class OWARemastered {
         if(intersect != null) {
             if(sensor == bottomLeft || sensor == bottomRight) {
                 Ground intersectUp = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex-1);
-                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectUp);
+                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectUp, sonic);
                 return higher;    
             }
             else if(sensor == topLeft || sensor == topRight) {
                 Ground intersectDown = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex+1);
-                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectDown);
+                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectDown, sonic);
                 return higher;    
             }
         }
         else {
             if(sensor == bottomLeft || sensor == bottomRight) {
                 Ground intersectDown = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex+1);
-                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectDown);
+                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectDown, sonic);
                 return higher;    
             }
             else if(sensor == topLeft || sensor == topRight) {
                 Ground intersectUp = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex-1);
-                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectUp);
+                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectUp, sonic);
                 return higher;    
             }
         }
@@ -409,7 +409,7 @@ public class OWARemastered {
         g2.fill(topLeft);
         g2.setColor(Color.YELLOW);
         g2.fill(topRight);
-        if(lowLeft != null && sonic.getLayer() == lowLeft.getLayer()) {
+        if(lowLeft != null) {
             heightBottomLeftIndex = (int) Math.abs(((xTopLeft - lowLeft.getXRef())/4));   
             pixelyL = (int) (lowLeft.getPixelBox(heightBottomLeftIndex).getY()+lowLeft.getPixelBox(heightBottomLeftIndex).getHeight());
             groundCheckL = lowLeft.getPixelBox(heightBottomLeftIndex);
@@ -417,7 +417,7 @@ public class OWARemastered {
                 tLCollide = true;
             }
         }  
-        if(lowRight != null && sonic.getLayer() == lowRight.getLayer()) {
+        if(lowRight != null) {
             heightBottomRightIndex = (int) Math.abs(((xTopRight - lowRight.getXRef())/4));   
             pixelyR = (int) (lowRight.getPixelBox(heightBottomRightIndex).getY()+lowRight.getPixelBox(heightBottomRightIndex).getHeight());
             groundCheckR = lowRight.getPixelBox(heightBottomRightIndex);
@@ -456,16 +456,18 @@ public class OWARemastered {
         if(intersect != null && sonic.getLayer() == intersect.getLayer()) {
             if(sideSensor == middleLeft) {
                 Rectangle collideCheck = intersect.getPixelBox(intersect.getPixelBoxes().size()-1);
-                if(xMiddleSensor <= (int) collideCheck.getX()+collideCheck.getHeight()+4 && middleLeft.intersects(collideCheck)) {
+                if(xMiddleSensor < (int) (collideCheck.getX()+collideCheck.getWidth())+4 && middleLeft.intersects(collideCheck)) {                   
                     groundSpeed = 0;
-                    mLCollide = true;                   
+                    mLCollide = true;    
+                    xDrawCenterSonic = (int) (collideCheck.getX()+collideCheck.getWidth()+38);
                 }    
             }
             else if(sideSensor == middleRight) {              
                 Rectangle collideCheck = intersect.getPixelBox(0);
-                if(xMiddleSensor >= (int) collideCheck.getX() && middleRight.intersects(collideCheck)) {
+                if(xMiddleSensor > (int) collideCheck.getX() && middleRight.intersects(collideCheck)) {
                     groundSpeed = 0; 
-                    mRCollide = true;                                     
+                    mRCollide = true;   
+                    xDrawCenterSonic = (int) (collideCheck.getX()-40);
                 }    
             }
         }
@@ -596,7 +598,7 @@ public class OWARemastered {
         g2.drawString("tLCollide: "+tLCollide,75,375);
         g2.drawString("tRCollide: "+tRCollide,75,400);
         g2.drawString("mLCollide: "+mLCollide,75,425);
-        g2.drawString("temp: ",75,450);
+        g2.drawString("mRCollide: "+mRCollide,75,450);
         g2.drawString("bLDistanceFromRect: "+bLDistanceFromRect,75,475);
         g2.drawString("bRDistanceFromRect: "+bRDistanceFromRect,75,500);
         g2.drawString("yLastGround: "+yLastGround,75,525);
