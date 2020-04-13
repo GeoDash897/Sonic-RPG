@@ -39,7 +39,9 @@ public class OWARemastered {
     private static double ACCELERATION = 0.046875;
     private static double AIR = 0.09375;
     private static double DECELERATION = 0.15;
+    private static double ROLLDECELERATION = 0.125;
     private static double FRICTION = 0.046875;
+    private static double ROLLFRICTION = 0.0234375;
     private static double GRAVITY = 0.21875;
     private static double JUMP = 6.5;
     private static double SLOPE = 0.125;
@@ -191,8 +193,13 @@ public class OWARemastered {
                 }          
             }
             jumpState = JumpState.STATE_NOJUMP;
-            groundSpeed -= slope*Math.sin(angle);
-            if(!PlayerInput.getLeftPress() && !PlayerInput.getRightPress() && angle == 0) {
+            /*Remember- the SLOPE variable controls how Sonic interacts with slopes (slides on them)
+            and changes depending if Sonic is rolling/running/etc
+            BUG- If a sensor interacts with a slope and another one interacts on another one (this occurs
+            when Sonic is standing on one tile with two opposing slopes on either side of him,), Sonic will
+            be pushed in the wrong direction by a tile*/
+            groundSpeed -= SLOPE*Math.sin(angle);
+            if(!PlayerInput.getLeftPress() && !PlayerInput.getRightPress()) {
                 groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);    
             }  
             /*NOTE! If you want to change groundSpeed, you have to put the code before here! (since this is 
@@ -315,7 +322,9 @@ public class OWARemastered {
         else if(pixelyR < pixelyL) {
             setSonicGroundStat(heightBottomRightIndex,pixelyR, yBottomSensor, highRight);
         } 
-        else if(pixelyR == pixelyL && pixelyR != Integer.MAX_VALUE) {
+        else if(pixelyR == pixelyL && pixelyR != 90000) {
+            /*Make sure that when pixelyR and pixelyL are equal that they are not equal to default value
+            This will cause Sonic to be set to the default position! (90000) */
             setSonicGroundStat(heightBottomRightIndex,pixelyR, yBottomSensor, highRight);
         }
         
@@ -383,7 +392,7 @@ public class OWARemastered {
     private void setSonicGroundStat(int heightIndex, int pixelHeight, int yBottomSensor, Ground highest) {     
         if(highest != null) {
             Rectangle collideCheck = highest.getPixelBox(heightIndex);
-            if(yBottomSensor >= (int) collideCheck.getY()-32) {
+            if(yBottomSensor >= (int) collideCheck.getY()) {
                 yLastGround = pixelHeight;
                 ySpriteCenterSonic = pixelHeight - 76; 
                 angle = highest.getAngle();    
@@ -550,24 +559,30 @@ public class OWARemastered {
             ySpeed = -4;
         }
         if(jumpState == JumpState.STATE_JUMP_UP) {
-            System.out.println("Code ran here");
             jumpState = JumpState.STATE_JUMP_DOWN;
         }
     }
     private void changeAnimation() {
-        if(ledgeState == LedgeState.STATE_NOLEDGE) {
+        /*Watch out for state conflicts- if one is conflicting with another one, it causes Sonic to freeze on his animation/
+        or perform his animation wrong*/
+        if(jumpState == JumpState.STATE_NOJUMP && ledgeState == LedgeState.STATE_NOLEDGE) {
             if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_STAND) {
                 animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_STAND);    
             }    
         }
         if(ledgeState == LedgeState.STATE_LEFTLEDGE) {
             if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT) {
-                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT);    
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT);    
             }
         }
         else if(ledgeState == LedgeState.STATE_RIGHTLEDGE) {
             if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT) {
-                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT);    
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT);    
+            }
+        }
+        if(jumpState == JumpState.STATE_JUMP_UP || jumpState == JumpState.STATE_JUMP_DOWN) {
+            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_JUMP) {
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_JUMP);   
             }
         }
     }
@@ -608,6 +623,7 @@ public class OWARemastered {
         g2.setColor(Color.ORANGE);
         g2.drawString("Sonic's Ledge State: "+ledgeState, 75, 700);
         g2.drawString("Sonic's Jump State: "+jumpState, 75, 725);
+        g2.drawString("Sonic's Animation: "+animation, 75, 200);
     }
     public enum LedgeState {
         STATE_NOLEDGE,

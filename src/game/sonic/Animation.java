@@ -220,7 +220,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
         if(animationTimer >= (animationTimerFrameSet*numberOfFrames)) {
             animationFrame = resetAnimationFrame;
             animationTimer = resetAnimationTimer;
-        }                            
+        }    
     }
     public void setSonicAnimation(SonicAnimation newAnimation) {
         animationNumber = newAnimation;
@@ -230,7 +230,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
             animationFrame = 1;
             animationReset = 1;
         }
-        System.out.println("Changed animation to "+newAnimation);
+        //System.out.println("Changed animation to "+newAnimation);
     }
     @Override
     public void draw(Graphics2D g2) {
