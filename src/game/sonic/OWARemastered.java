@@ -24,6 +24,7 @@ public class OWARemastered {
     private static double groundSpeed;
     private static double slope;
     private static double angle;
+    private static double friction;
     private static boolean grounded;
     private static boolean collideWithSlopeL;
     private static boolean collideWithSlopeR;
@@ -39,7 +40,7 @@ public class OWARemastered {
     private static double ACCELERATION = 0.046875;
     private static double AIR = 0.09375;
     private static double DECELERATION = 0.15;
-    private static double ROLLDECELERATION = 0.125;
+    private static double ROLLDECELERATION = 0.025;
     private static double FRICTION = 0.046875;
     private static double ROLLFRICTION = 0.0234375;
     private static double GRAVITY = 0.21875;
@@ -48,6 +49,9 @@ public class OWARemastered {
     private static double SLOPEROLLUP = 0.078125;
     private static double SLOPEROLLDOWN = 0.3125;
     private static double TOPSPEED = 6;   
+    
+    private static Ground middleLeftIntersect;
+    private static Ground middleRightIntersect;
     
     private static Rectangle bottomLeft;
     private static Rectangle bottomRight;
@@ -60,18 +64,20 @@ public class OWARemastered {
     private static Room currentRoom;
     private static Sonic sonic;
     
+    private static DuckState duckState;
     private static JumpState jumpState;
     private static LedgeState ledgeState;
     
     public OWARemastered() {
-        xDrawCenterSonic = 1000;
+        xDrawCenterSonic = 500;
         ySpriteCenterSonic = 500;
         yLastGround = 0;
         xSpeed = 0;
         ySpeed = 0;
         groundSpeed = 0;
-        slope = 0;
+        slope = SLOPE;
         angle = 0; 
+        friction = FRICTION;
         grounded = false;
         collideWithSlopeL = false;
         collideWithSlopeR = false;
@@ -83,6 +89,7 @@ public class OWARemastered {
         bRDistanceFromRect = 0;
         ledgeState = LedgeState.STATE_NOLEDGE;
         jumpState = JumpState.STATE_NOJUMP;
+        middleLeftIntersect = null;
     }
     
     public void mainMethod(Graphics2D g2, Sonic son, Room cR, Animation ani){
@@ -129,8 +136,8 @@ public class OWARemastered {
             middleLeft = new Rectangle(xDrawCenterSonic-40,ySpriteCenterSonic-4,40,4);
             middleRight = new Rectangle(xDrawCenterSonic+4,ySpriteCenterSonic-4,40,4);
         }
-        if(!grounded) {//Added this to reset the height of Sonic sensors if he jumps off a slope (ground == true wouldn't trigger 
-            //early) making Sonic stop earlier then he should
+        if(!grounded) {/*Added this to reset the height of Sonic sensors if he jumps off a slope (ground == true wouldn't trigger 
+            early) making Sonic stop earlier then he should*/
             bottomLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic,4,80);    
             bottomRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic,4,80); 
             middleLeft = new Rectangle(xDrawCenterSonic-40,ySpriteCenterSonic-4,40,4);
@@ -138,7 +145,6 @@ public class OWARemastered {
         }
         topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-84,4,80);
         topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-84,4,80);
-        //Gravity code goes here
         if(PlayerInput.getLeftPress()) {
             leftPress();
         }
@@ -149,15 +155,38 @@ public class OWARemastered {
             ySpeed = -3;
         }
         else if(PlayerInput.getDownPress()) {
-            ySpeed = 3;
+            downPress();
         }
         if(PlayerInput.getZPress()) {//Jump has to be calculated before gravity is added to ySpeed
-            //I need to figure out what to do with groundSpeed when Sonic first lands from a jump
             zPress();
         }
         else if(!PlayerInput.getZPress() && PlayerInput.checkZReleased()) {
             zReleased();
+        }        
+        /*This resets the duckState if Sonic jumps (this is why is placed here right after the code for jumping),
+        or his groundSpeed is less than abs(0.5) (prevents turning bug from Genesis games)
+        */
+        if(jumpState != JumpState.STATE_NOJUMP) {
+            duckState = DuckState.STATE_NODUCK;
         }
+        if(!PlayerInput.getDownPress() && Math.abs(groundSpeed) < 0.5) {
+            duckState = DuckState.STATE_NODUCK;
+        }
+        //Sets correct value for friction
+        if(duckState == DuckState.STATE_ROLL) {
+            friction = ROLLFRICTION;           
+            if(Math.signum(groundSpeed) == Math.signum(Math.sin(angle))) {//Checks if Sonic is rolling uphill
+                slope = SLOPEROLLUP;
+            }
+            else if(Math.signum(groundSpeed) != Math.signum(Math.sin(angle))) {//Checks if Sonic is rolling downhill
+                slope = SLOPEROLLDOWN;
+            }            
+        }
+        else {
+            friction = FRICTION;
+            slope = SLOPE;
+        }
+        //Gravity code goes here
         if(!grounded) {           
             if (ySpeed < 0 && ySpeed > -4)//air drag calculation
             {
@@ -169,7 +198,9 @@ public class OWARemastered {
             if(ySpeed > 16) {//limits how fast Sonic is falling (so he won't clip through tiles)
                 ySpeed = 16;
             }
-        }              
+        }  
+        /*Be careful when creating tiles, especially ones that allow Sonic's bottom and middle sensors to intersect 
+        the same tile*/
         sideCheck(g2);
         if(tLCollide || tRCollide) {
             ySpeed = 1;
@@ -197,11 +228,21 @@ public class OWARemastered {
             and changes depending if Sonic is rolling/running/etc
             BUG- If a sensor interacts with a slope and another one interacts on another one (this occurs
             when Sonic is standing on one tile with two opposing slopes on either side of him,), Sonic will
-            be pushed in the wrong direction by a tile*/
-            groundSpeed -= SLOPE*Math.sin(angle);
-            if(!PlayerInput.getLeftPress() && !PlayerInput.getRightPress()) {
-                groundSpeed -= Math.min(Math.abs(groundSpeed), FRICTION) * Math.signum(groundSpeed);    
+            be pushed in the wrong direction by a tile*/            
+            groundSpeed -= slope*Math.sin(angle);
+            if(!PlayerInput.getLeftPress() && !PlayerInput.getRightPress() && grounded) {
+                groundSpeed -= Math.min(Math.abs(groundSpeed), friction) * Math.signum(groundSpeed);    
             }  
+            else if(duckState == DuckState.STATE_ROLL) {
+                /*If you are rolling and pressing in the direction of your motion- friction is still in effect
+                and Sonic should still slow down*/              
+                if(groundSpeed < 0 && PlayerInput.getLeftPress()) {
+                    groundSpeed -= Math.min(Math.abs(groundSpeed), friction) * Math.signum(groundSpeed);   
+                }
+                else if(groundSpeed > 0 && PlayerInput.getRightPress()) {
+                    groundSpeed -= Math.min(Math.abs(groundSpeed), friction) * Math.signum(groundSpeed);   
+                }
+            }
             /*NOTE! If you want to change groundSpeed, you have to put the code before here! (since this is 
             where groundSpeed effects xSpeed*/
             xSpeed = groundSpeed*Math.cos(angle);
@@ -213,8 +254,7 @@ public class OWARemastered {
         changeAnimation();
         if(Game.getDebug()) {
             drawDebug(g2);
-        }
-        
+        }       
     }
     
     private void sideCheck(Graphics2D g2) {
@@ -253,14 +293,6 @@ public class OWARemastered {
                 topCollision(g2);
             }
         }
-        /*if(grounded || ySpeed >= 0) {
-            bottomCollision(g2);    
-        }
-        else if(!grounded && ySpeed < 0) {
-            topCollision(g2);
-        }
-        leftCollision(g2);
-        rightCollision(g2);*/
     }
     
     private void bottomCollision(Graphics2D g2) {
@@ -269,8 +301,8 @@ public class OWARemastered {
         int yBottomSensor = (int) (ySpriteCenterSonic+80);
         int heightBottomLeftIndex = 0;
         int heightBottomRightIndex = 0;
-        int pixelyL = 90000;
-        int pixelyR = 90000;
+        int pixelyL = ySpriteCenterSonic+80;
+        int pixelyR = ySpriteCenterSonic+80;
         bLDistanceFromRect = 64;
         bRDistanceFromRect = 64;
         Rectangle groundCheckL;
@@ -284,7 +316,7 @@ public class OWARemastered {
         g2.setColor(Color.BLACK);
         g2.drawString("highLeft: "+highLeft, 500, 100);
         g2.drawString("highRight: "+highRight, 500, 125);
-        if(highLeft != null) {
+        if(highLeft != null && middleLeftIntersect != highLeft) {
             heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - highLeft.getXRef())/4));   
             pixelyL = (int) highLeft.getPixelBox(heightBottomLeftIndex).getY();
             groundCheckL = highLeft.getPixelBox(heightBottomLeftIndex);
@@ -322,7 +354,7 @@ public class OWARemastered {
         else if(pixelyR < pixelyL) {
             setSonicGroundStat(heightBottomRightIndex,pixelyR, yBottomSensor, highRight);
         } 
-        else if(pixelyR == pixelyL && pixelyR != 90000) {
+        else if(pixelyR == pixelyL && pixelyR != (ySpriteCenterSonic+80)) {
             /*Make sure that when pixelyR and pixelyL are equal that they are not equal to default value
             This will cause Sonic to be set to the default position! (90000) */
             setSonicGroundStat(heightBottomRightIndex,pixelyR, yBottomSensor, highRight);
@@ -359,8 +391,7 @@ public class OWARemastered {
             g2.fillRect(xBottomSensor,ySpriteCenterSonic+143,1,1);
         }
         int xBottomIndex = xBottomSensor/64;
-        int yBottomIndex = yBottomSensor/64;
-        
+        int yBottomIndex = yBottomSensor/64;       
         Ground intersect = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex);
         if(intersect != null) {
             if(sensor == bottomLeft || sensor == bottomRight) {
@@ -460,21 +491,25 @@ public class OWARemastered {
         int yMiddleSensor = (int) sideSensor.getY();
         int xBottomIndex = xMiddleSensor/64;
         int yBottomIndex = yMiddleSensor/64;
-        Ground intersect = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex); 
+        Ground intersect = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex);        
         g2.drawString("intersect :"+intersect, 500, 200);
         if(intersect != null && sonic.getLayer() == intersect.getLayer()) {
-            if(sideSensor == middleLeft) {
+            if(sideSensor == middleLeft) {               
                 Rectangle collideCheck = intersect.getPixelBox(intersect.getPixelBoxes().size()-1);
-                if(xMiddleSensor < (int) (collideCheck.getX()+collideCheck.getWidth())+4 && middleLeft.intersects(collideCheck)) {                   
+                if(xMiddleSensor < (int) (collideCheck.getX()+collideCheck.getWidth())+4 && middleLeft.intersects(collideCheck)) {      
+                    middleLeftIntersect = intersect;
                     groundSpeed = 0;
+                    xSpeed = 0;
                     mLCollide = true;    
                     xDrawCenterSonic = (int) (collideCheck.getX()+collideCheck.getWidth()+38);
                 }    
             }
-            else if(sideSensor == middleRight) {              
+            else if(sideSensor == middleRight) {                      
                 Rectangle collideCheck = intersect.getPixelBox(0);
                 if(xMiddleSensor > (int) collideCheck.getX() && middleRight.intersects(collideCheck)) {
-                    groundSpeed = 0; 
+                    middleRightIntersect = intersect;
+                    groundSpeed = 0;
+                    xSpeed = 0;
                     mRCollide = true;   
                     xDrawCenterSonic = (int) (collideCheck.getX()-40);
                 }    
@@ -493,12 +528,17 @@ public class OWARemastered {
         }
         else if(grounded) {
             if(groundSpeed > 0) {
-                groundSpeed -= DECELERATION;
+                if(duckState == DuckState.STATE_NODUCK) {
+                    groundSpeed -= DECELERATION;    
+                }
+                else if(duckState == DuckState.STATE_ROLL) {
+                    groundSpeed -= (ROLLDECELERATION+friction);
+                }
                 if(groundSpeed <= 0) {
                     groundSpeed = -0.5;
                 }
             }
-            else if(groundSpeed > -TOPSPEED) {
+            else if(groundSpeed > -TOPSPEED && duckState == DuckState.STATE_NODUCK) {
                 groundSpeed -= ACCELERATION;
                 if(groundSpeed <= -TOPSPEED) {
                     groundSpeed = -TOPSPEED;
@@ -518,12 +558,17 @@ public class OWARemastered {
         }
         else if(grounded) {
             if(groundSpeed < 0) {
-                groundSpeed += DECELERATION;
+                if(duckState == DuckState.STATE_NODUCK) {
+                    groundSpeed += DECELERATION;    
+                }
+                else if(duckState == DuckState.STATE_ROLL) {
+                    groundSpeed += (ROLLDECELERATION+friction);
+                }
                 if(groundSpeed >= 0) {
                     groundSpeed = 0.5;
                 }
             }
-            else if(groundSpeed < TOPSPEED) {
+            else if(groundSpeed < TOPSPEED && duckState == DuckState.STATE_NODUCK) {
                 groundSpeed += ACCELERATION;
                 if(groundSpeed >= TOPSPEED) {
                     groundSpeed = TOPSPEED;
@@ -531,6 +576,23 @@ public class OWARemastered {
             }    
         }       
     }    
+    
+    private void downPress() {
+        if(grounded) {
+            if(angle == 0) {
+                if(Math.abs(groundSpeed) < 1) {
+                    duckState = DuckState.STATE_DUCK;
+                }
+                else if(Math.abs(groundSpeed) >= 1) {
+                    duckState = DuckState.STATE_ROLL;
+                }    
+            }
+            else {
+                duckState = DuckState.STATE_ROLL;
+            }
+            
+        }
+    }
     
     private void zPress() {       
         if(grounded && jumpState == JumpState.STATE_NOJUMP) {
@@ -547,8 +609,8 @@ public class OWARemastered {
                 ySpeed = -JUMP;    
             }      
             else {
-                xSpeed = JUMP*Math.sin(angle);
-                ySpeed = JUMP*Math.cos(angle);
+                //I have to fix when Sonic jumps on a slope
+                ySpeed = -JUMP;    
             }
             grounded = false;
         } 
@@ -565,22 +627,32 @@ public class OWARemastered {
     private void changeAnimation() {
         /*Watch out for state conflicts- if one is conflicting with another one, it causes Sonic to freeze on his animation/
         or perform his animation wrong*/
-        if(jumpState == JumpState.STATE_NOJUMP && ledgeState == LedgeState.STATE_NOLEDGE) {
+        if(jumpState == JumpState.STATE_NOJUMP && ledgeState == LedgeState.STATE_NOLEDGE && duckState == DuckState.STATE_NODUCK) {
             if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_STAND) {
                 animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_STAND);    
             }    
         }
-        if(ledgeState == LedgeState.STATE_LEFTLEDGE) {
+        if(ledgeState == LedgeState.STATE_LEFTLEDGE && duckState == DuckState.STATE_NODUCK) {
             if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT) {
                 animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT);    
             }
         }
-        else if(ledgeState == LedgeState.STATE_RIGHTLEDGE) {
+        else if(ledgeState == LedgeState.STATE_RIGHTLEDGE && duckState == DuckState.STATE_NODUCK) {
             if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT) {
                 animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT);    
             }
         }
         if(jumpState == JumpState.STATE_JUMP_UP || jumpState == JumpState.STATE_JUMP_DOWN) {
+            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_JUMP) {
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_JUMP);   
+            }
+        }
+        if(duckState == DuckState.STATE_DUCK) {
+            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_DUCK) {
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_DUCK);   
+            }
+        }
+        else if(duckState == DuckState.STATE_ROLL) {
             if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_JUMP) {
                 animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_JUMP);   
             }
@@ -617,22 +689,31 @@ public class OWARemastered {
         g2.drawString("bLDistanceFromRect: "+bLDistanceFromRect,75,475);
         g2.drawString("bRDistanceFromRect: "+bRDistanceFromRect,75,500);
         g2.drawString("yLastGround: "+yLastGround,75,525);
+        g2.drawString("friction: "+friction,75,550);
         //Variables that have to do with Sonic's animations:
         g2.setColor(Color.GREEN);
         g2.drawString("angle: "+angle, 400, 75);
         g2.setColor(Color.ORANGE);
         g2.drawString("Sonic's Ledge State: "+ledgeState, 75, 700);
         g2.drawString("Sonic's Jump State: "+jumpState, 75, 725);
-        g2.drawString("Sonic's Animation: "+animation, 75, 200);
+        g2.drawString("Sonic's Duck State: "+duckState, 75, 750);
     }
+    
     public enum LedgeState {
         STATE_NOLEDGE,
         STATE_LEFTLEDGE,
         STATE_RIGHTLEDGE,
     } 
+    
     public enum JumpState {
         STATE_NOJUMP,
         STATE_JUMP_UP,
         STATE_JUMP_DOWN,
+    }
+    
+    public enum DuckState {
+        STATE_NODUCK,
+        STATE_DUCK,
+        STATE_ROLL
     }
 }

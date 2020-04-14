@@ -18,6 +18,7 @@ public class PlayerInput implements KeyListener {
     private static boolean rightPress = false;
     private static boolean upPress = false;
     private static boolean downPress = false;
+    private static int downReleaseTimer = 10;
     private static boolean zPress = false;
     private static boolean xPress = false;
     private static int zPressTimer = 0;
@@ -39,13 +40,24 @@ public class PlayerInput implements KeyListener {
             g2.drawString("leftPress: "+leftPress,1000,500);
             g2.drawString("rightPress: "+rightPress,1000,525);
             g2.drawString("downPress: "+downPress,1000,550);
-            g2.drawString("zPress: "+zPress,1000,575);
-            g2.drawString("zPressTimer: "+zPressTimer,1000,600);
-            g2.drawString("zReleaseTimer: "+zReleaseTimer,1000,625);
-            g2.drawString("xPress: "+xPress,1000,650);
-            g2.drawString("xPressTimer: "+xPressTimer,1000,675);
-            g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,700);    
-        }       
+            g2.drawString("downReleaseTimer: "+downReleaseTimer,1000,575);
+            g2.drawString("zPress: "+zPress,1000,600);
+            g2.drawString("zPressTimer: "+zPressTimer,1000,625);
+            g2.drawString("zReleaseTimer: "+zReleaseTimer,1000,650);
+            g2.drawString("xPress: "+xPress,1000,675);
+            g2.drawString("xPressTimer: "+xPressTimer,1000,700);
+            g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,725);    
+        }  
+        if(downPress) {
+            if(downReleaseTimer > 0) {
+                downReleaseTimer = 0;
+            }
+        }
+        else if(!downPress) {
+            if(downReleaseTimer < 10) {
+                downReleaseTimer++;
+            }
+        }
         if(zPress) {
             if(zReleaseTimer > 0) {
                 zReleaseTimer = 0;
@@ -193,11 +205,18 @@ public class PlayerInput implements KeyListener {
         }
         return check;
     }
+    
+    public static boolean checkDownReleased() {
+        boolean check = false;
+        if(!downPress && downReleaseTimer <= 1) {
+            check = true;
+        }
+        return check;
+    }
+    
     @Override
-    public void keyPressed(KeyEvent e) {/*Note!- due to the way keys are processed
-        //false = not pressed, true = pressed, it is impossible to check when a 
-        key has just been released (whenReleased command in clickteam fusion for example)
-        */
+    public void keyPressed(KeyEvent e) {
+        
         if(allowInput && e.getKeyCode() == e.VK_RIGHT) {
             rightPress = true;
             leftPress = false;
