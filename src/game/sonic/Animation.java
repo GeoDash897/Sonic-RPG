@@ -128,7 +128,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                 }
                 break;
             case ANIMATION_SONIC_DUCK:
-                animationTimerFrameSet = 50;
+                animationTimerFrameSet = 25;
                 numberOfFrames = 2;
                 resetAnimationFrame = 2;
                 resetAnimationTimer = 200;
@@ -173,6 +173,18 @@ public class Animation extends Sonic implements Picture {//This will control Son
                 }
                 else if(direction == 1) {
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Sleep_"+animationFrame+".png");
+                }
+                break;
+            case ANIMATION_SONIC_BORED:
+                animationTimerFrameSet = 25;
+                numberOfFrames = 4;
+                resetAnimationFrame = 2;
+                resetAnimationTimer = 51;
+                if(direction == 0) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Bored_"+animationFrame+".png");
+                }
+                else if(direction == 1) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Bored_"+animationFrame+".png");
                 }
                 break;
             case ANIMATION_SONIC_PUSH_LEFT:                
@@ -269,6 +281,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
         ANIMATION_SONIC_SKID,
         ANIMATION_SONIC_SPINDASH,
         ANIMATION_SONIC_SLEEP,
+        ANIMATION_SONIC_BORED,
         ANIMATION_SONIC_PUSH_LEFT,
         ANIMATION_SONIC_PUSH_RIGHT,
         ANIMATION_SONIC_SPRING,
