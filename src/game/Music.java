@@ -10,15 +10,22 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
-/**
- *
+/**This class controls everything that has to deal with loading/
+ * playing/ and stopping music.
  * @author GeoSonicDash
  */
 public class Music {
     private static Clip testAreaTheme;
+    
+    /**
+     *  Runs various load[Insert Music Name Here] methods. 
+     */
     public static void standard() {
         //loadTestAreaTheme();
     }
+    /**
+     * Loads the theme for the Test Area.
+     */
     public static void loadTestAreaTheme() {
         try {
             File musicPath = new File("src\\game\\resources\\music files\\Test.wav");//creates File object which has path of musicLocation
@@ -35,6 +42,13 @@ public class Music {
             ex.printStackTrace();
         }
     }
+    
+    /**
+     * Plays/Stops the Test Area Theme.
+     * @param start controls if the music is going to play or stop;
+     * 0 = stop, 1 = start and loop.
+     * @param setPosition position of music before it starts.
+     */
     public static void playTestAreaTheme(int start, int setPosition) {
         if(start == 0) {
             testAreaTheme.stop();

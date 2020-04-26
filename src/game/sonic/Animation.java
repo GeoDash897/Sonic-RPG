@@ -20,26 +20,38 @@ import java.awt.Toolkit;
 public class Animation extends Sonic implements Picture {//This will control Sonic's animations
     private static int xDrawSonic;
     private static int yDrawSonic;
-    private static int animationTimer = 1;
-    private static SonicAnimation animationNumber = SonicAnimation.ANIMATION_SONIC_STAND;
-    private static int animationReset = 0;
-    private static int animationFrame = 1;
-    private static int sonicWidth = 288;
-    private static int animationTimerFrameSet = 0;
-    private static int numberOfFrames = 0;
-    private static int resetAnimationFrame = 1;
-    private static int resetAnimationTimer = 0;
-    private static boolean addToPictureAL = false;
-    private static int direction = 1;
+    private static int animationTimer;
+    private static SonicAnimation animationNumber;
+    private static int animationReset;
+    private static int animationFrame;
+    private static int sonicWidth;
+    private static int animationTimerFrameSet;
+    private static int numberOfFrames;
+    private static int resetAnimationFrame;
+    private static int resetAnimationTimer;
+    private static boolean addToPictureAL;
+    private static int direction;
     private static Image sonicPicture;
+    public Animation() {
+        animationTimer = 1;
+        animationNumber = SonicAnimation.ANIMATION_SONIC_STAND;
+        animationReset = 0;
+        animationFrame = 1;
+        sonicWidth = 288;
+        animationTimerFrameSet = 0;
+        numberOfFrames = 0;
+        resetAnimationFrame = 1;
+        resetAnimationTimer = 0;
+        addToPictureAL = false;
+        direction = 1;
+    }
     public void standard(Graphics2D g2, Room currentRoom, int xCenterSonic, int yCenterSonic) {
         if(!addToPictureAL) {
-            System.out.println("Code Ran Here");
             currentRoom.addPicture(this);
             addToPictureAL = true;
         }
-        xDrawSonic = xCenterSonic - 144;
-        yDrawSonic = yCenterSonic - 144;
+        xDrawSonic = xCenterSonic - (sonicWidth/2);
+        yDrawSonic = yCenterSonic - (sonicWidth/2);
         switch (animationNumber) {
             case ANIMATION_SONIC_STAND:              
                 animationTimerFrameSet = 10;
@@ -116,7 +128,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
                 }
                 break;
             case ANIMATION_SONIC_DUCK:
-                animationTimerFrameSet = 50;
+                animationTimerFrameSet = 25;
                 numberOfFrames = 2;
                 resetAnimationFrame = 2;
                 resetAnimationTimer = 200;
@@ -161,6 +173,18 @@ public class Animation extends Sonic implements Picture {//This will control Son
                 }
                 else if(direction == 1) {
                     sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Sleep_"+animationFrame+".png");
+                }
+                break;
+            case ANIMATION_SONIC_BORED:
+                animationTimerFrameSet = 25;
+                numberOfFrames = 4;
+                resetAnimationFrame = 2;
+                resetAnimationTimer = 51;
+                if(direction == 0) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\LSonic Bored_"+animationFrame+".png");
+                }
+                else if(direction == 1) {
+                    sonicPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Bored_"+animationFrame+".png");
                 }
                 break;
             case ANIMATION_SONIC_PUSH_LEFT:                
@@ -208,7 +232,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
         if(animationTimer >= (animationTimerFrameSet*numberOfFrames)) {
             animationFrame = resetAnimationFrame;
             animationTimer = resetAnimationTimer;
-        }                            
+        }    
     }
     public void setSonicAnimation(SonicAnimation newAnimation) {
         animationNumber = newAnimation;
@@ -218,12 +242,15 @@ public class Animation extends Sonic implements Picture {//This will control Son
             animationFrame = 1;
             animationReset = 1;
         }
-        System.out.println("Changed animation to "+newAnimation);
+        //System.out.println("Changed animation to "+newAnimation);
     }
     @Override
     public void draw(Graphics2D g2) {
         g2.drawImage(sonicPicture,xDrawSonic,yDrawSonic,sonicWidth,sonicWidth,this);
-        g2.setColor(Color.black);
+        g2.setColor(Color.MAGENTA);
+        g2.fillRect(xDrawSonic+(sonicWidth/2),yDrawSonic+(sonicWidth/2),4,4);
+        g2.setColor(Color.GREEN);
+        g2.fillRect(xDrawSonic+(sonicWidth/2),yDrawSonic+(sonicWidth/2)-20,4,4);             
     }
     public void setaddToPictureAL(boolean set) {
         addToPictureAL = set;
@@ -254,6 +281,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
         ANIMATION_SONIC_SKID,
         ANIMATION_SONIC_SPINDASH,
         ANIMATION_SONIC_SLEEP,
+        ANIMATION_SONIC_BORED,
         ANIMATION_SONIC_PUSH_LEFT,
         ANIMATION_SONIC_PUSH_RIGHT,
         ANIMATION_SONIC_SPRING,
