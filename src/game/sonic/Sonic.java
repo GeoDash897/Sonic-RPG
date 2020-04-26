@@ -29,7 +29,6 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     private static boolean allowInput = true;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
-    private static OverWorldAction owa;
     private static OWARemastered owaR;
     private static Animation animation;
     private static Room currentRoom;

@@ -33,7 +33,6 @@ public class Room {
     private RoomType roomType;
     private ArrayList<Ground> groundTiles;
     private ArrayList<Map<Integer, Ground>> groundGrid;
-    private ArrayList<DefaultObject> objects;
     private ArrayList<Picture> pictures;
     private SaveLoadObjects slo;
     private OverWorld overworld;
@@ -50,7 +49,6 @@ public class Room {
         this.roomType = roomType;   
         this.groundGrid = new ArrayList<Map<Integer, Ground>>();
         this.groundTiles = new ArrayList<Ground>();
-        this.objects = new ArrayList<DefaultObject>();
         this.pictures = new ArrayList<Picture>();
         this.slo = new SaveLoadObjects();
         createRoom();
@@ -97,10 +95,6 @@ public class Room {
             createTile(GRD_SONICHOUSE_SONICBED_30,1,256,576,1);
             createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);*/
         }
-        if(objects.isEmpty()) {
-            //Objects that are supposed to be in room are loaded in SaveLoadObjects and are returned in an ArrayList 
-            objects = slo.getObject(overworld, roomType);
-        }
     }
     
     /**
@@ -116,15 +110,12 @@ public class Room {
             for(int j = 0; j < 24; j++) {
                 g2.drawRect(0+(i*64), 0+(j*64), 64, 64);
             }
-        }    
-        for(DefaultObject obj : objects) {       
-            obj.action();
-        }          
+        }             
         Draw.drawInLayers(g2, pictures);
     }
     
     public void saveRoom() {
-        slo.saveCurrentRoom(roomType, groundTiles, objects);
+        //slo.saveCurrentRoom(roomType, groundTiles, objects);
     }
     
     /**
@@ -160,26 +151,10 @@ public class Room {
     
     public ArrayList<Ground> getGroundArrayList() {
         return groundTiles;
-    }
-    
-    public ArrayList<DefaultObject> getDefaultObjectArrayList() {
-        return objects;
-    }
+    }   
     
     public ArrayList<Picture> getPictureArrayList() {
         return pictures;
-    }
-    
-    public String getGroupInArray(int index) {
-        return objects.get(index).getGroup();
-    }
-    
-    public void addObject(DefaultObject add) {
-        objects.add(add);
-    }
-    
-    public void removeObject(int index) {
-        objects.remove(index);
     }
     
     public void addPicture(Picture add) {

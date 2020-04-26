@@ -57,7 +57,6 @@ public class OverWorld extends Game {
         currentRoom = newRoom;
         sonic = new Sonic();
         sonic.addToPictureALAgain();
-        OverWorldAction.setSPRoomSwitch(newRoom);
     }
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == e.VK_ENTER) {
