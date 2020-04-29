@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package game;
+package game.input;
 
+import game.GameLoop;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -31,23 +32,8 @@ public class PlayerInput implements KeyListener {
     /**
      * Runs the counters for zPress and xPress (checks how long
      * those keys are pressed for)
-     * @param g2 Need Graphics2D object to display variables.
      */
-    public void standard(Graphics2D g2) {
-        if(Game.getDebug()) {
-            g2.setColor(Color.cyan);
-            g2.drawString("upPress: "+upPress,1000,475);
-            g2.drawString("leftPress: "+leftPress,1000,500);
-            g2.drawString("rightPress: "+rightPress,1000,525);
-            g2.drawString("downPress: "+downPress,1000,550);
-            g2.drawString("downReleaseTimer: "+downReleaseTimer,1000,575);
-            g2.drawString("zPress: "+zPress,1000,600);
-            g2.drawString("zPressTimer: "+zPressTimer,1000,625);
-            g2.drawString("zReleaseTimer: "+zReleaseTimer,1000,650);
-            g2.drawString("xPress: "+xPress,1000,675);
-            g2.drawString("xPressTimer: "+xPressTimer,1000,700);
-            g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,725);    
-        }  
+    public void standard() {        
         if(downPress) {
             if(downReleaseTimer > 0) {
                 downReleaseTimer = 0;
@@ -86,6 +72,23 @@ public class PlayerInput implements KeyListener {
                 xReleaseTimer++;
             }
         }
+    }
+    
+    public void draw(Graphics2D g2) {
+        if(GameLoop.getDebug()) {
+            g2.setColor(Color.cyan);
+            g2.drawString("upPress: "+upPress,1000,475);
+            g2.drawString("leftPress: "+leftPress,1000,500);
+            g2.drawString("rightPress: "+rightPress,1000,525);
+            g2.drawString("downPress: "+downPress,1000,550);
+            g2.drawString("downReleaseTimer: "+downReleaseTimer,1000,575);
+            g2.drawString("zPress: "+zPress,1000,600);
+            g2.drawString("zPressTimer: "+zPressTimer,1000,625);
+            g2.drawString("zReleaseTimer: "+zReleaseTimer,1000,650);
+            g2.drawString("xPress: "+xPress,1000,675);
+            g2.drawString("xPressTimer: "+xPressTimer,1000,700);
+            g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,725);    
+        }  
     }
     
     @Override
@@ -238,7 +241,7 @@ public class PlayerInput implements KeyListener {
             xPress = true;
         }
         if(allowInput && e.getKeyCode() == e.VK_ESCAPE) {
-            Game.setDebug();
+            GameLoop.setDebug();
         }
     }
 

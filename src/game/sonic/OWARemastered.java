@@ -5,8 +5,8 @@
  */
 package game.sonic;
 
-import game.Game;
-import game.PlayerInput;
+import game.GameLoop;
+import game.input.PlayerInput;
 import game.overworld.Ground;
 import game.overworld.Room;
 import java.awt.Color;
@@ -97,12 +97,7 @@ public class OWARemastered {
         middleLeftIntersect = null;
     }
     
-    public void mainMethod(Graphics2D g2, Sonic son, Room cR, Animation ani){
-        /*try {
-            Thread.sleep(200);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }*/
+    public void mainMethod(Sonic son, Room cR, Animation ani){
         currentRoom = cR;
         animation = ani;
         sonic = son;
@@ -162,7 +157,7 @@ public class OWARemastered {
         else if(PlayerInput.getDownPress()) {
             downPress();
         }
-        performSpindash(g2);
+        performSpindash();
         if(PlayerInput.getZPress()) {//Jump has to be calculated before gravity is added to ySpeed
             zPress();
         }
@@ -213,7 +208,7 @@ public class OWARemastered {
         }  
         /*Be careful when creating tiles, especially ones that allow Sonic's bottom and middle sensors to intersect 
         the same tile*/
-        sideCheck(g2);
+        sideCheck();
         if(tLCollide || tRCollide) {
             ySpeed = 1;
         }
@@ -263,52 +258,49 @@ public class OWARemastered {
         }             
         xDrawCenterSonic += (int) xSpeed;
         ySpriteCenterSonic += (int) ySpeed;
-        bottomTopCheck(g2);//This needs to go after gravity is calculated (since it affects ySpeed)!
-        changeAnimation();
-        if(Game.getDebug()) {
-            drawDebug(g2);
-        }       
+        bottomTopCheck();//This needs to go after gravity is calculated (since it affects ySpeed)!
+        changeAnimation();    
     }
     
-    private void sideCheck(Graphics2D g2) {
+    private void sideCheck() {
         mLCollide = false;
         mRCollide = false;
         if(grounded) {
             if(groundSpeed > 0) {
-               sideCollision(g2, middleRight);
+               sideCollision(middleRight);
             }
             else if(groundSpeed < 0) {
-               sideCollision(g2, middleLeft);
+               sideCollision(middleLeft);
             }            
         }
         else if(!grounded) {
             if(xSpeed < 0) {
-                sideCollision(g2, middleLeft);
+                sideCollision(middleLeft);
             }
             else if(xSpeed > 0) {
-                sideCollision(g2, middleRight);
+                sideCollision(middleRight);
             }
         }
     }
-    private void bottomTopCheck(Graphics2D g2) {
+    private void bottomTopCheck() {
         bLCollide = false;
         bRCollide = false;
         tLCollide = false;
         tRCollide = false;
         if(grounded) {
-            bottomCollision(g2);             
+            bottomCollision();             
         }
         else if(!grounded) {
             if(ySpeed > 0 || Math.abs(xSpeed) > Math.abs(ySpeed)) {
-                bottomCollision(g2);     
+                bottomCollision();     
             }
             else if(ySpeed < 0 || Math.abs(xSpeed) > Math.abs(ySpeed)) {
-                topCollision(g2);
+                topCollision();
             }
         }
     }
     
-    private void bottomCollision(Graphics2D g2) {
+    private void bottomCollision() {
         int xBottomLeft = (int) bottomLeft.getX();
         int xBottomRight = (int) bottomRight.getX();  
         int yBottomSensor = (int) (ySpriteCenterSonic+80);
@@ -320,15 +312,11 @@ public class OWARemastered {
         bRDistanceFromRect = 64;
         Rectangle groundCheckL;
         Rectangle groundCheckR;
-        g2.setColor(Color.GREEN);
-        g2.fill(bottomLeft);
-        g2.setColor(Color.CYAN);
-        g2.fill(bottomRight);
-        Ground highLeft = getCorrectTile(yBottomSensor, g2,bottomLeft);
-        Ground highRight = getCorrectTile(yBottomSensor, g2,bottomRight);
-        g2.setColor(Color.BLACK);
+        Ground highLeft = getCorrectTile(yBottomSensor,bottomLeft);
+        Ground highRight = getCorrectTile(yBottomSensor,bottomRight);
+        /*g2.setColor(Color.BLACK);
         g2.drawString("highLeft: "+highLeft, 500, 100);
-        g2.drawString("highRight: "+highRight, 500, 125);
+        g2.drawString("highRight: "+highRight, 500, 125);*/
         if(highLeft != null && middleLeftIntersect != highLeft) {
             heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - highLeft.getXRef())/4));   
             pixelyL = (int) highLeft.getPixelBox(heightBottomLeftIndex).getY();
@@ -359,8 +347,8 @@ public class OWARemastered {
                 }
             }            
         }       
-        g2.drawString("pixelyL: "+pixelyL, 500, 150);
-        g2.drawString("pixelyR: "+pixelyR, 500, 175);
+        /*g2.drawString("pixelyL: "+pixelyL, 500, 150);
+        g2.drawString("pixelyR: "+pixelyR, 500, 175);*/
         if(pixelyL < pixelyR) {
             setSonicGroundStat(heightBottomLeftIndex,pixelyL, yBottomSensor, highLeft);
         }
@@ -369,7 +357,7 @@ public class OWARemastered {
         } 
         else if(pixelyR == pixelyL && pixelyR != (ySpriteCenterSonic+80)) {
             /*Make sure that when pixelyR and pixelyL are equal that they are not equal to default value
-            This will cause Sonic to be set to the default position! (90000) */
+            This will cause Sonic to be set to the default position! (ySpriteCenterSonic+80)) */
             /*Added this here to prevent Sonic from sliding down a slope if his front sensor (the one in
             front of him relative to his movement) collides with a slope*/
             if(groundSpeed > 0) {
@@ -401,9 +389,9 @@ public class OWARemastered {
         }          
     } 
     
-    private Ground getCorrectTile(int yBottomSensor,Graphics2D g2, Rectangle sensor) {
+    private Ground getCorrectTile(int yBottomSensor, Rectangle sensor) {
         int xBottomSensor = (int) sensor.getX();     
-        if(sensor == bottomLeft) {
+        /*if(sensor == bottomLeft) {
             g2.setColor(Color.MAGENTA);
             g2.fillRect(xBottomSensor,ySpriteCenterSonic,1,80);
             g2.fillRect(xBottomSensor,ySpriteCenterSonic+143,1,1);
@@ -412,7 +400,7 @@ public class OWARemastered {
             g2.setColor(Color.RED);
             g2.fillRect(xBottomSensor,ySpriteCenterSonic,1,80);
             g2.fillRect(xBottomSensor,ySpriteCenterSonic+143,1,1);
-        }
+        }*/
         int xBottomIndex = xBottomSensor/64;
         int yBottomIndex = yBottomSensor/64;       
         Ground intersect = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex);
@@ -458,7 +446,7 @@ public class OWARemastered {
             }
         }        
     }
-    private void topCollision(Graphics2D g2) {
+    private void topCollision() {
         int xTopLeft = (int) topLeft.getX();
         int xTopRight = (int) topRight.getX();  
         int yBottomSensor = ySpriteCenterSonic;
@@ -468,15 +456,15 @@ public class OWARemastered {
         int pixelyR = -90000;
         Rectangle groundCheckL;
         Rectangle groundCheckR;
-        Ground lowLeft = getCorrectTile(yBottomSensor, g2,topLeft);
-        Ground lowRight = getCorrectTile(yBottomSensor, g2,topRight);
-        g2.setColor(Color.BLACK);
+        Ground lowLeft = getCorrectTile(yBottomSensor,topLeft);
+        Ground lowRight = getCorrectTile(yBottomSensor,topRight);
+        /*g2.setColor(Color.BLACK);
         g2.drawString("lowLeft: "+lowLeft, 500, 100);
         g2.drawString("lowRight: "+lowRight, 500, 125);
         g2.setColor(Color.BLUE);
         g2.fill(topLeft);
         g2.setColor(Color.YELLOW);
-        g2.fill(topRight);
+        g2.fill(topRight);*/
         if(lowLeft != null) {
             heightBottomLeftIndex = (int) Math.abs(((xTopLeft - lowLeft.getXRef())/4));   
             pixelyL = (int) (lowLeft.getPixelBox(heightBottomLeftIndex).getY()+lowLeft.getPixelBox(heightBottomLeftIndex).getHeight());
@@ -507,23 +495,23 @@ public class OWARemastered {
         }
     }
     
-    private void sideCollision(Graphics2D g2, Rectangle sideSensor) {
+    private void sideCollision(Rectangle sideSensor) {
         int xMiddleSensor = 0;
         if(sideSensor == middleLeft) {
             xMiddleSensor = (int) sideSensor.getX();
-            g2.setColor(Color.MAGENTA);
-            g2.fill(middleLeft);                
+            /*g2.setColor(Color.MAGENTA);
+            g2.fill(middleLeft); */               
         }
         else if(sideSensor == middleRight) {
             xMiddleSensor = (int) (sideSensor.getX()+sideSensor.getWidth());
-            g2.setColor(Color.YELLOW);
-            g2.fill(middleRight);
+            /*g2.setColor(Color.YELLOW);
+            g2.fill(middleRight);*/
         }
         int yMiddleSensor = (int) sideSensor.getY();
         int xBottomIndex = xMiddleSensor/64;
         int yBottomIndex = yMiddleSensor/64;
         Ground intersect = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex);        
-        g2.drawString("intersect :"+intersect, 500, 200);
+        //g2.drawString("intersect :"+intersect, 500, 200);
         if(intersect != null && sonic.getLayer() == intersect.getLayer()) {
             if(sideSensor == middleLeft) {               
                 Rectangle collideCheck = intersect.getPixelBox(intersect.getPixelBoxes().size()-1);
@@ -548,7 +536,7 @@ public class OWARemastered {
         }
     }
     
-    private void performSpindash(Graphics2D g2) {
+    private void performSpindash() {
         //If Sonic is ducking and the Z Key is pressed, start spindashing (need state in order to change animation)
         if(grounded && duckState == DuckState.STATE_DUCK && PlayerInput.checkForZPressOnce() && spindashState == SpindashState.STATE_NOSPINDASH) {
             spindashState = SpindashState.STATE_SPINDASH;           
@@ -782,41 +770,55 @@ public class OWARemastered {
         return yDrawCenterSonic;
     }
 
-    private void drawDebug(Graphics2D g2) {
-        g2.setColor(Color.MAGENTA);
-        g2.drawString("DEBUG MENU",600,25);        
-        //Variables that have to do with Sonic's x and y position, checking ground, x and y speed, etc:
-        g2.drawString("xDrawCenterSonic: "+xDrawCenterSonic,75,75);
-        g2.drawString("yDrawCenterSonic: "+yDrawCenterSonic,75,100);
-        g2.drawString("ySpriteCenterSonic: "+ySpriteCenterSonic,75,125);
-        g2.drawString("grounded: "+grounded,75,150);
-        g2.drawString("groundSpeed: "+groundSpeed,75,175);
-        g2.drawString("xSpeed: "+xSpeed,75,200);
-        g2.drawString("ySpeed: "+ySpeed,75,225);       
-        g2.drawString("slope: "+slope,75,250);
-        g2.drawString("collideWithSlopeL: "+collideWithSlopeL,75,275);
-        g2.drawString("collideWithSlopeR: "+collideWithSlopeR,75,300);
-        g2.drawString("bLCollide: "+bLCollide,75,325);
-        g2.drawString("bRCollide: "+bRCollide,75,350);
-        g2.drawString("tLCollide: "+tLCollide,75,375);
-        g2.drawString("tRCollide: "+tRCollide,75,400);
-        g2.drawString("mLCollide: "+mLCollide,75,425);
-        g2.drawString("mRCollide: "+mRCollide,75,450);
-        g2.drawString("bLDistanceFromRect: "+bLDistanceFromRect,75,475);
-        g2.drawString("bRDistanceFromRect: "+bRDistanceFromRect,75,500);
-        g2.drawString("yLastGround: "+yLastGround,75,525);
-        g2.drawString("friction: "+friction,75,550);
-        g2.drawString("spindashRev: "+spindashRev,75,575);
-        //Variables that have to do with Sonic's animations:
-        g2.setColor(Color.GREEN);
-        g2.drawString("angle: "+angle, 400, 75);
-        g2.drawString("direction: "+animation.getDirection(), 400, 100);
-        g2.drawString("waitTimer: "+waitTimer, 400, 125);
-        g2.setColor(Color.ORANGE);
-        g2.drawString("Sonic's Ledge State: "+ledgeState, 75, 700);
-        g2.drawString("Sonic's Jump State: "+jumpState, 75, 725);
-        g2.drawString("Sonic's Duck State: "+duckState, 75, 750);
-        g2.drawString("Sonic's Spindash State: "+spindashState, 75, 775);
+    public void drawDebug(Graphics2D g2) {
+        if(GameLoop.getDebug()) {
+            g2.setColor(Color.MAGENTA);
+            g2.drawString("DEBUG MENU",600,25);        
+            //Variables that have to do with Sonic's x and y position, checking ground, x and y speed, etc:
+            g2.drawString("xDrawCenterSonic: "+xDrawCenterSonic,75,75);
+            g2.drawString("yDrawCenterSonic: "+yDrawCenterSonic,75,100);
+            g2.drawString("ySpriteCenterSonic: "+ySpriteCenterSonic,75,125);
+            g2.drawString("grounded: "+grounded,75,150);
+            g2.drawString("groundSpeed: "+groundSpeed,75,175);
+            g2.drawString("xSpeed: "+xSpeed,75,200);
+            g2.drawString("ySpeed: "+ySpeed,75,225);       
+            g2.drawString("slope: "+slope,75,250);
+            g2.drawString("collideWithSlopeL: "+collideWithSlopeL,75,275);
+            g2.drawString("collideWithSlopeR: "+collideWithSlopeR,75,300);
+            g2.drawString("bLCollide: "+bLCollide,75,325);
+            g2.drawString("bRCollide: "+bRCollide,75,350);
+            g2.drawString("tLCollide: "+tLCollide,75,375);
+            g2.drawString("tRCollide: "+tRCollide,75,400);
+            g2.drawString("mLCollide: "+mLCollide,75,425);
+            g2.drawString("mRCollide: "+mRCollide,75,450);
+            g2.drawString("bLDistanceFromRect: "+bLDistanceFromRect,75,475);
+            g2.drawString("bRDistanceFromRect: "+bRDistanceFromRect,75,500);
+            g2.drawString("yLastGround: "+yLastGround,75,525);
+            g2.drawString("friction: "+friction,75,550);
+            g2.drawString("spindashRev: "+spindashRev,75,575);
+            //Variables that have to do with Sonic's animations:
+            g2.setColor(Color.GREEN);
+            g2.drawString("angle: "+angle, 400, 75);
+            //g2.drawString("direction: "+animation.getDirection(), 400, 100);
+            g2.drawString("waitTimer: "+waitTimer, 400, 125);
+            g2.setColor(Color.ORANGE);
+            g2.drawString("Sonic's Ledge State: "+ledgeState, 75, 700);
+            g2.drawString("Sonic's Jump State: "+jumpState, 75, 725);
+            g2.drawString("Sonic's Duck State: "+duckState, 75, 750);
+            g2.drawString("Sonic's Spindash State: "+spindashState, 75, 775);   
+            g2.setColor(Color.BLUE);    
+            g2.fill(topLeft);
+            g2.setColor(Color.YELLOW);    
+            g2.fill(topRight);
+            g2.setColor(Color.MAGENTA);    
+            g2.fill(middleLeft);
+            g2.setColor(Color.RED);    
+            g2.fill(middleRight);
+            g2.setColor(Color.GREEN);    
+            g2.fill(bottomLeft);
+            g2.setColor(Color.CYAN);    
+            g2.fill(bottomRight);
+        }          
     }
     
     public enum LedgeState {
