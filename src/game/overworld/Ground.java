@@ -204,7 +204,7 @@ public class Ground extends OverWorld implements Picture {
         g2.fillRect(xRef, yRef+63, 64, 1);
         g2.fillRect(xRef, yRef, 1, 64);
         g2.fillRect(xRef+63, yRef, 1, 64);
-        g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, this);
+        g2.drawImage(groundPicture, xRef, yRef, length*4, width*4, null);
     }
     public int getXRef() {
         return xRef;
@@ -221,7 +221,6 @@ public class Ground extends OverWorld implements Picture {
     public int getLength() {
         return length;
     }
-    @Override
     public int getWidth() {
         return width;
     }

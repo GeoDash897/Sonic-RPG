@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package game.overworld;
-import game.Game;
 import game.overworld.Room.RoomType;
 import static game.overworld.Room.RoomType.ROOM_SONIC_HOUSE;
 import static game.overworld.Room.RoomType.ROOM_SONIC_TEST;
@@ -16,30 +15,40 @@ import java.util.ArrayList;
     Author: GeoDash897  Date:10/5/19    Updated:12/31/19
 */
 //memes
-public class OverWorld extends Game {
+public class OverWorld {
     private static ArrayList<Room> rooms = new ArrayList<Room>();
     private static boolean generateEverything = false;
     private static RoomType currentRoom = ROOM_SONIC_HOUSE;
     private Sonic sonic;
-    public void standard(Graphics2D g2) {
+    public void standard() {
         if(generateEverything == false) {
-            //Music.playTestAreaTheme(1, 0);    
+            //Music.playTestAreaTheme(1, 0);
+            generate();
         }      
-        if(generateEverything == false) {
-            generate(g2);
-        }
         else if(generateEverything == true) {
-            getCurrentRoom().runRoom(g2);
-            g2.drawString(""+currentRoom,300,200);
-            sonic = new Sonic();
-            sonic.setup(g2,this);
+            getCurrentRoom().runRoom();
+            if(sonic == null) {
+                sonic = new Sonic();     
+            }            
+            sonic.setup(this);
         }      
     }   
-    public void generate(Graphics2D g2) {      
+    
+    public void draw(Graphics2D g2) {
+        getCurrentRoom().drawRoom(g2);
+        if(sonic != null) {
+            sonic.draw(g2);
+        }
+        g2.drawString(""+currentRoom,300,200);
+    }
+    
+    public void generate() {      
         rooms.add(new Room(this, ROOM_SONIC_HOUSE));
         rooms.add(new Room(this,ROOM_SONIC_TEST));
         System.out.println("Everything has been generated");
-        generateEverything = true;
+        if(rooms.size() == 2) {
+            generateEverything = true;    
+        }        
     }
     public ArrayList<Room> getRoomsArrayList() {
         return rooms;

@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
-public class Sonic extends OverWorld {//This is the main Sonic class; 
+public class Sonic {//This is the main Sonic class; 
     //this will run all the other classes related to Sonic (Animation, Inventory,etc)
     private static int level;
     private static int exp;
@@ -29,24 +29,37 @@ public class Sonic extends OverWorld {//This is the main Sonic class;
     private static boolean allowInput = true;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
+    private static OverWorld overWorld;
     private static OWARemastered owaR;
     private static Animation animation;
     private static Room currentRoom;
-    public void setup(Graphics2D g2, OverWorld overworld) {
+    public void setup(OverWorld overworld) {
         if(owaR == null) {
             owaR = new OWARemastered();    
         } 
+        if(overWorld == null) {
+            overWorld = overworld;    
+        }
         if(animation == null) {
             animation =  new Animation();    
         }       
         currentRoom = overworld.getCurrentRoom();
         if(!cutscene) {           
-            owaR.mainMethod(g2,this, currentRoom, animation);
-            animation.standard(g2,currentRoom,owaR.getXCenterSonic(),owaR.getYCenterSonic()); 
-            /*animation.standard(g2,currentRoom,owa.getXCenterSonic(),owa.getYCenterSonic()); 
-            owa.standard(g2);*/
+            owaR.mainMethod(this, currentRoom, animation);   
+            animation.standard(currentRoom,owaR.getXCenterSonic(),owaR.getYCenterSonic());
         }
     }
+    
+    public void draw(Graphics2D g2) {
+        if(owaR != null) {
+            owaR.drawDebug(g2);    
+        }        
+    }
+    
+    public OverWorld getOverWorld() {
+        return overWorld;
+    }
+    
     public void addToPictureALAgain() {
         animation.setaddToPictureAL(false);
     }

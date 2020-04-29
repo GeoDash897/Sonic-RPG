@@ -1,0 +1,181 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package game;
+
+import game.display.Display;
+import game.input.PlayerInput;
+import game.overworld.OverWorld;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+
+/**
+ *
+ * @author GeoSonicDash
+ */
+public class GameLoop extends JPanel {
+    private static int length;
+    private static int width;
+    private static String title;
+    private static boolean debug; 
+    private static boolean isPainting;
+    private static boolean loadTempSave;
+    public static Font debugStat;
+    public static Font dialog;    
+    private ArrayList<Thread> objectThreads;
+    private File temp;
+    private OverWorld overWorld;
+    private PlayerInput playerInput;
+    private Display display;
+    
+    public GameLoop(String title, int length, int width) {
+        this.length = length;
+        this.width = width;
+        this.title = title;
+        this.loadTempSave = true;
+        this.isPainting = true;       
+        create();
+    }
+    
+    private void create() {
+        //creates TempSave.txt- file where everything is temp. saved during gameplay
+        createTempSave();
+        display = new Display(title, length, width);
+        Container c = display.getFrame().getContentPane();
+        setOpaque(false);//allows for setting a color background in JPanel
+        c.setBackground(Color.gray);//background color can be changed
+        playerInput = new PlayerInput();
+        overWorld = new OverWorld();
+    }
+       
+    public void start() {
+        display.addKeyListener(playerInput);
+        display.addJPanel(this);//Adding the JPanel invokes the paintComponent method- game actually starts
+        /*I put it in a separate method call in order to make sure that the container, setOpaque, and setBackgroundColor
+        methods ran before adding the JPanel to the JFrame*/
+    }
+    
+    public void createTempSave() {
+        File local = new File("src/game/Area1.txt");
+        temp = new File("src/game/TempSave.txt");
+        if(objectThreads == null) {
+            objectThreads = new ArrayList<Thread>();
+        }
+        try {
+            if(!temp.exists()) {
+                temp.createNewFile();
+            }
+            BufferedReader br = new BufferedReader(new FileReader(local));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
+            String currentLine = br.readLine();
+            while(currentLine != null) {
+                /*For each line, a thread is created- the thread reads the line of text
+                and copys that line of text over, splits the work of reading each line*/
+                Thread line = new Thread(new GameLoop.CopyFile(bw,currentLine));
+                line.start();            
+                /*All the threads are added to objectThreads arrayList to store them
+                This makes it easy to remove them*/
+                objectThreads.add(line);             
+                currentLine = br.readLine();
+            }
+            bw.flush();
+            bw.close();
+            br.close();
+        }
+        catch(IOException ex) {
+            ex.printStackTrace();
+        }
+    }    
+    
+    @Override
+    public void paintComponent(Graphics g) {//opens paint method
+        /*Create Graphics2D object from Graphics (use to draw everything),
+            use that to set RenderingHints to draw everything based on speed > quality*/
+            Graphics2D g2 = (Graphics2D) g;
+            RenderingHints rh = new RenderingHints(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_SPEED);
+            g2.setRenderingHints(rh);
+            g2.setFont(debugStat);
+            g2.setColor(Color.CYAN);           
+            if(loadTempSave) {  
+                //Destroys all the threads used to copy text over to TempSave.txt and start overWorld.standard method
+                playerInput.standard();//Needed for zPressTimer and xPressTimer to function (allows them to increase when their key is pressed)
+                overWorld.standard();//main method for game 
+                playerInput.draw(g2);    
+                overWorld.draw(g2);
+            } 
+            if(isPainting) {
+                repaint();    
+            }    
+            else {
+                end();
+            }
+    }
+    
+    public void end() {
+        temp.deleteOnExit();
+        System.exit(0);
+    }
+    
+    /** @return 
+     * <ul>
+     * <li>{@code false}- the debug menu is not displayed.
+     * <li>{@code true}- the debug menu is displayed.
+     * </ul>
+     */
+    public static boolean getDebug() {
+        return debug;
+    }
+    
+    /**
+     * Sets the value of boolean {@code debug}.
+     */
+    public static void setDebug() {
+        debug = !debug;
+    }
+    
+    /**
+     * Thread used to process each line of {@code Area.txt}.
+     */
+    class CopyFile implements Runnable {
+        private boolean isDone;
+        private BufferedWriter bw;
+        private String currentLine;
+        public CopyFile(BufferedWriter bw, String currentLine) {
+            this.isDone = false;
+            this.bw = bw;
+            this.currentLine = currentLine;
+        }
+        /**
+        * Thread that takes line of {@code Area1.txt} and copies it to a {@code TempSave.txt}.
+        */
+        @Override
+        public synchronized void run() {
+            while(!isDone) {
+                try {   
+                    if(currentLine != null) {
+                        //If the current that the thread is processing is not null, copy it to other TempSave.txt
+                        bw.write(currentLine);
+                        bw.newLine();    
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } 
+                isDone = true; //End the thread            
+            }                       
+        }
+    }
+}

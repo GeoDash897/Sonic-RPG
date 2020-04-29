@@ -36,6 +36,7 @@ public class Room {
     private ArrayList<Picture> pictures;
     private SaveLoadObjects slo;
     private OverWorld overworld;
+    private static Draw draw;
     
     /**
      * Creates room Object (it's the constructor of the Room class).
@@ -51,6 +52,9 @@ public class Room {
         this.groundTiles = new ArrayList<Ground>();
         this.pictures = new ArrayList<Picture>();
         this.slo = new SaveLoadObjects();
+        if(draw == null) {
+            draw = new Draw();   
+        }       
         createRoom();
     }
     
@@ -99,12 +103,15 @@ public class Room {
     
     /**
      * Runs draw and action methods of DefaultObjects.
-     * @param g2 Needed to send to Draw class to draw all the picture objects.
      */
-    public void runRoom(Graphics2D g2) {
+    public void runRoom() {
         /*for(int i = 0; i < objects.size(); i++) {
             g2.drawString(objects.get(i).toString(),500, 100+(25*i));
         } */    
+        
+    }
+    
+    public void drawRoom(Graphics2D g2) {
         g2.setColor(Color.MAGENTA);
         for(int i = 0; i < 24; i++) {
             for(int j = 0; j < 24; j++) {

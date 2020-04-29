@@ -45,7 +45,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
         addToPictureAL = false;
         direction = 1;
     }
-    public void standard(Graphics2D g2, Room currentRoom, int xCenterSonic, int yCenterSonic) {
+    public void standard(Room currentRoom, int xCenterSonic, int yCenterSonic) {
         if(!addToPictureAL) {
             currentRoom.addPicture(this);
             addToPictureAL = true;
@@ -232,7 +232,7 @@ public class Animation extends Sonic implements Picture {//This will control Son
         if(animationTimer >= (animationTimerFrameSet*numberOfFrames)) {
             animationFrame = resetAnimationFrame;
             animationTimer = resetAnimationTimer;
-        }    
+        }   
     }
     public void setSonicAnimation(SonicAnimation newAnimation) {
         animationNumber = newAnimation;
@@ -245,11 +245,12 @@ public class Animation extends Sonic implements Picture {//This will control Son
         //System.out.println("Changed animation to "+newAnimation);
     }
     @Override
-    public void draw(Graphics2D g2) {
-        g2.drawImage(sonicPicture,xDrawSonic,yDrawSonic,sonicWidth,sonicWidth,this);
+    public void draw(Graphics2D g2) {       
+        g2.drawImage(sonicPicture,xDrawSonic,yDrawSonic,sonicWidth,sonicWidth, null);
         g2.setColor(Color.MAGENTA);
         g2.fillRect(xDrawSonic+(sonicWidth/2),yDrawSonic+(sonicWidth/2),4,4);
         g2.setColor(Color.GREEN);
+        //g2.drawString("animationTimer:"+animationTimer, 1000, 400);
         g2.fillRect(xDrawSonic+(sonicWidth/2),yDrawSonic+(sonicWidth/2)-20,4,4);             
     }
     public void setaddToPictureAL(boolean set) {
