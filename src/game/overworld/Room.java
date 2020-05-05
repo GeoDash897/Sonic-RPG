@@ -78,7 +78,7 @@ public class Room {
             for(int i = 0; i < 11; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,1472,0+(i*64),1);
             }
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
+            /*createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
             createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,448,576,1);  
             createTile(GRD_SONICHOUSE_WOODPLANK,1,512,576,1); 
@@ -89,15 +89,15 @@ public class Room {
             createTile(GRD_SONICHOUSE_WOODPLANK,1,704,576,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,768,576,0);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,768,640,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1,832,640,0);
-            /*createTile(GRD_SONICHOUSE_SONICBED_00,1,64,576,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,832,640,0);*/
+            createTile(GRD_SONICHOUSE_SONICBED_00,1,64,576,1);
             createTile(GRD_SONICHOUSE_SONICBED_01,1,64,640,1); 
             createTile(GRD_SONICHOUSE_SONICBED_10,1,128,576,1);  
             createTile(GRD_SONICHOUSE_SONICBED_11,1,128,640,1);
             createTile(GRD_SONICHOUSE_SONICBED_20,1,192,576,1);  
             createTile(GRD_SONICHOUSE_SONICBED_21,1,192,640,1);
             createTile(GRD_SONICHOUSE_SONICBED_30,1,256,576,1);
-            createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);*/
+            createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);
         }
     }
     

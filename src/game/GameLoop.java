@@ -33,7 +33,6 @@ public class GameLoop extends JPanel {
     private static String title;
     private static boolean debug; 
     private static boolean isPainting;
-    private static boolean loadTempSave;
     public static Font debugStat;
     public static Font dialog;    
     private ArrayList<Thread> objectThreads;
@@ -46,7 +45,6 @@ public class GameLoop extends JPanel {
         this.length = length;
         this.width = width;
         this.title = title;
-        this.loadTempSave = true;
         this.isPainting = true;       
         create();
     }
@@ -66,7 +64,7 @@ public class GameLoop extends JPanel {
         display.addKeyListener(playerInput);
         display.addJPanel(this);//Adding the JPanel invokes the paintComponent method- game actually starts
         /*I put it in a separate method call in order to make sure that the container, setOpaque, and setBackgroundColor
-        methods ran before adding the JPanel to the JFrame*/
+        methods have run before adding the JPanel to the JFrame*/
     }
     
     public void createTempSave() {
@@ -110,13 +108,11 @@ public class GameLoop extends JPanel {
             g2.setRenderingHints(rh);
             g2.setFont(debugStat);
             g2.setColor(Color.CYAN);           
-            if(loadTempSave) {  
-                //Destroys all the threads used to copy text over to TempSave.txt and start overWorld.standard method
-                playerInput.standard();//Needed for zPressTimer and xPressTimer to function (allows them to increase when their key is pressed)
-                overWorld.standard();//main method for game 
-                playerInput.draw(g2);    
-                overWorld.draw(g2);
-            } 
+            //Destroys all the threads used to copy text over to TempSave.txt and start overWorld.standard method
+            playerInput.standard();//Needed for zPressTimer and xPressTimer to function (allows them to increase when their key is pressed)
+            overWorld.standard();//main method for game 
+            playerInput.draw(g2);    
+            overWorld.draw(g2);
             if(isPainting) {
                 repaint();    
             }    

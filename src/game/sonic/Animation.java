@@ -5,7 +5,6 @@
  */
 package game.sonic;
 
-import game.overworld.OverWorld;
 import game.overworld.Picture;
 import game.overworld.Room;
 import static game.sonic.Animation.SonicAnimation.ANIMATION_SONIC_STAND;

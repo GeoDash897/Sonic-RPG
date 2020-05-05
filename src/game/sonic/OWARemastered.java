@@ -550,7 +550,7 @@ public class OWARemastered {
         if(spindashState == SpindashState.STATE_SPINDASH && PlayerInput.checkDownReleased()) {    
             //I changed the initial groundSpeed from 8 to 10 since the spindash was too weak
             if(animation.getDirection() == 0) {
-                groundSpeed = -10 + ((int)(spindashRev) / 2); //Negative since Sonic would be facing left
+                groundSpeed = -10 - ((int)(spindashRev) / 2); //Negative since Sonic would be facing left
             }
             else if(animation.getDirection() == 1) {
                 groundSpeed = 10 + ((int)(spindashRev) / 2); //Positive since Sonic would be facing right    

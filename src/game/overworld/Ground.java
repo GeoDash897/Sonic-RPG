@@ -17,7 +17,7 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class Ground extends OverWorld implements Picture {
+public class Ground implements Picture {
     private GroundType groundType;
     private int xIndex;
     private int yIndex;
