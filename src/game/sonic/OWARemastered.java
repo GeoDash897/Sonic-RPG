@@ -374,7 +374,7 @@ public class OWARemastered {
         //Get's Sonic's ledges
         if(grounded && xSpeed == 0 && angle == 0 && bLCollide && !bRCollide && bRDistanceFromRect >= 48) {
             if(highLeft != null) {
-                if(xDrawCenterSonic >= highLeft.getXRef()+64+4) {
+                if(xDrawCenterSonic >= highLeft.getXRef()+64+4 && animation.getDirection() == 1) {
                     ledgeState = LedgeState.STATE_RIGHTLEDGE;    
                 }
             }
@@ -382,7 +382,7 @@ public class OWARemastered {
         }
         else if(grounded && xSpeed == 0 && angle == 0 && !bLCollide && bRCollide && bLDistanceFromRect >= 48) {
             if(highRight != null) {
-                if(xDrawCenterSonic <= highRight.getXRef()-4) {
+                if(xDrawCenterSonic <= highRight.getXRef()-4 && animation.getDirection() == 0) {
                     ledgeState = LedgeState.STATE_LEFTLEDGE;    
                 }
             }
@@ -574,7 +574,13 @@ public class OWARemastered {
             if(groundSpeed < 0) {//If Sonic's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
             //completely (skid) before changing direction (can't change direction immediately)
                 animation.setDirection(0);
-            }            
+            }    
+            /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
+            he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)
+            */                      
+            if(grounded && groundSpeed == 0 && mLCollide && animation.getDirection() == 1) {
+                animation.setDirection(1);
+            }
             if(groundSpeed > 0) {
                 if(duckState == DuckState.STATE_NODUCK) {
                     groundSpeed -= DECELERATION;    
@@ -610,8 +616,11 @@ public class OWARemastered {
             //(completely skid) before changing direction (can't change direction immediately)
                 animation.setDirection(1);
             }
-            if(mRCollide && animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_PUSH_RIGHT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_PUSH_RIGHT);
+            /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
+            he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)
+            */
+            if(grounded && groundSpeed == 0 && mRCollide && animation.getDirection() == 0) {
+                animation.setDirection(1);
             }
             if(groundSpeed < 0) {
                 if(duckState == DuckState.STATE_NODUCK) {
@@ -721,24 +730,24 @@ public class OWARemastered {
                     animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_RUN);    
                 }
             }
-            if(PlayerInput.getLeftPress() && mLCollide && animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_PUSH_LEFT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_PUSH_LEFT);
+            if(PlayerInput.getLeftPress() && mLCollide && animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_PUSH) {
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_PUSH);
             }
-            else if(PlayerInput.getRightPress() && mRCollide && animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_PUSH_RIGHT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_PUSH_LEFT);
+            else if(PlayerInput.getRightPress() && mRCollide && animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_PUSH) {
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_PUSH);
             }
         }
         else {//This resets the waitTimer if the player is ducking/rolling/on ledge/spindashing/etc
             waitTimer = 0;
         }
         if(ledgeState == LedgeState.STATE_LEFTLEDGE && duckState == DuckState.STATE_NODUCK) {
-            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT);    
+            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA) {
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA);    
             }
         }
         else if(ledgeState == LedgeState.STATE_RIGHTLEDGE && duckState == DuckState.STATE_NODUCK) {
-            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT);    
+            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA) {
+                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA);    
             }
         }
         if(jumpState == JumpState.STATE_JUMP_UP || jumpState == JumpState.STATE_JUMP_DOWN) {
