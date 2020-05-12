@@ -110,9 +110,9 @@ public class GameLoop extends JPanel {
             g2.setColor(Color.CYAN);           
             //Destroys all the threads used to copy text over to TempSave.txt and start overWorld.standard method
             playerInput.standard();//Needed for zPressTimer and xPressTimer to function (allows them to increase when their key is pressed)
-            overWorld.standard();//main method for game 
-            playerInput.draw(g2);    
+            overWorld.standard();//main method for game             
             overWorld.draw(g2);
+            playerInput.draw(g2);   
             if(isPainting) {
                 repaint();    
             }    

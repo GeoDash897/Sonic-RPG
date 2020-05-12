@@ -31,7 +31,6 @@ import java.util.Map;
  */
 public class Room {
     private RoomType roomType;
-    private ArrayList<Ground> groundTiles;
     private ArrayList<Map<Integer, Ground>> groundGrid;
     private ArrayList<Picture> pictures;
     private SaveLoadObjects slo;
@@ -49,7 +48,6 @@ public class Room {
         this.overworld = overworld;
         this.roomType = roomType;   
         this.groundGrid = new ArrayList<Map<Integer, Ground>>();
-        this.groundTiles = new ArrayList<Ground>();
         this.pictures = new ArrayList<Picture>();
         this.slo = new SaveLoadObjects();
         if(draw == null) {
@@ -148,17 +146,12 @@ public class Room {
         Let's say I wanted to create a ground Tile at 64,64. I have to make sure a HashMap exists at 64 (or index 1 of ArrayList) before
         I create the tile (it will try to add the tile to a HashMap that doesn't exist*/
         groundGrid.get(xIndex).put(yIndex, ground);//Y Plane (tiles going down on screen)
-        groundTiles.add(ground);  
         pictures.add(ground);
     }
     
     public ArrayList<Map<Integer, Ground>> getGroundGridArrayList() {
         return groundGrid;
-    }
-    
-    public ArrayList<Ground> getGroundArrayList() {
-        return groundTiles;
-    }   
+    } 
     
     public ArrayList<Picture> getPictureArrayList() {
         return pictures;

@@ -62,7 +62,7 @@ public class OWARemastered {
     private static Rectangle topLeft;
     private static Rectangle topRight;
     
-    private static Animation animation;
+    private static AnimationControl animation;
     private static Room currentRoom;
     private static Sonic sonic;
     
@@ -97,7 +97,7 @@ public class OWARemastered {
         middleLeftIntersect = null;
     }
     
-    public void mainMethod(Sonic son, Room cR, Animation ani){
+    public void mainMethod(Sonic son, Room cR, AnimationControl ani){
         currentRoom = cR;
         animation = ani;
         sonic = son;
@@ -256,10 +256,10 @@ public class OWARemastered {
             xSpeed = groundSpeed*Math.cos(angle);
             ySpeed = groundSpeed*-Math.sin(angle);
         }             
-        xDrawCenterSonic += (int) xSpeed;
-        ySpriteCenterSonic += (int) ySpeed;
+        /*xDrawCenterSonic += (int) xSpeed;
+        ySpriteCenterSonic += (int) ySpeed;*/
         bottomTopCheck();//This needs to go after gravity is calculated (since it affects ySpeed)!
-        changeAnimation();    
+        //changeAnimation();    
     }
     
     private void sideCheck() {
@@ -374,7 +374,7 @@ public class OWARemastered {
         //Get's Sonic's ledges
         if(grounded && xSpeed == 0 && angle == 0 && bLCollide && !bRCollide && bRDistanceFromRect >= 48) {
             if(highLeft != null) {
-                if(xDrawCenterSonic >= highLeft.getXRef()+64+4) {
+                if(xDrawCenterSonic >= highLeft.getXRef()+64+4 && animation.getDirection() == 1) {
                     ledgeState = LedgeState.STATE_RIGHTLEDGE;    
                 }
             }
@@ -382,7 +382,7 @@ public class OWARemastered {
         }
         else if(grounded && xSpeed == 0 && angle == 0 && !bLCollide && bRCollide && bLDistanceFromRect >= 48) {
             if(highRight != null) {
-                if(xDrawCenterSonic <= highRight.getXRef()-4) {
+                if(xDrawCenterSonic <= highRight.getXRef()-4 && animation.getDirection() == 0) {
                     ledgeState = LedgeState.STATE_LEFTLEDGE;    
                 }
             }
@@ -574,7 +574,13 @@ public class OWARemastered {
             if(groundSpeed < 0) {//If Sonic's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
             //completely (skid) before changing direction (can't change direction immediately)
                 animation.setDirection(0);
-            }            
+            }    
+            /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
+            he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)
+            */                      
+            if(grounded && groundSpeed == 0 && mLCollide && animation.getDirection() == 1) {
+                animation.setDirection(0);
+            }
             if(groundSpeed > 0) {
                 if(duckState == DuckState.STATE_NODUCK) {
                     groundSpeed -= DECELERATION;    
@@ -610,8 +616,11 @@ public class OWARemastered {
             //(completely skid) before changing direction (can't change direction immediately)
                 animation.setDirection(1);
             }
-            if(mRCollide && animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_PUSH_RIGHT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_PUSH_RIGHT);
+            /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
+            he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)
+            */
+            if(grounded && groundSpeed == 0 && mRCollide && animation.getDirection() == 0) {
+                animation.setDirection(1);
             }
             if(groundSpeed < 0) {
                 if(duckState == DuckState.STATE_NODUCK) {
@@ -690,18 +699,18 @@ public class OWARemastered {
             if(grounded && groundSpeed == 0 && angle == 0 && !PlayerInput.getLeftPress() && !PlayerInput.getRightPress()) {
                 waitTimer++;
                 if(waitTimer < 988) {
-                    if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_STAND) {
-                        animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_STAND);               
+                    if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_STAND) {
+                        animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_STAND);               
                     }                   
                 }
                 else if(waitTimer >= 998 && waitTimer < 3000) {
-                    if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_WAIT) {
-                        animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_WAIT);               
+                    if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_WAIT) {
+                        animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_WAIT);               
                     }
                 }
                 else if(waitTimer >= 3000 && waitTimer < 3001) {
-                    if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_BORED) {
-                        animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_BORED);               
+                    if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_BORED) {
+                        animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_BORED);               
                     }
                 }
                 else if(waitTimer >= 3000) {
@@ -712,53 +721,53 @@ public class OWARemastered {
                 waitTimer = 0;
             }         
             if(Math.abs(groundSpeed) > 0.5 && Math.abs(groundSpeed) < 6 && (!mLCollide || !mRCollide)) {
-                if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_WALK) {
-                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_WALK);    
+                if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_WALK) {
+                    animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_WALK);    
                 }
             }
             else if(Math.abs(groundSpeed) >= 6) {//Controls when Sonic's running animation plays
-                if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_RUN) {
-                    animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_RUN);    
+                if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_RUN) {
+                    animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_RUN);    
                 }
             }
-            if(PlayerInput.getLeftPress() && mLCollide && animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_PUSH_LEFT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_PUSH_LEFT);
+            if(PlayerInput.getLeftPress() && mLCollide && animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH) {
+                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH);
             }
-            else if(PlayerInput.getRightPress() && mRCollide && animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_PUSH_RIGHT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_PUSH_LEFT);
+            else if(PlayerInput.getRightPress() && mRCollide && animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH) {
+                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH);
             }
         }
         else {//This resets the waitTimer if the player is ducking/rolling/on ledge/spindashing/etc
             waitTimer = 0;
         }
         if(ledgeState == LedgeState.STATE_LEFTLEDGE && duckState == DuckState.STATE_NODUCK) {
-            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_LEFT);    
+            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_TRIPA) {
+                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_TRIPA);    
             }
         }
         else if(ledgeState == LedgeState.STATE_RIGHTLEDGE && duckState == DuckState.STATE_NODUCK) {
-            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_TRIPA_RIGHT);    
+            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_TRIPA) {
+                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_TRIPA);    
             }
         }
         if(jumpState == JumpState.STATE_JUMP_UP || jumpState == JumpState.STATE_JUMP_DOWN) {
-            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_JUMP) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_JUMP);   
+            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_JUMP) {
+                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_JUMP);   
             }
         }
         if(duckState == DuckState.STATE_DUCK && spindashState == SpindashState.STATE_NOSPINDASH) {
-            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_DUCK) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_DUCK);   
+            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_DUCK) {
+                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_DUCK);   
             }
         }
         else if(duckState == DuckState.STATE_ROLL) {
-            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_JUMP) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_JUMP);   
+            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_JUMP) {
+                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_JUMP);   
             }
         }
         if(duckState == DuckState.STATE_DUCK && spindashState == SpindashState.STATE_SPINDASH) {
-            if(animation.getAnimationNumber() != Animation.SonicAnimation.ANIMATION_SONIC_SPINDASH) {
-                animation.setSonicAnimation(Animation.SonicAnimation.ANIMATION_SONIC_SPINDASH);   
+            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_SPINDASH) {
+                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_SPINDASH);   
             }
         }
     }

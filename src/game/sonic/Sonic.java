@@ -5,7 +5,6 @@
  */
 package game.sonic;
 import game.overworld.OverWorld;
-import game.items.*;
 import game.overworld.Room;
 import java.awt.Graphics2D;
 /*
@@ -31,7 +30,7 @@ public class Sonic {//This is the main Sonic class;
     private static boolean bMenu = false;
     private static OverWorld overWorld;
     private static OWARemastered owaR;
-    private static Animation animation;
+    private static AnimationControl animation;
     private static Room currentRoom;
     public void setup(OverWorld overworld) {
         if(owaR == null) {
@@ -41,7 +40,7 @@ public class Sonic {//This is the main Sonic class;
             overWorld = overworld;    
         }
         if(animation == null) {
-            animation =  new Animation();    
+            animation =  new AnimationControl();    
         }       
         currentRoom = overworld.getCurrentRoom();
         if(!cutscene) {           
