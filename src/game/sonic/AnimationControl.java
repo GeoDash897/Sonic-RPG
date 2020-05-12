@@ -7,7 +7,7 @@ package game.sonic;
 
 import game.overworld.Picture;
 import game.overworld.Room;
-import static game.sonic.Animation.SonicAnimation.ANIMATION_SONIC_STAND;
+import static game.sonic.AnimationControl.SonicAnimation.ANIMATION_SONIC_STAND;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -16,7 +16,7 @@ import java.awt.Toolkit;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
-public class Animation extends Sonic implements Picture {//This will control Sonic's animations
+public class AnimationControl extends Sonic implements Picture {//This will control Sonic's animations
     private static int xDrawSonic;
     private static int yDrawSonic;
     private static int animationTimer;
@@ -32,13 +32,14 @@ public class Animation extends Sonic implements Picture {//This will control Son
     private static int direction;
     private static Image sonicPicture;
     private static String filePath;
-    public Animation() {
+    public AnimationControl() {
         animationTimer = 1;
         animationNumber = SonicAnimation.ANIMATION_SONIC_STAND;
+        filePath = "src\\game\\resources\\Sonic Wait_";
         animationReset = 0;
         animationFrame = 1;
         sonicWidth = 288;
-        animationTimerFrameSet = 0;
+        animationTimerFrameSet = 1;
         numberOfFrames = 0;
         resetAnimationFrame = 1;
         resetAnimationTimer = 0;
@@ -51,7 +52,30 @@ public class Animation extends Sonic implements Picture {//This will control Son
             addToPictureAL = true;
         }
         xDrawSonic = xCenterSonic - (sonicWidth/2);
-        yDrawSonic = yCenterSonic - (sonicWidth/2);
+        yDrawSonic = yCenterSonic - (sonicWidth/2);       
+        getCorrectAnimationStats();
+        //Gets the right filePath if Sonic is facing left (the file with LSonic), else keep normal filePath
+        if(direction == 0) {
+            if(filePath.charAt(20) != 'L') {
+                String start = filePath.substring(0, 19);
+                String end = filePath.substring(19);
+                filePath = start+"L"+end;   
+            }           
+        }
+        sonicPicture = Toolkit.getDefaultToolkit().getImage(filePath+animationFrame+".png");
+        if(animationNumber != ANIMATION_SONIC_STAND) {
+            animationTimer++;            
+        }
+        if(animationTimer%animationTimerFrameSet == 0) {
+            animationFrame++;
+        }
+        if(animationTimer >= (animationTimerFrameSet*numberOfFrames)) {
+            animationFrame = resetAnimationFrame;
+            animationTimer = resetAnimationTimer;
+        }   
+    }
+    
+    private void getCorrectAnimationStats() {
         switch (animationNumber) {
             case ANIMATION_SONIC_STAND:              
                 animationTimerFrameSet = 10;
@@ -154,25 +178,6 @@ public class Animation extends Sonic implements Picture {//This will control Son
             default:
                 break;
         }
-        //Gets the right filePath if Sonic is facing left (the file with LSonic), else keep normal filePath
-        if(direction == 0) {
-            if(filePath.charAt(20) != 'L') {
-                String start = filePath.substring(0, 19);
-                String end = filePath.substring(19);
-                filePath = start+"L"+end;    
-            }           
-        }
-        sonicPicture = Toolkit.getDefaultToolkit().getImage(filePath+animationFrame+".png");
-        if(animationNumber != ANIMATION_SONIC_STAND) {
-            animationTimer++;            
-        }
-        if(animationTimer%animationTimerFrameSet == 0) {
-            animationFrame++;
-        }
-        if(animationTimer >= (animationTimerFrameSet*numberOfFrames)) {
-            animationFrame = resetAnimationFrame;
-            animationTimer = resetAnimationTimer;
-        }   
     }
     public void setSonicAnimation(SonicAnimation newAnimation) {
         animationNumber = newAnimation;

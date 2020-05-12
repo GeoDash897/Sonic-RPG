@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package game.overworld;
+import game.gui.Menu.MenuType;
+import game.gui.PlayerMenu;
 import game.overworld.Room.RoomType;
 import static game.overworld.Room.RoomType.ROOM_SONIC_HOUSE;
 import static game.overworld.Room.RoomType.ROOM_SONIC_TEST;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 */
 //memes
 public class OverWorld {
+    private static PlayerMenu playerMenu = new PlayerMenu(MenuType.MENUTYPE_VERTICAL);
     private static ArrayList<Room> rooms = new ArrayList<Room>();
     private static boolean generateEverything = false;
     private static RoomType currentRoom = ROOM_SONIC_HOUSE;
@@ -31,6 +34,7 @@ public class OverWorld {
                 sonic = new Sonic();     
             }            
             sonic.setup(this);
+            playerMenu.standard();
         }      
     }   
     
@@ -40,6 +44,7 @@ public class OverWorld {
             sonic.draw(g2);
         }
         g2.drawString(""+currentRoom,300,200);
+        playerMenu.draw(g2);
     }
     
     public void generate() {      
@@ -64,7 +69,9 @@ public class OverWorld {
     public void setCurrentRoomType(RoomType newRoom) {
         getCurrentRoom().saveRoom();
         currentRoom = newRoom;
-        sonic = new Sonic();
+        if(sonic == null) {
+            sonic = new Sonic();    
+        }      
         sonic.addToPictureALAgain();
     }
     public void keyPressed(KeyEvent e) {

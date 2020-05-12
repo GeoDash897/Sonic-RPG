@@ -18,7 +18,9 @@ public class PlayerInput implements KeyListener {
     private static boolean leftPress = false;
     private static boolean rightPress = false;
     private static boolean upPress = false;
+    private static int upPressTimer = 0;
     private static boolean downPress = false;
+    private static int downPressTimer = 0;
     private static int downReleaseTimer = 10;
     private static boolean zPress = false;
     private static boolean xPress = false;
@@ -33,13 +35,25 @@ public class PlayerInput implements KeyListener {
      * Runs the counters for zPress and xPress (checks how long
      * those keys are pressed for)
      */
-    public void standard() {        
+    public void standard() { 
+        if(upPress) {
+            upPressTimer++;
+        }
+        else if(!upPress) {
+            if(upPressTimer > 0) {
+                upPressTimer = 0;
+            }
+        }
         if(downPress) {
             if(downReleaseTimer > 0) {
                 downReleaseTimer = 0;
             }
+            downPressTimer++;
         }
         else if(!downPress) {
+            if(downPressTimer > 0) {
+                downPressTimer = 0;
+            }
             if(downReleaseTimer < 10) {
                 downReleaseTimer++;
             }
@@ -87,7 +101,8 @@ public class PlayerInput implements KeyListener {
             g2.drawString("zReleaseTimer: "+zReleaseTimer,1000,650);
             g2.drawString("xPress: "+xPress,1000,675);
             g2.drawString("xPressTimer: "+xPressTimer,1000,700);
-            g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,725);    
+            g2.drawString("xReleaseTimer: "+xReleaseTimer,1000,725);   
+            g2.drawString("downReleaseTimer: "+downPressTimer,1000,750);
         }  
     }
     
@@ -154,6 +169,40 @@ public class PlayerInput implements KeyListener {
      */
     public static boolean getXPress() {
         return xPress;
+    }
+    
+    /** @return 
+     * Checks if the down Key is pressed only once.
+     * <ul>
+     * <li>{@code false}- the down key is not pressed/been
+     * held for a bit of time.
+     * <li>{@code true}- the down key was pressed once 
+     * (occurs when the key is first pressed).
+     * </ul>
+     */
+    public static boolean checkForUpPressOnce() {
+        boolean check = false;
+        if(upPress && upPressTimer <= 1) {
+            check = true;
+        }
+        return check;
+    }
+    
+    /** @return 
+     * Checks if the down Key is pressed only once.
+     * <ul>
+     * <li>{@code false}- the down key is not pressed/been
+     * held for a bit of time.
+     * <li>{@code true}- the down key was pressed once 
+     * (occurs when the key is first pressed).
+     * </ul>
+     */
+    public static boolean checkForDownPressOnce() {
+        boolean check = false;
+        if(downPress && downPressTimer <= 1) {
+            check = true;
+        }
+        return check;
     }
     
     /** @return 
