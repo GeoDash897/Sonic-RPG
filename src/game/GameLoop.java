@@ -38,7 +38,7 @@ public class GameLoop extends JPanel {
     private ArrayList<Thread> objectThreads;
     private File temp;
     private OverWorld overWorld;
-    private PlayerInput playerInput;
+    private PlayerInput pIRemade;
     private Display display;
     
     public GameLoop(String title, int length, int width) {
@@ -56,12 +56,12 @@ public class GameLoop extends JPanel {
         Container c = display.getFrame().getContentPane();
         setOpaque(false);//allows for setting a color background in JPanel
         c.setBackground(Color.gray);//background color can be changed
-        playerInput = new PlayerInput();
+        pIRemade = new PlayerInput();
         overWorld = new OverWorld();
     }
        
     public void start() {
-        display.addKeyListener(playerInput);
+        display.addKeyListener(pIRemade);
         display.addJPanel(this);//Adding the JPanel invokes the paintComponent method- game actually starts
         /*I put it in a separate method call in order to make sure that the container, setOpaque, and setBackgroundColor
         methods have run before adding the JPanel to the JFrame*/
@@ -109,10 +109,10 @@ public class GameLoop extends JPanel {
             g2.setFont(debugStat);
             g2.setColor(Color.CYAN);           
             //Destroys all the threads used to copy text over to TempSave.txt and start overWorld.standard method
-            playerInput.standard();//Needed for zPressTimer and xPressTimer to function (allows them to increase when their key is pressed)
+            pIRemade.standard();//Needed for buttonPressTimer/buttonReleaseTimer to function (allows them to increase)
             overWorld.standard();//main method for game             
             overWorld.draw(g2);
-            playerInput.draw(g2);   
+            pIRemade.draw(g2);
             if(isPainting) {
                 repaint();    
             }    

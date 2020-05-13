@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,7 +22,6 @@ public class Menu {
     private MenuType menuType;
     private int xIndex;
     private int yIndex;
-    private boolean isVisible;
     private ArrayList<HashMap<Integer, String>> choices;  
     private Image selectionArrow;
     public Menu(MenuType mT) {
@@ -31,18 +31,18 @@ public class Menu {
     }
     
     public void standard() {
-        if(PlayerInput.getLeftPress()) {
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_LEFT)) {
             leftPress();
         } 
-        if(PlayerInput.getRightPress()) {
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_RIGHT)) {
             rightPress();
         }
-        if(PlayerInput.getUpPress()) {
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_UP)) {
             upPress();
         }
-        if(PlayerInput.getDownPress()) {
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_DOWN)) {
             downPress();
-        }
+        }          
     }
     
     public void draw(Graphics2D g2) {
@@ -67,22 +67,18 @@ public class Menu {
     }
     
     public void upPress() {
-        if(PlayerInput.checkForUpPressOnce()) {
-            yIndex--;
-            if(yIndex < 0) {
-                yIndex = choices.get(xIndex).size()-1;
-            }
-        }        
-    }
+        yIndex--;
+        if(yIndex < 0) {
+            yIndex = choices.get(xIndex).size()-1;
+        }
+    }        
     
     public void downPress() {
-        if(PlayerInput.checkForDownPressOnce()) {
-            yIndex++;            
-            if(yIndex > choices.get(xIndex).size()-1) {
-                yIndex = 0;
-            } 
-        }        
-    }
+        yIndex++;            
+        if(yIndex > choices.get(xIndex).size()-1) {
+            yIndex = 0;
+        } 
+    }        
     
     public void addOption(int xIndex, int yIndex, String option) {
         if(menuType != MenuType.MENUTYPE_VERTICAL && xIndex > choices.size()-1) {

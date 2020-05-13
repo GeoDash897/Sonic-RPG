@@ -5,13 +5,13 @@
  */
 package game.sonic;
 
-import game.GameLoop;
 import game.input.PlayerInput;
 import game.overworld.Ground;
 import game.overworld.Room;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 
 public class OWARemastered {
 
@@ -145,23 +145,23 @@ public class OWARemastered {
         }
         topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-84,4,80);
         topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-84,4,80);
-        if(PlayerInput.getLeftPress()) {
+        if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT)) {
             leftPress();
         }
-        else if(PlayerInput.getRightPress()) {
+        else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
             rightPress();
         }
-        if(PlayerInput.getUpPress()) {
+        if(PlayerInput.checkIsPressed(KeyEvent.VK_UP)) {
             ySpeed = -3;
         }
-        else if(PlayerInput.getDownPress()) {
+        else if(PlayerInput.checkIsPressed(KeyEvent.VK_DOWN)) {
             downPress();
         }
         performSpindash();
-        if(PlayerInput.getZPress()) {//Jump has to be calculated before gravity is added to ySpeed
+        if(PlayerInput.checkIsPressed(KeyEvent.VK_Z)) {//Jump has to be calculated before gravity is added to ySpeed
             zPress();
         }
-        else if(!PlayerInput.getZPress() && PlayerInput.checkZReleased()) {
+        else if(PlayerInput.checkIsJustReleased(KeyEvent.VK_Z)) {
             zReleased();
         }           
         /*This resets the duckState if Sonic jumps (this is why is placed here right after the code for jumping),
@@ -172,12 +172,13 @@ public class OWARemastered {
             spindashRev = 0;
         }
         //resets the duckState if groundSpeed is less than abs(0.5) (prevents turning bug from Genesis games)
-        if(!PlayerInput.getDownPress() && Math.abs(groundSpeed) < 0.5 && angle == 0) {
+        if(!PlayerInput.checkIsPressed(KeyEvent.VK_DOWN) && Math.abs(groundSpeed) < 0.5 && angle == 0) {
             duckState = DuckState.STATE_NODUCK;
         }
         //resets the duckState if the down key is released and Sonic is ducking
-        if(PlayerInput.checkDownReleased() && duckState == DuckState.STATE_DUCK && spindashState == SpindashState.STATE_NOSPINDASH) {
+        if(PlayerInput.checkIsJustReleased(KeyEvent.VK_DOWN) && duckState == DuckState.STATE_DUCK && spindashState == SpindashState.STATE_NOSPINDASH) {
             duckState = DuckState.STATE_NODUCK;
+            
         }
         //Sets correct value for friction
         if(duckState == DuckState.STATE_ROLL) {
@@ -238,16 +239,16 @@ public class OWARemastered {
             when Sonic is standing on one tile with two opposing slopes on either side of him,), Sonic will
             be pushed in the wrong direction by a tile*/            
             groundSpeed -= slope*Math.sin(angle);
-            if(!PlayerInput.getLeftPress() && !PlayerInput.getRightPress() && grounded) {
+            if(!PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && !PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT) && grounded) {
                 groundSpeed -= Math.min(Math.abs(groundSpeed), friction) * Math.signum(groundSpeed);    
             }  
             else if(duckState == DuckState.STATE_ROLL) {
                 /*If you are rolling and pressing in the direction of your motion- friction is still in effect
                 and Sonic should still slow down*/              
-                if(groundSpeed < 0 && PlayerInput.getLeftPress()) {
+                if(groundSpeed < 0 && PlayerInput.checkIsPressed(KeyEvent.VK_LEFT)) {
                     groundSpeed -= Math.min(Math.abs(groundSpeed), friction) * Math.signum(groundSpeed);   
                 }
-                else if(groundSpeed > 0 && PlayerInput.getRightPress()) {
+                else if(groundSpeed > 0 && PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
                     groundSpeed -= Math.min(Math.abs(groundSpeed), friction) * Math.signum(groundSpeed);   
                 }
             }
@@ -256,10 +257,10 @@ public class OWARemastered {
             xSpeed = groundSpeed*Math.cos(angle);
             ySpeed = groundSpeed*-Math.sin(angle);
         }             
-        /*xDrawCenterSonic += (int) xSpeed;
-        ySpriteCenterSonic += (int) ySpeed;*/
+        xDrawCenterSonic += (int) xSpeed;
+        ySpriteCenterSonic += (int) ySpeed;
         bottomTopCheck();//This needs to go after gravity is calculated (since it affects ySpeed)!
-        //changeAnimation();    
+        changeAnimation();    
     }
     
     private void sideCheck() {
@@ -538,7 +539,7 @@ public class OWARemastered {
     
     private void performSpindash() {
         //If Sonic is ducking and the Z Key is pressed, start spindashing (need state in order to change animation)
-        if(grounded && duckState == DuckState.STATE_DUCK && PlayerInput.checkForZPressOnce() && spindashState == SpindashState.STATE_NOSPINDASH) {
+        if(grounded && duckState == DuckState.STATE_DUCK && PlayerInput.checkIsPressedOnce(KeyEvent.VK_Z) && spindashState == SpindashState.STATE_NOSPINDASH) {
             spindashState = SpindashState.STATE_SPINDASH;           
         }
         if(spindashRev > 0.01) {
@@ -547,7 +548,7 @@ public class OWARemastered {
         else {
             spindashRev = 0;    
         } 
-        if(spindashState == SpindashState.STATE_SPINDASH && PlayerInput.checkDownReleased()) {    
+        if(spindashState == SpindashState.STATE_SPINDASH && PlayerInput.checkIsJustReleased(KeyEvent.VK_DOWN)) {    
             //I changed the initial groundSpeed from 8 to 10 since the spindash was too weak
             if(animation.getDirection() == 0) {
                 groundSpeed = -10 - ((int)(spindashRev) / 2); //Negative since Sonic would be facing left
@@ -639,7 +640,7 @@ public class OWARemastered {
                     groundSpeed = TOPSPEED;
                 }
             }    
-        }       
+        }
     }    
     
     private void downPress() {
@@ -679,7 +680,7 @@ public class OWARemastered {
             }
             grounded = false;
         }
-        if(spindashState == SpindashState.STATE_SPINDASH && PlayerInput.checkForZPressOnce()) {
+        if(spindashState == SpindashState.STATE_SPINDASH && PlayerInput.checkIsPressedOnce(KeyEvent.VK_Z)) {
             spindashRev+=2;
         }
     }
@@ -696,7 +697,7 @@ public class OWARemastered {
         /*Watch out for state conflicts- if one is conflicting with another one, it causes Sonic to freeze on his animation/
         or perform his animation wrong*/
         if(jumpState == JumpState.STATE_NOJUMP && ledgeState == LedgeState.STATE_NOLEDGE && duckState == DuckState.STATE_NODUCK) {
-            if(grounded && groundSpeed == 0 && angle == 0 && !PlayerInput.getLeftPress() && !PlayerInput.getRightPress()) {
+            if(grounded && groundSpeed == 0 && angle == 0 && !PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && !PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
                 waitTimer++;
                 if(waitTimer < 988) {
                     if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_STAND) {
@@ -730,10 +731,10 @@ public class OWARemastered {
                     animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_RUN);    
                 }
             }
-            if(PlayerInput.getLeftPress() && mLCollide && animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH) {
+            if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && mLCollide && animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH) {
                 animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH);
             }
-            else if(PlayerInput.getRightPress() && mRCollide && animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH) {
+            else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT) && mRCollide && animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH) {
                 animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH);
             }
         }
@@ -780,7 +781,7 @@ public class OWARemastered {
     }
 
     public void drawDebug(Graphics2D g2) {
-        if(GameLoop.getDebug()) {
+        /*if(GameLoop.getDebug()) {*/
             g2.setColor(Color.MAGENTA);
             g2.drawString("DEBUG MENU",600,25);        
             //Variables that have to do with Sonic's x and y position, checking ground, x and y speed, etc:
@@ -827,7 +828,7 @@ public class OWARemastered {
             g2.fill(bottomLeft);
             g2.setColor(Color.CYAN);    
             g2.fill(bottomRight);
-        }          
+        //}          
     }
     
     public enum LedgeState {
