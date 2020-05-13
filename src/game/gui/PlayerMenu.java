@@ -9,6 +9,7 @@ import game.gui.Menu.MenuType;
 import game.input.PlayerInput;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 
 /**
  *
@@ -20,22 +21,22 @@ public class PlayerMenu extends Menu {
         createMenu();
     }
     
-    public void createMenu() {
+    private void createMenu() {
         super.addOption(0, 0, "Test");
         super.addOption(0, 1, "Test2");
     }
     @Override
     public void standard() {
-        if(PlayerInput.getLeftPress()) {
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_LEFT)) {
             leftPress();
         } 
-        if(PlayerInput.getRightPress()) {
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_RIGHT)) {
             rightPress();
         }
-        if(PlayerInput.getUpPress()) {
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_UP)) {
             upPress();
         }
-        if(PlayerInput.getDownPress()) {
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_DOWN)) {
             downPress();
         }
     }

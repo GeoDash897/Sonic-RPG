@@ -44,7 +44,7 @@ public class Ground implements Picture {
         this.pixelBoxes = new ArrayList<Rectangle>(16);
         create();
     }
-    public void create() {
+    private void create() {
         groundName = String.valueOf(groundType);
         /*NOTE!- When creating the height values of tiles, try to not have any height values of 0 for the pixelBoxes (it makes comparing tiles a lot
         more complicated*/
