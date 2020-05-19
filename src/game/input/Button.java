@@ -63,7 +63,7 @@ public class Button {
        
     public boolean isPressedOnce() {
         boolean check = false;
-        if(buttonPressed && buttonPressTimer <= 1) {
+        if(buttonPressed && buttonPressTimer == 1) {
             check = true;
         }
         return check;
@@ -71,7 +71,7 @@ public class Button {
     
     public boolean isJustReleased() {
         boolean check = false;
-        if(!buttonPressed && buttonReleaseTimer <= 1) {
+        if(!buttonPressed && buttonReleaseTimer == 1) {
             check = true;
         }
         return check;

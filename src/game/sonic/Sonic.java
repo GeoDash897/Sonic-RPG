@@ -12,6 +12,8 @@ import java.awt.Graphics2D;
 */
 public class Sonic {//This is the main Sonic class; 
     //this will run all the other classes related to Sonic (Animation, Inventory,etc)
+    private static int lastXCenterSonic;
+    private static int lastYCenterSonic;
     private static int level;
     private static int exp;
     private static int coins;
@@ -22,8 +24,7 @@ public class Sonic {//This is the main Sonic class;
     private static int attack;
     private static int defense;
     private static int speed;
-    private static int area = 1;
-    private static int layer = 1;
+    private static int area = 1;    
     private static int owPowerUp = 0;
     private static boolean allowInput = true;
     private static boolean cutscene = false;
@@ -43,9 +44,11 @@ public class Sonic {//This is the main Sonic class;
             animation =  new AnimationControl();    
         }       
         currentRoom = overworld.getCurrentRoom();
-        if(!cutscene) {           
+        if(!cutscene && !PlayerMenu.isVisible()) {     
+            lastXCenterSonic = owaR.getXCenterSonic();
+            lastYCenterSonic = owaR.getYCenterSonic();
             owaR.mainMethod(this, currentRoom, animation);   
-            animation.standard(currentRoom,owaR.getXCenterSonic(),owaR.getYCenterSonic());
+            animation.standard(currentRoom,lastXCenterSonic,lastYCenterSonic);
         }
     }
     
@@ -64,10 +67,7 @@ public class Sonic {//This is the main Sonic class;
     }
     public int getAreaNumber() {
         return area;
-    }
-    public int getLayer() {
-        return layer;
-    }
+    }    
     public int getOWPowerUp() {
         return owPowerUp;
     }

@@ -16,9 +16,10 @@ import java.awt.Toolkit;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
-public class AnimationControl extends Sonic implements Picture {//This will control Sonic's animations
+public class AnimationControl implements Picture {//This will control Sonic's animations
     private static int xDrawSonic;
     private static int yDrawSonic;
+    private static int layer;
     private static int animationTimer;
     private static SonicAnimation animationNumber;
     private static int animationReset;
@@ -44,6 +45,7 @@ public class AnimationControl extends Sonic implements Picture {//This will cont
         resetAnimationFrame = 1;
         resetAnimationTimer = 0;
         addToPictureAL = false;
+        layer = 1;
         direction = 1;
     }
     public void standard(Room currentRoom, int xCenterSonic, int yCenterSonic) {
@@ -206,6 +208,11 @@ public class AnimationControl extends Sonic implements Picture {//This will cont
     public SonicAnimation getAnimationNumber() {
         return animationNumber;
     }
+    
+    @Override
+    public int getLayer() {
+        return layer;
+    }    
     public int getDirection() {
         return direction;
     }
@@ -215,7 +222,7 @@ public class AnimationControl extends Sonic implements Picture {//This will cont
     @Override
     public String toString() {
         return "Sonic is playing animationNumber "+animationNumber+"; Current Frame: "+animationFrame+", Current AnimationTimer: "+
-                animationTimer+ ", direction: "+direction;
+                animationTimer+ ", direction: "+direction+", layer: "+layer;
     }  
     public enum SonicAnimation {
         ANIMATION_SONIC_STAND,

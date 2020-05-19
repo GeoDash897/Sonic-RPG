@@ -5,6 +5,7 @@
  */
 package game.sonic;
 
+import game.GameLoop;
 import game.input.PlayerInput;
 import game.overworld.Ground;
 import game.overworld.Room;
@@ -219,6 +220,9 @@ public class OWARemastered {
             spindashRev = 0;
         }  
         if(grounded) {
+            if(xSpeed == 0 && groundSpeed == 0 && duckState == DuckState.STATE_NODUCK && PlayerInput.checkIsPressed(KeyEvent.VK_ENTER)) {
+                PlayerMenu.setVisible(true);
+            }
             /*I'm getting the correct groundSpeed when sonic first is grounded (if grounded == true and 
             jump == STATE_JUMP_DOWN, this means that sonic just landed after a jump*/
             if(jumpState == JumpState.STATE_JUMP_DOWN && angle < 45) {
@@ -408,24 +412,24 @@ public class OWARemastered {
         if(intersect != null) {
             if(sensor == bottomLeft || sensor == bottomRight) {
                 Ground intersectUp = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex-1);
-                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectUp, sonic);
+                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectUp, animation.getLayer());
                 return higher;    
             }
             else if(sensor == topLeft || sensor == topRight) {
                 Ground intersectDown = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex+1);
-                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectDown, sonic);
+                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectDown, animation.getLayer());
                 return higher;    
             }
         }
         else {
             if(sensor == bottomLeft || sensor == bottomRight) {
                 Ground intersectDown = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex+1);
-                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectDown, sonic);
+                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectDown, animation.getLayer());
                 return higher;    
             }
             else if(sensor == topLeft || sensor == topRight) {
                 Ground intersectUp = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex-1);
-                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectUp, sonic);
+                Ground higher = Ground.compareSCTile(xBottomSensor, intersect, intersectUp, animation.getLayer());
                 return higher;    
             }
         }
@@ -513,7 +517,7 @@ public class OWARemastered {
         int yBottomIndex = yMiddleSensor/64;
         Ground intersect = currentRoom.getGroundGridArrayList().get(xBottomIndex).get(yBottomIndex);        
         //g2.drawString("intersect :"+intersect, 500, 200);
-        if(intersect != null && sonic.getLayer() == intersect.getLayer()) {
+        if(intersect != null && animation.getLayer() == intersect.getLayer()) {
             if(sideSensor == middleLeft) {               
                 Rectangle collideCheck = intersect.getPixelBox(intersect.getPixelBoxes().size()-1);
                 if(xMiddleSensor < (int) (collideCheck.getX()+collideCheck.getWidth())+4 && middleLeft.intersects(collideCheck)) {      
@@ -781,7 +785,7 @@ public class OWARemastered {
     }
 
     public void drawDebug(Graphics2D g2) {
-        /*if(GameLoop.getDebug()) {*/
+        if(GameLoop.getDebug()) {
             g2.setColor(Color.MAGENTA);
             g2.drawString("DEBUG MENU",600,25);        
             //Variables that have to do with Sonic's x and y position, checking ground, x and y speed, etc:
@@ -828,7 +832,7 @@ public class OWARemastered {
             g2.fill(bottomLeft);
             g2.setColor(Color.CYAN);    
             g2.fill(bottomRight);
-        //}          
+        }          
     }
     
     public enum LedgeState {

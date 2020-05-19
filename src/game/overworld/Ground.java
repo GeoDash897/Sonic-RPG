@@ -255,15 +255,15 @@ public class Ground implements Picture {
         return pixelBoxes;
     }
     //Compares tiles in same column
-    public static Ground compareSCTile(int xBottomSensor, Ground tile1, Ground tile2, Sonic sonic) {
+    public static Ground compareSCTile(int xBottomSensor, Ground tile1, Ground tile2, int layer) {
         //Change it so it initially sets each rectangle to null, this changes if this or other is not null (and gets rect)
         Rectangle rectTile1 = null;
         Rectangle rectTile2 = null;
-        if(tile1 != null && tile1.getLayer() == sonic.getLayer()) {
+        if(tile1 != null && tile1.getLayer() == layer) {
             int heightIndex = (int) Math.abs((xBottomSensor-tile1.getXRef())/4);
             rectTile1 = tile1.getPixelBox(heightIndex);    
         }
-        if(tile2 != null && tile2.getLayer() == sonic.getLayer()) {
+        if(tile2 != null && tile2.getLayer() == layer) {
             int heightIndex = (int) Math.abs((xBottomSensor-tile2.getXRef())/4);
             rectTile2 = tile2.getPixelBox(heightIndex);    
         }
