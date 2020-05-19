@@ -24,10 +24,12 @@ public class Menu {
     private int yIndex;
     private ArrayList<HashMap<Integer, String>> choices;  
     private Image selectionArrow;
+    private String selectedOption;
     public Menu(MenuType mT) {
         selectionArrow = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Selection Arrow.png");
         menuType = mT;
-        choices = new ArrayList<HashMap<Integer, String>>();        
+        choices = new ArrayList<HashMap<Integer, String>>();  
+        selectedOption = "";
     }
     
     public void standard() {
@@ -42,14 +44,17 @@ public class Menu {
         }
         if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_DOWN)) {
             downPress();
-        }          
+        }
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_Z)) {
+            zPress();
+        }
     }
     
     public void draw(Graphics2D g2) {
         g2.setColor(Color.WHITE);
         g2.drawString("xIndex: "+xIndex, 1250, 400);
         g2.drawString("yIndex: "+yIndex, 1250, 425);
-        g2.drawString("String: "+getChoice(), 1250, 450);
+        g2.drawString("String: "+selectedOption, 1250, 450);
     }
     
     public void leftPress() {
@@ -80,6 +85,10 @@ public class Menu {
         } 
     }        
     
+    public void zPress() {
+        selectedOption = choices.get(xIndex).get(yIndex);
+    }
+    
     public void addOption(int xIndex, int yIndex, String option) {
         if(menuType != MenuType.MENUTYPE_VERTICAL && xIndex > choices.size()-1) {
             choices.add(new HashMap<Integer, String>());    
@@ -93,8 +102,12 @@ public class Menu {
         
     }
     
-    public String getChoice() {
-        return choices.get(xIndex).get(yIndex);
+    public void setSelectedChoice(String temp) {
+        selectedOption = temp;
+    }
+    
+    public String getSelectedChoice() {
+        return selectedOption;
     }
     
     public int getXIndex() {
@@ -103,6 +116,12 @@ public class Menu {
     
     public int getYIndex() {
         return yIndex;
+    }
+   
+    public void resetMenuPosition() {
+        xIndex = 0;
+        yIndex = 0;
+        selectedOption = "";
     }
     
     public Image getSelectionArrow() {

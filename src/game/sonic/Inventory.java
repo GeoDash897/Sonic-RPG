@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
 */
-public class Inventory extends Sonic {//This controls Sonic's inventory
+public class Inventory {//This controls Sonic's inventory
     private static ArrayList<DefaultItem> inventory = new ArrayList<DefaultItem>();
     private static int inventoryLimit = 10;
     public void addItem(DefaultItem defaultItem) {

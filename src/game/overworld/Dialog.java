@@ -5,7 +5,7 @@
  */
 package game.overworld;
 
-import static game.GameLoop.dialog;
+import static game.Launcher.dialog;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;

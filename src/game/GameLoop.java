@@ -5,15 +5,16 @@
  */
 package game;
 
+import static game.Launcher.debugStat;
 import game.display.Display;
 import game.input.PlayerInput;
 import game.overworld.OverWorld;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,9 +33,7 @@ public class GameLoop extends JPanel {
     private static int width;
     private static String title;
     private static boolean debug; 
-    private static boolean isPainting;
-    public static Font debugStat;
-    public static Font dialog;    
+    private static boolean isPainting;  
     private ArrayList<Thread> objectThreads;
     private File temp;
     private OverWorld overWorld;
@@ -107,8 +106,10 @@ public class GameLoop extends JPanel {
             RenderingHints rh = new RenderingHints(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_SPEED);
             g2.setRenderingHints(rh);
             g2.setFont(debugStat);
-            g2.setColor(Color.CYAN);           
-            //Destroys all the threads used to copy text over to TempSave.txt and start overWorld.standard method
+            g2.setColor(Color.CYAN); 
+            if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_ESCAPE)) {
+                debug = !debug;
+            }
             pIRemade.standard();//Needed for buttonPressTimer/buttonReleaseTimer to function (allows them to increase)
             overWorld.standard();//main method for game             
             overWorld.draw(g2);
@@ -123,6 +124,7 @@ public class GameLoop extends JPanel {
     
     public void end() {
         temp.deleteOnExit();
+        System.out.println("Code Died :(");
         System.exit(0);
     }
     
@@ -134,13 +136,6 @@ public class GameLoop extends JPanel {
      */
     public static boolean getDebug() {
         return debug;
-    }
-    
-    /**
-     * Sets the value of boolean {@code debug}.
-     */
-    public static void setDebug() {
-        debug = !debug;
     }
     
     /**

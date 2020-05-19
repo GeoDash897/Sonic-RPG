@@ -5,6 +5,7 @@
  */
 package game.input;
 
+import game.GameLoop;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -29,6 +30,9 @@ public class PlayerInput implements KeyListener {
         keys.put(KeyEvent.VK_LEFT, new Button(KeyEvent.VK_LEFT));
         keys.put(KeyEvent.VK_RIGHT, new Button(KeyEvent.VK_RIGHT));
         keys.put(KeyEvent.VK_Z, new Button(KeyEvent.VK_Z));
+        keys.put(KeyEvent.VK_X, new Button(KeyEvent.VK_X));
+        keys.put(KeyEvent.VK_ESCAPE, new Button(KeyEvent.VK_ESCAPE));
+        keys.put(KeyEvent.VK_ENTER, new Button(KeyEvent.VK_ENTER));
     }
     
     public void standard() {
@@ -39,12 +43,14 @@ public class PlayerInput implements KeyListener {
     }
 
     public void draw(Graphics2D g2) {
-        for (Map.Entry<Integer, Button> entry : keys.entrySet()) {
-            Button button = entry.getValue();
-            if(button.getButtonPressed()) {
-                button.draw(g2);    
-            }           
-        }
+        if(GameLoop.getDebug()) {
+            for (Map.Entry<Integer, Button> entry : keys.entrySet()) {
+                Button button = entry.getValue();
+                if(button.getButtonPressed()) {
+                    button.draw(g2);    
+                }           
+            }    
+        }        
     }
     
     public static boolean checkIsPressed(int numOfKey) {
@@ -81,6 +87,15 @@ public class PlayerInput implements KeyListener {
         if(e.getKeyCode() == e.VK_Z && !keys.get(KeyEvent.VK_Z).isPressed()) {
             keys.get(KeyEvent.VK_Z).setPressed(true);
         }
+        if(e.getKeyCode() == e.VK_X && !keys.get(KeyEvent.VK_X).isPressed()) {
+            keys.get(KeyEvent.VK_X).setPressed(true);
+        }
+        if(e.getKeyCode() == e.VK_ESCAPE && !keys.get(KeyEvent.VK_ESCAPE).isPressed()) {
+            keys.get(KeyEvent.VK_ESCAPE).setPressed(true);
+        }
+        if(e.getKeyCode() == e.VK_ENTER && !keys.get(KeyEvent.VK_ENTER).isPressed()) {
+            keys.get(KeyEvent.VK_ENTER).setPressed(true);
+        }
     }
 
     @Override
@@ -99,6 +114,15 @@ public class PlayerInput implements KeyListener {
         }
         if(e.getKeyCode() == e.VK_Z && keys.get(KeyEvent.VK_Z).isPressed()) {
             keys.get(KeyEvent.VK_Z).setPressed(false);
+        }
+        if(e.getKeyCode() == e.VK_X && keys.get(KeyEvent.VK_X).isPressed()) {
+            keys.get(KeyEvent.VK_X).setPressed(false);
+        }
+        if(e.getKeyCode() == e.VK_ESCAPE && keys.get(KeyEvent.VK_ESCAPE).isPressed()) {
+            keys.get(KeyEvent.VK_ESCAPE).setPressed(false);
+        }
+        if(e.getKeyCode() == e.VK_ENTER && keys.get(KeyEvent.VK_ENTER).isPressed()) {
+            keys.get(KeyEvent.VK_ENTER).setPressed(false);
         }
     }
 }

@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 package game.overworld;
+import game.sonic.PlayerMenu;
 import game.gui.Menu.MenuType;
-import game.gui.PlayerMenu;
+import game.input.PlayerInput;
 import game.overworld.Room.RoomType;
 import static game.overworld.Room.RoomType.ROOM_SONIC_HOUSE;
 import static game.overworld.Room.RoomType.ROOM_SONIC_TEST;
@@ -18,33 +19,39 @@ import java.util.ArrayList;
 */
 //memes
 public class OverWorld {
-    private static PlayerMenu playerMenu = new PlayerMenu(MenuType.MENUTYPE_VERTICAL);
-    private static ArrayList<Room> rooms = new ArrayList<Room>();
-    private static boolean generateEverything = false;
-    private static RoomType currentRoom = ROOM_SONIC_HOUSE;
+    private static PlayerMenu playerMenu;
+    private static ArrayList<Room> rooms; 
+    private static boolean generateEverything;
+    private static RoomType currentRoom;
     private Sonic sonic;
+    public OverWorld() {
+        rooms = new ArrayList<Room>();
+        sonic = new Sonic(); 
+        playerMenu = new PlayerMenu();
+        generateEverything = false;
+        currentRoom = ROOM_SONIC_HOUSE;
+    }
     public void standard() {
         if(generateEverything == false) {
             //Music.playTestAreaTheme(1, 0);
             generate();
         }      
         else if(generateEverything == true) {
-            getCurrentRoom().runRoom();
-            if(sonic == null) {
-                sonic = new Sonic();     
-            }            
-            sonic.setup(this);
-            playerMenu.standard();
+            getCurrentRoom().runRoom();          
+            sonic.setup(this);             
+            if(PlayerMenu.isVisible()) {
+                playerMenu.standard();     
+            }               
         }      
     }   
     
     public void draw(Graphics2D g2) {
         getCurrentRoom().drawRoom(g2);
-        if(sonic != null) {
-            sonic.draw(g2);
-        }
+        sonic.draw(g2);
         g2.drawString(""+currentRoom,300,200);
-        playerMenu.draw(g2);
+        if(PlayerMenu.isVisible()) {
+            playerMenu.draw(g2);    
+        }        
     }
     
     public void generate() {      
@@ -69,9 +76,6 @@ public class OverWorld {
     public void setCurrentRoomType(RoomType newRoom) {
         getCurrentRoom().saveRoom();
         currentRoom = newRoom;
-        if(sonic == null) {
-            sonic = new Sonic();    
-        }      
         sonic.addToPictureALAgain();
     }
     public void keyPressed(KeyEvent e) {
