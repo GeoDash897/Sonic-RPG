@@ -80,13 +80,8 @@ public class GameLoop extends JPanel {
             BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
             String currentLine = br.readLine();
             while(currentLine != null) {
-                /*For each line, a thread is created- the thread reads the line of text
-                and copys that line of text over, splits the work of reading each line*/
-                Thread line = new Thread(new GameLoop.CopyFile(bw,currentLine));
-                line.start();            
-                /*All the threads are added to objectThreads arrayList to store them
-                This makes it easy to remove them*/
-                objectThreads.add(line);             
+                bw.write(currentLine);
+                bw.newLine();    
                 currentLine = br.readLine();
             }
             bw.flush();
@@ -136,37 +131,5 @@ public class GameLoop extends JPanel {
      */
     public static boolean getDebug() {
         return debug;
-    }
-    
-    /**
-     * Thread used to process each line of {@code Area.txt}.
-     */
-    class CopyFile implements Runnable {
-        private boolean isDone;
-        private BufferedWriter bw;
-        private String currentLine;
-        public CopyFile(BufferedWriter bw, String currentLine) {
-            this.isDone = false;
-            this.bw = bw;
-            this.currentLine = currentLine;
-        }
-        /**
-        * Thread that takes line of {@code Area1.txt} and copies it to a {@code TempSave.txt}.
-        */
-        @Override
-        public synchronized void run() {
-            while(!isDone) {
-                try {   
-                    if(currentLine != null) {
-                        //If the current that the thread is processing is not null, copy it to other TempSave.txt
-                        bw.write(currentLine);
-                        bw.newLine();    
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                } 
-                isDone = true; //End the thread            
-            }                       
-        }
     }
 }

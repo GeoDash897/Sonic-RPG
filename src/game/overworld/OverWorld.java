@@ -5,8 +5,6 @@
  */
 package game.overworld;
 import game.sonic.PlayerMenu;
-import game.gui.Menu.MenuType;
-import game.input.PlayerInput;
 import game.overworld.Room.RoomType;
 import static game.overworld.Room.RoomType.ROOM_SONIC_HOUSE;
 import static game.overworld.Room.RoomType.ROOM_SONIC_TEST;
@@ -18,16 +16,14 @@ import java.util.ArrayList;
     Author: GeoDash897  Date:10/5/19    Updated:12/31/19
 */
 //memes
-public class OverWorld {
-    private static PlayerMenu playerMenu;
+public class OverWorld {    
     private static ArrayList<Room> rooms; 
     private static boolean generateEverything;
     private static RoomType currentRoom;
     private Sonic sonic;
     public OverWorld() {
         rooms = new ArrayList<Room>();
-        sonic = new Sonic(); 
-        playerMenu = new PlayerMenu();
+        sonic = new Sonic();         
         generateEverything = false;
         currentRoom = ROOM_SONIC_HOUSE;
     }
@@ -39,19 +35,14 @@ public class OverWorld {
         else if(generateEverything == true) {
             getCurrentRoom().runRoom();          
             sonic.setup(this);             
-            if(PlayerMenu.isVisible()) {
-                playerMenu.standard();     
-            }               
+                           
         }      
     }   
     
     public void draw(Graphics2D g2) {
         getCurrentRoom().drawRoom(g2);
         sonic.draw(g2);
-        g2.drawString(""+currentRoom,300,200);
-        if(PlayerMenu.isVisible()) {
-            playerMenu.draw(g2);    
-        }        
+        g2.drawString(""+currentRoom,300,200);               
     }
     
     public void generate() {      

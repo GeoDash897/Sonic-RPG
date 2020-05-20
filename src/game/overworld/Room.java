@@ -16,6 +16,8 @@ import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_30;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_31;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
+import game.overworld.TempSign.SignType;
+import game.sonic.PlayerMenu;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -30,11 +32,13 @@ import java.util.Map;
  * @author GeoSonicDash
  */
 public class Room {
+    private static PlayerMenu playerMenu;
     private RoomType roomType;
     private ArrayList<Map<Integer, Ground>> groundGrid;
     private ArrayList<Picture> pictures;
     private SaveLoadObjects slo;
     private OverWorld overworld;
+    private static TempSign tempSign;
     private static Draw draw;
     
     /**
@@ -50,6 +54,9 @@ public class Room {
         this.groundGrid = new ArrayList<Map<Integer, Ground>>();
         this.pictures = new ArrayList<Picture>();
         this.slo = new SaveLoadObjects();
+        if(playerMenu == null) {
+            playerMenu = new PlayerMenu();    
+        }        
         if(draw == null) {
             draw = new Draw();   
         }       
@@ -105,8 +112,10 @@ public class Room {
     public void runRoom() {
         /*for(int i = 0; i < objects.size(); i++) {
             g2.drawString(objects.get(i).toString(),500, 100+(25*i));
-        } */    
-        
+        } */ 
+        if(PlayerMenu.isVisible()) {
+            playerMenu.standard();     
+        }
     }
     
     public void drawRoom(Graphics2D g2) {
@@ -117,10 +126,13 @@ public class Room {
             }
         }             
         Draw.drawInLayers(g2, pictures);
+        if(PlayerMenu.isVisible()) {
+            playerMenu.drawGUI(g2);    
+        }
     }
     
     public void saveRoom() {
-        //slo.saveCurrentRoom(roomType, groundTiles, objects);
+        
     }
     
     /**

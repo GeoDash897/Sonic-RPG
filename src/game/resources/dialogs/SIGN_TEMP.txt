@@ -1,0 +1,7 @@
+ SONIC_NORMAL::Hello! This is a test!
+ I want to see how this works!
+ This is a super duper ultra mega extra bigger line.
+ BREAK
+ TAILS::Hello Again!
+ This is a shorter line of dialog.
+ BREAK

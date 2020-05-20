@@ -16,12 +16,13 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import game.gui.GUI;
 
 /**
  *
  * @author GeoSonicDash
  */
-public class PlayerMenu {
+public class PlayerMenu implements GUI {
     private static int xRef;
     private static int yRef;
     private static boolean visible;
@@ -41,6 +42,8 @@ public class PlayerMenu {
         menus.get(0).addOption(0, 1, "Exit");
         menus.add(1, new Menu(MenuType.MENUTYPE_VERTICAL));
         menus.get(1).addOption(0, 0, "Exit");
+        System.out.println("Code Here");
+        currentMenu = menus.get(currentMenuIndex);
     }
     public void standard() {        
         if(visible) {           
@@ -61,9 +64,9 @@ public class PlayerMenu {
             }    
             currentMenu = menus.get(currentMenuIndex);
         }        
-    }
-    
-    public void draw(Graphics2D g2) {
+    }   
+    @Override
+    public void drawGUI(Graphics2D g2) {
         switch (currentMenuIndex) {
             case 0:
                 xRef = 1250;

@@ -67,7 +67,7 @@ public class Sonic {//This is the main Sonic class;
     }
     public int getAreaNumber() {
         return area;
-    }    
+    }
     public int getOWPowerUp() {
         return owPowerUp;
     }

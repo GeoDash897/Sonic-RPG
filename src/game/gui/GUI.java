@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package game;
+package game.gui;
+
+import java.awt.Graphics2D;
 
 /**
- *This class controls creating DefaultObjects (Monitors, Springs, Signs, etc)
- * from lines of text, and saving rooms.
+ *
  * @author GeoSonicDash
  */
-public class SaveLoadObjects {
-    
+public interface GUI {
+    void drawGUI(Graphics2D g2);
 }
