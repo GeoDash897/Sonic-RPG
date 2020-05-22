@@ -18,16 +18,29 @@ import java.util.ArrayList;
  */
 public class LoadDialogs {
     private static int  CHAR_LIMIT;
+    /**
+     *Consists of a list of speeches.
+     *<p> A speech consists of all of the dialogue that a character says (a character
+     * is "CHARACTER_NAME" before the double colons).
+     */
     private ArrayList<String> speeches;
+    /**
+     *Consists of a list of dialogs.
+     *<p> A dialog is a part of a speech of the character that can fit into one blue box on the
+     * screen. 
+     */
     private ArrayList<Dialog> dialogs;
     private String refName;
+    /**
+     * All of the text with a text file- includes all of the "CHARACTER_NAME::"s and "BREAK"s.
+     */
     private String chunk;
     public LoadDialogs(String refName) {
         this.chunk = "";
         this.refName = refName;
         this.speeches = new ArrayList<String>();
         this.dialogs = new ArrayList<Dialog>();
-        CHAR_LIMIT = 80;
+        CHAR_LIMIT = 160;
     }
     public ArrayList<Dialog> getDialogChain() {       
         getDialogChunk();
@@ -74,10 +87,10 @@ public class LoadDialogs {
         String removedName = speech.substring(speech.indexOf("::")+2);
         int fullLine = removedName.length() / CHAR_LIMIT;
         for(int i = 0; i < fullLine; i++) {
-            String dialog = removedName.substring(80*i, 80*(i+1)+1);
+            String dialog = removedName.substring(CHAR_LIMIT*i, CHAR_LIMIT*(i+1));
             dialogs.add(new Dialog(speakerName, dialog));
         } 
-        String tailEnd = removedName.substring((80*fullLine));
+        String tailEnd = removedName.substring((CHAR_LIMIT*fullLine));
         dialogs.add(new Dialog(speakerName, tailEnd));
     }
 }

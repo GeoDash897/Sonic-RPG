@@ -5,6 +5,7 @@
  */
 package game.sonic;
 
+import static game.Launcher.debugStat;
 import game.overworld.Picture;
 import game.overworld.Room;
 import static game.sonic.AnimationControl.SonicAnimation.ANIMATION_SONIC_STAND;
@@ -193,8 +194,9 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     }
     @Override
     public void draw(Graphics2D g2) { 
+        g2.setFont(debugStat);
         g2.setColor(Color.ORANGE);
-        g2.drawString(toString(), 200, 50);
+        g2.drawString(toString(), 200, 300);
         g2.drawImage(sonicPicture,xDrawSonic,yDrawSonic,sonicWidth,sonicWidth, null);
         g2.setColor(Color.MAGENTA);
         g2.fillRect(xDrawSonic+(sonicWidth/2),yDrawSonic+(sonicWidth/2),4,4);

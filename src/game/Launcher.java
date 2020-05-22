@@ -20,18 +20,18 @@ import java.util.logging.Logger;
  */
 public class Launcher {
     public static Font debugStat;
-    public static Font dialog;  
+    public static Font dialogFont;  
     public static Font statusScreen;
     public static void main (String [] args) {      
         Music.standard();  
         System.setProperty("sun.java2d.opengl", "True"); 
         try {
             debugStat = Font.createFont(Font.TRUETYPE_FONT, new File("src\\game\\resources\\clacon.ttf")).deriveFont(25f);
-            dialog = Font.createFont(Font.TRUETYPE_FONT, new File("src\\game\\resources\\clacon.ttf")).deriveFont(40f);
+            dialogFont = Font.createFont(Font.TRUETYPE_FONT, new File("src\\game\\resources\\clacon.ttf")).deriveFont(40f);
             statusScreen = Font.createFont(Font.TRUETYPE_FONT, new File("src\\game\\resources\\clacon.ttf")).deriveFont(60f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(debugStat);
-            ge.registerFont(dialog);
+            ge.registerFont(dialogFont);
         } catch (FontFormatException | IOException ex) {
             Logger.getLogger(Launcher.class.getName()).log(Level.SEVERE, null, ex);
         }

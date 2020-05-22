@@ -47,9 +47,8 @@ public class OverWorld {
     
     public void generate() {      
         rooms.add(new Room(this, ROOM_SONIC_HOUSE));
-        rooms.add(new Room(this,ROOM_SONIC_TEST));
         System.out.println("Everything has been generated");
-        if(rooms.size() == 2) {
+        if(rooms.size() == 1) {
             generateEverything = true;    
         }        
     }

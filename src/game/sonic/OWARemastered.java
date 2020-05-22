@@ -146,6 +146,7 @@ public class OWARemastered {
         }
         topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-84,4,80);
         topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-84,4,80);
+        currentRoom.getTP().interactWithSonic(middleLeft);
         if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT)) {
             leftPress();
         }

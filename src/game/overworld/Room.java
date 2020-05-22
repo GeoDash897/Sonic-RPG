@@ -5,6 +5,7 @@
  */
 package game.overworld;
 
+import game.gameObjects.TempSign;
 import game.SaveLoadObjects;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_00;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_01;
@@ -16,7 +17,7 @@ import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_30;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_31;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
-import game.overworld.TempSign.SignType;
+import game.gameObjects.TempSign.SignType;
 import game.sonic.PlayerMenu;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -38,7 +39,7 @@ public class Room {
     private ArrayList<Picture> pictures;
     private SaveLoadObjects slo;
     private OverWorld overworld;
-    private static TempSign tempSign;
+    private TempSign tp = new TempSign(this, SignType.SIGN_TEMP, 1, 500, 100);
     private static Draw draw;
     
     /**
@@ -82,7 +83,8 @@ public class Room {
             }
             for(int i = 0; i < 11; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,1472,0+(i*64),1);
-            }
+            }            
+            addPicture(tp);
             /*createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
             createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,448,576,1);  
@@ -113,6 +115,7 @@ public class Room {
         /*for(int i = 0; i < objects.size(); i++) {
             g2.drawString(objects.get(i).toString(),500, 100+(25*i));
         } */ 
+        tp.action();
         if(PlayerMenu.isVisible()) {
             playerMenu.standard();     
         }
@@ -159,6 +162,10 @@ public class Room {
         I create the tile (it will try to add the tile to a HashMap that doesn't exist*/
         groundGrid.get(xIndex).put(yIndex, ground);//Y Plane (tiles going down on screen)
         pictures.add(ground);
+    }
+    
+    public TempSign getTP() {
+        return tp;
     }
     
     public ArrayList<Map<Integer, Ground>> getGroundGridArrayList() {

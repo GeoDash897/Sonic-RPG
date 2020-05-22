@@ -13,16 +13,9 @@ import java.util.Collections;
  *
  * @author GeoSonicDash
  */
-public class Draw {
-    private static ArrayList <Picture> lastList;
-    public Draw() {
-        lastList = new ArrayList<Picture>();
-    }
-    
+public class Draw {   
     public static void drawInLayers(Graphics2D g2, ArrayList<Picture>listOfObjects) {
-        if(lastList != listOfObjects) {
-            Collections.sort(listOfObjects,Picture.pictureCompareLayer);  
-        }        
+        Collections.sort(listOfObjects,Picture.pictureCompareLayer);         
         for(int i = 0; i < listOfObjects.size(); i++) { 
             listOfObjects.get(i).draw(g2);
         }
