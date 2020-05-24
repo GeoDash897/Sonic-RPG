@@ -8,6 +8,7 @@ package game.gameObjects;
 import game.overworld.Ground;
 import game.overworld.Picture;
 import game.overworld.Room;
+import game.sonic.OWARemastered;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -17,7 +18,7 @@ import java.awt.Rectangle;
  *
  * @author GeoSonicDash
  */
-public class BasicObject implements Picture  {
+public class BasicObject implements Picture, Interactable  {
     private int xRef;
     private int yRef;
     private double xSpeed;
@@ -31,6 +32,7 @@ public class BasicObject implements Picture  {
     private boolean bRCollide;
     private Rectangle bottomLeft;
     private Rectangle bottomRight;
+    private Rectangle intersectBox;
     
     private static double GRAVITY = 0.21875;
     
@@ -40,7 +42,7 @@ public class BasicObject implements Picture  {
         this.objectRoom = objectRoom;
     }
     public void createObject(int layer, int xRef, int yRef, int length, int width, Rectangle bottomLeft, 
-            Rectangle bottomRight, boolean ground, boolean gravity, Image picture) {
+            Rectangle bottomRight, Rectangle intersectBox, boolean ground, boolean gravity, Image picture) {
         this.layer = layer;
         this.xRef = xRef;
         this.yRef = yRef;
@@ -50,6 +52,7 @@ public class BasicObject implements Picture  {
         this.width = width;
         this.bottomLeft = bottomLeft;
         this.bottomRight = bottomRight;
+        this.intersectBox = intersectBox;
         this.ground = ground;
         this.gravity = gravity;
         this.bLCollide = false;
@@ -63,12 +66,13 @@ public class BasicObject implements Picture  {
         g2.setColor(Color.RED);
         g2.fill(bottomLeft);
         g2.setColor(Color.MAGENTA);
-        g2.fill(bottomRight);       
+        g2.fill(bottomRight);
     }
     
     public void action() {
         bottomLeft = new Rectangle((int)(bottomLeft.getX()+xSpeed), (int)(bottomLeft.getY()+ySpeed), (int)bottomLeft.getWidth(), (int)bottomLeft.getHeight());
-        bottomRight = new Rectangle((int)(bottomRight.getX()+xSpeed), (int)(bottomRight.getY()+ySpeed), (int)bottomRight.getWidth(), (int)bottomRight.getHeight());       
+        bottomRight = new Rectangle((int)(bottomRight.getX()+xSpeed), (int)(bottomRight.getY()+ySpeed), (int)bottomRight.getWidth(), (int)bottomRight.getHeight()); 
+        intersectBox = new Rectangle((int)(intersectBox.getX()+xSpeed), (int)(intersectBox.getY()+ySpeed), (int)intersectBox.getWidth(), (int)intersectBox.getHeight());
         if(gravity) {
             if(!ground) {
                 ySpeed += GRAVITY;
@@ -109,7 +113,12 @@ public class BasicObject implements Picture  {
         yRef+= (int) ySpeed;
     }
 
-    private Ground getCorrectTile(int yBottomSensor, Rectangle sensor) {
+    @Override
+    public void interactWithSonic(OWARemastered owaR) {
+        
+    }
+    
+    public Ground getCorrectTile(int yBottomSensor, Rectangle sensor) {
         int xBottomSensor = (int) sensor.getX();     
         int xBottomIndex = xBottomSensor/64;
         int yBottomIndex = yBottomSensor/64;       
@@ -126,12 +135,28 @@ public class BasicObject implements Picture  {
         }
     }
     
-    public Rectangle getSensor() {
-        return bottomRight;
+    public Rectangle getIntersectBox() {
+        return intersectBox;
+    }
+    
+    public int getXRef() {
+        return xRef;
+    }
+    
+    public int getYRef() {
+        return yRef;
+    }
+    
+    public int getLength() {
+        return length;
     }
     
     @Override
     public int getLayer() {
         return layer;
+    }
+    
+    public Room getObjectRoom() {
+        return objectRoom;
     }
 }

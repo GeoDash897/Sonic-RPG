@@ -45,8 +45,12 @@ public class PlayerMenu implements GUI {
         System.out.println("Code Here");
         currentMenu = menus.get(currentMenuIndex);
     }
-    public void standard() {        
-        if(visible) {           
+    @Override
+    public void standardGUI() {        
+        if(visible) {  
+            if(!Sonic.getGUIVisible()) {
+                Sonic.setGUIVisible(true);
+            }
             if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_LEFT)) {
                 leftPress();
             } 
@@ -106,7 +110,8 @@ public class PlayerMenu implements GUI {
         currentMenu.draw(g2);
     }
     
-    public static boolean isVisible() {
+    @Override
+    public boolean isVisible() {
         return visible;
     }
     
@@ -149,6 +154,9 @@ public class PlayerMenu implements GUI {
         else if(currentMenuIndex == 0 && currentMenu.getSelectedChoice().equals("Exit")) {
             currentMenu.resetMenuPosition();
             visible = false;
+            if(Sonic.getGUIVisible()) {
+                Sonic.setGUIVisible(false);
+            }
         }
     }
 }

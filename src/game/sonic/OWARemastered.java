@@ -6,6 +6,8 @@
 package game.sonic;
 
 import game.GameLoop;
+import game.Launcher;
+import game.gameObjects.SolidObject;
 import game.input.PlayerInput;
 import game.overworld.Ground;
 import game.overworld.Room;
@@ -73,8 +75,8 @@ public class OWARemastered {
     private static SpindashState spindashState;
     
     public OWARemastered() {
-        xDrawCenterSonic = 100;
-        ySpriteCenterSonic = 625;
+        xDrawCenterSonic = 800;
+        ySpriteCenterSonic = 100;
         yLastGround = 0;
         xSpeed = 0;
         ySpeed = 0;
@@ -146,7 +148,6 @@ public class OWARemastered {
         }
         topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-84,4,80);
         topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-84,4,80);
-        currentRoom.getTP().interactWithSonic(middleLeft);
         if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT)) {
             leftPress();
         }
@@ -261,10 +262,13 @@ public class OWARemastered {
             where groundSpeed effects xSpeed*/
             xSpeed = groundSpeed*Math.cos(angle);
             ySpeed = groundSpeed*-Math.sin(angle);
-        }             
-        xDrawCenterSonic += (int) xSpeed;
-        ySpriteCenterSonic += (int) ySpeed;
+        }   
         bottomTopCheck();//This needs to go after gravity is calculated (since it affects ySpeed)!
+        for(int i = 0; i < currentRoom.getGameObjectArrayList().size(); i++) {
+            currentRoom.getGameObjectArrayList().get(i).interactWithSonic(this);
+        }
+        xDrawCenterSonic += (int) xSpeed;
+        ySpriteCenterSonic += (int) ySpeed;        
         changeAnimation();    
     }
     
@@ -353,8 +357,6 @@ public class OWARemastered {
                 }
             }            
         }       
-        /*g2.drawString("pixelyL: "+pixelyL, 500, 150);
-        g2.drawString("pixelyR: "+pixelyR, 500, 175);*/
         if(pixelyL < pixelyR) {
             setSonicGroundStat(heightBottomLeftIndex,pixelyL, yBottomSensor, highLeft);
         }
@@ -378,6 +380,11 @@ public class OWARemastered {
         }
         
         //Get's Sonic's ledges
+        getLedgeGround(highLeft, highRight);        
+    } 
+    
+    private void getLedgeGround(Ground highLeft, Ground highRight) {
+        //Get's Sonic's ledges
         if(grounded && xSpeed == 0 && angle == 0 && bLCollide && !bRCollide && bRDistanceFromRect >= 48) {
             if(highLeft != null) {
                 if(xDrawCenterSonic >= highLeft.getXRef()+64+4 && animation.getDirection() == 1) {
@@ -392,8 +399,22 @@ public class OWARemastered {
                     ledgeState = LedgeState.STATE_LEFTLEDGE;    
                 }
             }
-        }          
-    } 
+        } 
+    }
+    
+    public void getLedgeGameObject(Rectangle intersectBox){
+        if(grounded && xSpeed == 0 && angle == 0 && bLCollide && !bRCollide && bRDistanceFromRect >= 48) {
+            if(xDrawCenterSonic >= (int) (intersectBox.getX()+intersectBox.getWidth()+4) && animation.getDirection() == 1) {
+                ledgeState = LedgeState.STATE_RIGHTLEDGE;    
+            }
+            
+        }
+        else if(grounded && xSpeed == 0 && angle == 0 && !bLCollide && bRCollide && bLDistanceFromRect >= 48) {
+            if(xDrawCenterSonic <= intersectBox.getX()-4 && animation.getDirection() == 0) {
+                ledgeState = LedgeState.STATE_LEFTLEDGE;    
+            }
+        }
+    }
     
     private Ground getCorrectTile(int yBottomSensor, Rectangle sensor) {
         int xBottomSensor = (int) sensor.getX();     
@@ -452,6 +473,22 @@ public class OWARemastered {
             }
         }        
     }
+    
+    public void setSonicBottomGameStat(Rectangle sensor, Rectangle collideCheck) {
+        int yBottomSensor = (int) sensor.getY();
+        ySpeed = 0;
+        if(sensor == bottomLeft) {
+            bLCollide = true;
+        }
+        else if(sensor == bottomRight) {
+            bRCollide = true;
+        }
+        if(yBottomSensor >= (int) collideCheck.getY()) {
+            yLastGround = (int) collideCheck.getY();
+            ySpriteCenterSonic = (int) (collideCheck.getY() - 76);  
+        } 
+    }
+    
     private void topCollision() {
         int xTopLeft = (int) topLeft.getX();
         int xTopRight = (int) topRight.getX();  
@@ -489,15 +526,21 @@ public class OWARemastered {
         }
         if(pixelyL > pixelyR) {            
             ySpriteCenterSonic = pixelyL + 64;
-            jumpState = JumpState.STATE_JUMP_DOWN;
+            if(jumpState == JumpState.STATE_JUMP_UP) {
+                jumpState = JumpState.STATE_JUMP_DOWN;    
+            }            
         }
         else if(pixelyR > pixelyL) {
             ySpriteCenterSonic = pixelyR + 64;
-            jumpState = JumpState.STATE_JUMP_DOWN;
+            if(jumpState == JumpState.STATE_JUMP_UP) {
+                jumpState = JumpState.STATE_JUMP_DOWN;    
+            }
         } 
         else if(pixelyR == pixelyL && pixelyR != -90000) {
             ySpriteCenterSonic = pixelyL + 64;
-            jumpState = JumpState.STATE_JUMP_DOWN;
+            if(jumpState == JumpState.STATE_JUMP_UP) {
+                jumpState = JumpState.STATE_JUMP_DOWN;    
+            }
         }
     }
     
@@ -523,23 +566,31 @@ public class OWARemastered {
                 Rectangle collideCheck = intersect.getPixelBox(intersect.getPixelBoxes().size()-1);
                 if(xMiddleSensor < (int) (collideCheck.getX()+collideCheck.getWidth())+4 && middleLeft.intersects(collideCheck)) {      
                     middleLeftIntersect = intersect;
-                    groundSpeed = 0;
-                    xSpeed = 0;
-                    mLCollide = true;    
-                    xDrawCenterSonic = (int) (collideCheck.getX()+collideCheck.getWidth()+38);
+                    setCollideLeftStats(collideCheck);
                 }    
             }
             else if(sideSensor == middleRight) {                      
                 Rectangle collideCheck = intersect.getPixelBox(0);
                 if(xMiddleSensor > (int) collideCheck.getX() && middleRight.intersects(collideCheck)) {
                     middleRightIntersect = intersect;
-                    groundSpeed = 0;
-                    xSpeed = 0;
-                    mRCollide = true;   
-                    xDrawCenterSonic = (int) (collideCheck.getX()-40);
+                    setCollideRightStats(collideCheck);
                 }    
             }
         }
+    }
+    
+    public void setCollideLeftStats(Rectangle collideCheck) {
+        groundSpeed = 0;
+        xSpeed = 0;
+        mLCollide = true;    
+        xDrawCenterSonic = (int) (collideCheck.getX()+collideCheck.getWidth()+38);
+    }
+    
+    public void setCollideRightStats(Rectangle collideCheck) {
+        groundSpeed = 0;
+        xSpeed = 0;
+        mRCollide = true;   
+        xDrawCenterSonic = (int) (collideCheck.getX()-40);
     }
     
     private void performSpindash() {
@@ -785,9 +836,50 @@ public class OWARemastered {
         return yDrawCenterSonic;
     }
 
+    public Rectangle getBottomLeft() {
+        return bottomLeft;
+    }
+    
+    public Rectangle getBottomRight() {
+        return bottomRight;
+    }
+    
+    public Rectangle getMiddleLeft() {
+        return middleLeft;
+    }
+    
+    public Rectangle getMiddleRight() {
+        return middleRight;
+    }
+    
+    public JumpState getJumpState() {
+        return jumpState;
+    }
+    
+    public DuckState getDuckState() {
+        return duckState;
+    }
+    
+    public void setBLDistanceFromRect(int temp) {
+        bLDistanceFromRect = temp;
+    }
+    
+    public void setBRDistanceFromRect(int temp) {
+        bRDistanceFromRect = temp;
+    }
+    
+    public double getYSpeed() {
+        return ySpeed;
+    }
+    
+    public void setYSpeed(double temp) {
+        ySpeed = temp;
+    }
+    
     public void drawDebug(Graphics2D g2) {
         if(GameLoop.getDebug()) {
             g2.setColor(Color.MAGENTA);
+            g2.setFont(Launcher.debugStat);
             g2.drawString("DEBUG MENU",600,25);        
             //Variables that have to do with Sonic's x and y position, checking ground, x and y speed, etc:
             g2.drawString("xDrawCenterSonic: "+xDrawCenterSonic,75,75);
@@ -814,7 +906,7 @@ public class OWARemastered {
             //Variables that have to do with Sonic's animations:
             g2.setColor(Color.GREEN);
             g2.drawString("angle: "+angle, 400, 75);
-            //g2.drawString("direction: "+animation.getDirection(), 400, 100);
+            g2.drawString("direction: "+animation.getDirection(), 400, 100);
             g2.drawString("waitTimer: "+waitTimer, 400, 125);
             g2.setColor(Color.ORANGE);
             g2.drawString("Sonic's Ledge State: "+ledgeState, 75, 700);

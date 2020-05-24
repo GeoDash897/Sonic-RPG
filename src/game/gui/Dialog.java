@@ -33,7 +33,12 @@ public class Dialog {
                 speakerPic = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Face Normal.png");
                 length = 25;
                 width = 19;
+                break;
             case "TAILS":
+                length = 25;
+                width = 19;
+                break;
+            case "SIGN":
                 length = 25;
                 width = 19;
             default:

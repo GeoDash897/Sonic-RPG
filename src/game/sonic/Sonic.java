@@ -26,7 +26,8 @@ public class Sonic {//This is the main Sonic class;
     private static int speed;
     private static int area = 1;    
     private static int owPowerUp = 0;
-    private static boolean allowInput = true;
+    private static int keyDelay = 0;
+    private static boolean guiVisible = false;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
     private static OverWorld overWorld;
@@ -44,11 +45,16 @@ public class Sonic {//This is the main Sonic class;
             animation =  new AnimationControl();    
         }       
         currentRoom = overworld.getCurrentRoom();
-        if(!cutscene && !PlayerMenu.isVisible()) {     
+        if(!cutscene && !guiVisible && keyDelay == 0) {     
             lastXCenterSonic = owaR.getXCenterSonic();
             lastYCenterSonic = owaR.getYCenterSonic();
             owaR.mainMethod(this, currentRoom, animation);   
             animation.standard(currentRoom,lastXCenterSonic,lastYCenterSonic);
+        }
+        /*This is helps to prevent multiple actions from running (by different objects) for checkIsPressedOnce(),
+        not for checkIsPressedMethods()*/
+        if(keyDelay > 0) {
+            keyDelay = 0;
         }
     }
     
@@ -60,6 +66,19 @@ public class Sonic {//This is the main Sonic class;
     
     public OverWorld getOverWorld() {
         return overWorld;
+    }
+    
+    public static boolean getGUIVisible() {
+        return guiVisible;
+    }
+    
+    public static void setGUIVisible(boolean temp) {
+        guiVisible = temp;
+        resetKeyDelay();
+    }
+    
+    private static void resetKeyDelay() {
+        keyDelay = 50;
     }
     
     public void addToPictureALAgain() {

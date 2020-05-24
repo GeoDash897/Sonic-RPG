@@ -3,16 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package game.gui;
+package game.gameObjects;
 
-import java.awt.Graphics2D;
+import game.sonic.OWARemastered;
 
 /**
  *
  * @author GeoSonicDash
  */
-public interface GUI {
-    public void standardGUI();
-    void drawGUI(Graphics2D g2);   
-    public boolean isVisible();
+public interface Interactable {
+    void interactWithSonic(OWARemastered owaR);
 }

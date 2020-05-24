@@ -5,19 +5,11 @@
  */
 package game.overworld;
 
-import game.gameObjects.TempSign;
 import game.SaveLoadObjects;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_00;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_01;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_10;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_11;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_20;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_21;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_30;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_SONICBED_31;
+import game.gameObjects.BasicObject;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
 import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
-import game.gameObjects.TempSign.SignType;
+import game.gui.GUI;
 import game.sonic.PlayerMenu;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -37,9 +29,10 @@ public class Room {
     private RoomType roomType;
     private ArrayList<Map<Integer, Ground>> groundGrid;
     private ArrayList<Picture> pictures;
+    private ArrayList<GUI> guis;
+    private ArrayList<BasicObject> gameObjects;
     private SaveLoadObjects slo;
-    private OverWorld overworld;
-    private TempSign tp = new TempSign(this, SignType.SIGN_TEMP, 1, 500, 100);
+    private OverWorld overworld;    
     private static Draw draw;
     
     /**
@@ -54,6 +47,8 @@ public class Room {
         this.roomType = roomType;   
         this.groundGrid = new ArrayList<Map<Integer, Ground>>();
         this.pictures = new ArrayList<Picture>();
+        this.guis = new ArrayList<GUI>();
+        this.gameObjects = new ArrayList<BasicObject>();
         this.slo = new SaveLoadObjects();
         if(playerMenu == null) {
             playerMenu = new PlayerMenu();    
@@ -83,55 +78,57 @@ public class Room {
             }
             for(int i = 0; i < 11; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,1472,0+(i*64),1);
-            }            
-            addPicture(tp);
-            /*createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
+            } 
+            addGUI(playerMenu);
+            SaveLoadObjects.createGameObjectArrayList("TempSave", this);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
             createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,448,576,1);  
             createTile(GRD_SONICHOUSE_WOODPLANK,1,512,576,1); 
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,512,512,1);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,576,512,1);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,640,512,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1,704,512,0);      
+            /*createTile(GRD_SONICHOUSE_WOODSLOPE,1,704,512,0);    
             createTile(GRD_SONICHOUSE_WOODPLANK,1,704,576,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,768,576,0);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,768,640,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,832,640,0);*/
-            createTile(GRD_SONICHOUSE_SONICBED_00,1,64,576,1);
+            /*createTile(GRD_SONICHOUSE_SONICBED_00,1,64,576,1);
             createTile(GRD_SONICHOUSE_SONICBED_01,1,64,640,1); 
             createTile(GRD_SONICHOUSE_SONICBED_10,1,128,576,1);  
             createTile(GRD_SONICHOUSE_SONICBED_11,1,128,640,1);
             createTile(GRD_SONICHOUSE_SONICBED_20,1,192,576,1);  
             createTile(GRD_SONICHOUSE_SONICBED_21,1,192,640,1);
             createTile(GRD_SONICHOUSE_SONICBED_30,1,256,576,1);
-            createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);
+            createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);*/
         }
     }
     
     /**
      * Runs draw and action methods of DefaultObjects.
      */
-    public void runRoom() {
-        /*for(int i = 0; i < objects.size(); i++) {
-            g2.drawString(objects.get(i).toString(),500, 100+(25*i));
-        } */ 
-        tp.action();
-        if(PlayerMenu.isVisible()) {
-            playerMenu.standard();     
+    public void runRoom() {         
+        for(BasicObject temp : gameObjects) {
+            temp.action();
+        }
+        for(GUI temp : guis) {
+            if(temp.isVisible()) {
+               temp.standardGUI();
+            }
         }
     }
     
     public void drawRoom(Graphics2D g2) {
+        for(int i = 0; i < gameObjects.size(); i++) {
+            g2.drawString(gameObjects.get(i).toString(),500, 100+(25*i));
+        }
         g2.setColor(Color.MAGENTA);
         for(int i = 0; i < 24; i++) {
             for(int j = 0; j < 24; j++) {
                 g2.drawRect(0+(i*64), 0+(j*64), 64, 64);
             }
         }             
-        Draw.drawInLayers(g2, pictures);
-        if(PlayerMenu.isVisible()) {
-            playerMenu.drawGUI(g2);    
-        }
+        Draw.drawInLayers(g2, pictures, guis);
     }
     
     public void saveRoom() {
@@ -164,24 +161,36 @@ public class Room {
         pictures.add(ground);
     }
     
-    public TempSign getTP() {
-        return tp;
-    }
-    
     public ArrayList<Map<Integer, Ground>> getGroundGridArrayList() {
         return groundGrid;
     } 
     
+    public ArrayList<BasicObject> getGameObjectArrayList() {
+        return gameObjects;
+    }
+    
     public ArrayList<Picture> getPictureArrayList() {
         return pictures;
+    }
+    
+    public void addGameObject(BasicObject add) {
+        gameObjects.add(add);
+    }
+    
+    public void removeGameObject(BasicObject index) {
+        gameObjects.remove(index);
     }
     
     public void addPicture(Picture add) {
         pictures.add(add);
     }
     
-    public void removePicture(int index) {
+    public void removePicture(Picture index) {
         pictures.remove(index);
+    }
+    
+    public void addGUI(GUI add) {
+        guis.add(add);
     }
     
     public RoomType getRoomType() {

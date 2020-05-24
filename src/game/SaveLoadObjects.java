@@ -5,11 +5,62 @@
  */
 package game;
 
+import game.gameObjects.Monitor;
+import game.gameObjects.Monitor.MonitorType;
+import game.gameObjects.Sign;
+import game.gameObjects.Sign.SignType;
+import game.overworld.Room;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 /**
  *This class controls creating DefaultObjects (Monitors, Springs, Signs, etc)
  * from lines of text, and saving rooms.
  * @author GeoSonicDash
  */
 public class SaveLoadObjects {
+    public static void createGameObjectArrayList(String area, Room room) {
+        try {
+            File file = new File("src/game/"+area+".txt");
+            if(!file.exists()) {
+                file.createNewFile();
+            }
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String currentLine = br.readLine();
+            while(currentLine != null) {
+                String[] temp = currentLine.split(" ");
+                if(temp[0].equals(String.valueOf(room.getRoomType()))) {
+                    createObject(temp, room);    
+                }
+                currentLine = br.readLine();
+            }
+        }
+        catch(IOException ex) {
+            ex.printStackTrace();
+        }
+    }
     
+    private static void createObject(String[] lineSplit, Room room) {
+        String objectType = lineSplit[1].substring(0, lineSplit[1].length()-1);
+        switch(objectType) {
+            case "Sign":
+                Sign sign = new Sign(room, SignType.valueOf(lineSplit[2]), Integer.valueOf(lineSplit[3]), 
+                        Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
+                room.addGameObject(sign);
+                room.addGUI(sign);
+                room.addPicture(sign);
+                break;
+            case "Monitor":
+                Monitor monitor = new Monitor(room, MonitorType.valueOf(lineSplit[2]), Integer.valueOf(lineSplit[3]), 
+                        Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
+                room.addGameObject(monitor);
+                room.addPicture(monitor);
+                break;
+            default:
+                break;
+        }
+            
+    }
 }

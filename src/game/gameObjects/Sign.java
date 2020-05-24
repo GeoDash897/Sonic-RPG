@@ -7,8 +7,12 @@ package game.gameObjects;
 
 import game.LoadDialogs;
 import game.gui.Dialog;
+import game.gui.GUI;
 import game.input.PlayerInput;
 import game.overworld.Room;
+import game.sonic.OWARemastered;
+import game.sonic.Sonic;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -20,13 +24,13 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class TempSign extends BasicObject {
+public class Sign extends BasicObject implements GUI {
     private SignType signType;
     private int dialogIndex;
     private boolean isVisible;
     private LoadDialogs load;
     private ArrayList<Dialog> dialogChain;
-    public TempSign(Room objectRoom, SignType signType, int layer, int xRef, int yRef) {
+    public Sign(Room objectRoom, SignType signType, int layer, int xRef, int yRef) {
         super(objectRoom);
         this.signType = signType; 
         this.dialogIndex = -1;
@@ -41,36 +45,72 @@ public class TempSign extends BasicObject {
         int width = 0;
         Rectangle bottomLeft = null;
         Rectangle bottomRight = null;
+        Rectangle intersectBox = null;
         Image picture = null;
         if(signType == SignType.SIGN_TEMP) {
             length = 28;
             width = 32;
             bottomLeft = new Rectangle(xRef+((length*4)/2)-32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
             bottomRight = new Rectangle(xRef+((length*4)/2)+32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
+            intersectBox = new Rectangle(xRef, yRef, length*4, width*4);
             picture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor 1.png");            
         }
-        super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, false, true, picture);
+        super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, intersectBox, false, true, picture);
     }
-       
+      
     @Override
-    public void draw(Graphics2D g2) {
-        if(isVisible) {
-            dialogChain.get(dialogIndex).draw(g2);
-        }
+    public void standardGUI() {
+        
+    }
+    
+    @Override
+    public void draw(Graphics2D g2) {        
         super.draw(g2);
     }
     
-    public void interactWithSonic(Rectangle sensor) {
-        if(sensor.intersects(super.getSensor()) && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
-            if(dialogIndex == -1) {
-                isVisible = true;
-            }
-            dialogIndex++;
-            if(dialogIndex == dialogChain.size()) {
+    @Override
+    public void drawGUI(Graphics2D g2) {
+        if(isVisible && dialogIndex < dialogChain.size()) {
+            dialogChain.get(dialogIndex).draw(g2);
+        }
+        g2.setColor(Color.WHITE);
+        g2.drawString("dialogIndex :"+dialogIndex, 300, 400);
+    }
+    
+    @Override
+    public void action() {
+        super.action();
+        if(isVisible) {
+            if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
+                dialogIndex++;    
+            }            
+            else if(dialogIndex == dialogChain.size()) {
                 isVisible = false;
+                Sonic.setGUIVisible(false);
                 dialogIndex = -1;
             }
         }
+    }
+    
+    @Override
+    public void interactWithSonic(OWARemastered owaR) {
+        if(owaR.getMiddleLeft().intersects(super.getIntersectBox()) && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
+            if(dialogIndex == -1) {
+                isVisible = true;
+                Sonic.setGUIVisible(true);
+                dialogIndex++; 
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return ""+signType+", "+super.getLayer()+", "+super.getXRef()+", "+super.getYRef();
+    }
+    
+    @Override
+    public boolean isVisible() {
+        return isVisible;
     }
         
     public enum SignType {
