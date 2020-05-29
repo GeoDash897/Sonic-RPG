@@ -1,0 +1,26 @@
+MEET
+SKELETON::It is has been a long time since I have seen a mortal in
+ this realm...Whatever reason you have to be here child must be very important...
+BREAK
+SONIC_NORMAL::You betcha! Do you know where I could find a guide? I'm kinda new to this place.
+BREAK
+SKELETON::I can't say I have. You might want to head into town. Be cautious however, since
+ our kind is not known for liking people of the flesh...
+BREAK
+SONIC_NORMAL::I'll keep that in mind..
+BREAK
+MEET-END
+RETURN
+SKELETON::Hello again blue spiked one! I see that you are still in one piece.
+BREAK
+SONIC_NORMAL:: Yeah! I decided to check out the town. It was pretty interesting!
+BREAK
+RETURN-END
+GREET
+SONIC_NORMAL::Hey, Mr.Skeleton Man! I have a quick question for you.
+BREAK
+SKELETON::For your information mortal, I have a real name!
+BREAK
+SONIC_NORMAL::Sorry about that, didn't mean to anger you. What's you name?
+BREAK
+GREET-END

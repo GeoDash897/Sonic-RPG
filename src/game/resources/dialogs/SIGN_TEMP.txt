@@ -1,3 +1,4 @@
+READ
 SIGN::This is a picture of Sonic and Tails that is worn and torn with age. They are grinning at the camera and look
  like they are having a fun time. In the background there is a huge desert,
  with rolling dunes far into the distance. Tall skyscapers and buildings with bright lights and signs hover 
@@ -6,3 +7,11 @@ SIGN::This is a picture of Sonic and Tails that is worn and torn with age. They 
  that looks like an alien arm, but it's too hard to make out. In the other corner, there are the numbers '01 in 
  old, smudged black ink.
 BREAK
+SONIC_NORMAL::Man...It's so hard to believe that this was such a long time ago! I wonder how that place has changed since
+ we were last there? One things for sure, I should take out my Dreamcast some time! Where did I put that again?..
+BREAK
+TAILS::Geez Sonic! I didn't know that you were an old man!
+BREAK
+SONIC_NORMAL::Oh, be quiet you!
+BREAK
+READ-END

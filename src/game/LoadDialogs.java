@@ -42,8 +42,18 @@ public class LoadDialogs {
         this.dialogs = new ArrayList<Dialog>();
         CHAR_LIMIT = 160;
     }
-    public ArrayList<Dialog> getDialogChain() {       
-        getDialogChunk();
+    
+    public void clearSpeechesDialogs() {
+        if(!speeches.isEmpty()) {
+            speeches.clear();
+        }
+        if(!dialogs.isEmpty()) {
+            dialogs.clear();
+        }
+    }
+    
+    public ArrayList<Dialog> getDialogChain(String conversation) {       
+        getDialogChunk(conversation);        
         spiltChunk();
         for(String temp : speeches) {
             createDialogChain(temp);
@@ -51,7 +61,7 @@ public class LoadDialogs {
         return dialogs;
     }
     
-    private void getDialogChunk() {
+    private void getDialogChunk(String conversation) {
         File file = new File("src/game/resources/dialogs/"+refName+".txt");
         try {
             if(!file.exists()) {
@@ -59,8 +69,18 @@ public class LoadDialogs {
             }  
             BufferedReader br = new BufferedReader(new FileReader(file));
             String currentLine = br.readLine();
-            while(currentLine != null) {
-                chunk+=currentLine;
+            String section = "";
+            boolean endLoop = false;
+            while(!endLoop && currentLine != null) {
+                if(section.equals(conversation) && !currentLine.equals(conversation+"-END")) {
+                    chunk+=currentLine;    
+                }
+                else if(currentLine.equals(conversation)) {
+                    section = conversation;
+                }
+                else if(currentLine.equals(conversation+"-END")) {
+                    endLoop = true;
+                }
                 currentLine = br.readLine();
             }
             br.close();

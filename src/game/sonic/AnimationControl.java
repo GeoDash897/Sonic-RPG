@@ -6,13 +6,15 @@
 package game.sonic;
 
 import static game.Launcher.debugStat;
+import game.LoadAnimations;
+import game.animation.Animation;
+import game.animation.Animation.AnimationName;
 import game.overworld.Picture;
 import game.overworld.Room;
-import static game.sonic.AnimationControl.SonicAnimation.ANIMATION_SONIC_STAND;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
+import java.util.Map;
 
 /*
     Author: GeoDash897  Date:10/5/19    Updated:10/5/19
@@ -22,174 +24,52 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     private static int yDrawSonic;
     private static int layer;
     private static int animationTimer;
-    private static SonicAnimation animationNumber;
-    private static int animationReset;
     private static int animationFrame;
     private static int sonicWidth;
-    private static int animationTimerFrameSet;
-    private static int numberOfFrames;
-    private static int resetAnimationFrame;
-    private static int resetAnimationTimer;
     private static boolean addToPictureAL;
     private static int direction;
     private static Image sonicPicture;
-    private static String filePath;
+    private static Map<AnimationName, Animation> animations;
+    private static Animation currentAnimation;
     public AnimationControl() {
         animationTimer = 1;
-        animationNumber = SonicAnimation.ANIMATION_SONIC_STAND;
-        filePath = "src\\game\\resources\\Sonic Wait_";
-        animationReset = 0;
         animationFrame = 1;
         sonicWidth = 288;
-        animationTimerFrameSet = 1;
-        numberOfFrames = 0;
-        resetAnimationFrame = 1;
-        resetAnimationTimer = 0;
         addToPictureAL = false;
         layer = 1;
-        direction = 1;
+        direction = 1; 
+        animations = LoadAnimations.getAnimationMap("SONIC");
+        currentAnimation = animations.get(AnimationName.ANIMATION_SONIC_STAND);
     }
+    
     public void standard(Room currentRoom, int xCenterSonic, int yCenterSonic) {
         if(!addToPictureAL) {
             currentRoom.addPicture(this);
             addToPictureAL = true;
         }
         xDrawSonic = xCenterSonic - (sonicWidth/2);
-        yDrawSonic = yCenterSonic - (sonicWidth/2);       
-        getCorrectAnimationStats();
-        //Gets the right filePath if Sonic is facing left (the file with LSonic), else keep normal filePath
-        if(direction == 0) {
-            if(filePath.charAt(20) != 'L') {
-                String start = filePath.substring(0, 19);
-                String end = filePath.substring(19);
-                filePath = start+"L"+end;   
-            }           
-        }
-        sonicPicture = Toolkit.getDefaultToolkit().getImage(filePath+animationFrame+".png");
-        if(animationNumber != ANIMATION_SONIC_STAND) {
-            animationTimer++;            
-        }
-        if(animationTimer%animationTimerFrameSet == 0) {
+        yDrawSonic = yCenterSonic - (sonicWidth/2); 
+        
+        animationTimer++;
+        if(animationTimer%currentAnimation.getAnimationTimerFrameSet() == 0) {
             animationFrame++;
         }
-        if(animationTimer >= (animationTimerFrameSet*numberOfFrames)) {
-            animationFrame = resetAnimationFrame;
-            animationTimer = resetAnimationTimer;
-        }   
+        if(animationTimer >= (currentAnimation.getAnimationTimerFrameSet()*currentAnimation.getNumberOfFrames())) {
+            animationFrame = currentAnimation.getResetAnimationFrame();
+            animationTimer = currentAnimation.getResetAnimationTimer();
+        }
+        if(direction == 0) {
+            sonicPicture = currentAnimation.getLeftAnimationArray()[animationFrame-1];
+        }
+        else {
+            sonicPicture = currentAnimation.getAnimationArray()[animationFrame-1];
+        }        
     }
     
-    private void getCorrectAnimationStats() {
-        switch (animationNumber) {
-            case ANIMATION_SONIC_STAND:              
-                animationTimerFrameSet = 10;
-                numberOfFrames = 1;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Wait_";
-                break;
-            case ANIMATION_SONIC_WAIT:               
-                animationTimerFrameSet = 30;
-                numberOfFrames = 6;
-                resetAnimationFrame = 5;
-                resetAnimationTimer = 121;
-                filePath = "src\\game\\resources\\Sonic Wait_"; 
-                break;
-            case ANIMATION_SONIC_WALK:               
-                animationTimerFrameSet = 30;
-                numberOfFrames = 8;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Walk_";           
-                break;
-            case ANIMATION_SONIC_RUN:               
-                animationTimerFrameSet = 15;
-                numberOfFrames = 4;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Run_";  
-                break;
-            case ANIMATION_SONIC_TRIPA:               
-                animationTimerFrameSet = 25;
-                numberOfFrames = 3;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Trip A_";
-                break;
-            case ANIMATION_SONIC_JUMP:              
-                animationTimerFrameSet = 10;
-                numberOfFrames = 8;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Jump_";
-                break;
-            case ANIMATION_SONIC_DUCK:
-                animationTimerFrameSet = 25;
-                numberOfFrames = 2;
-                resetAnimationFrame = 2;
-                resetAnimationTimer = 200;
-                filePath = "src\\game\\resources\\Sonic Duck_";
-                break;
-            case ANIMATION_SONIC_SKID:
-                animationTimerFrameSet = 10;
-                numberOfFrames = 1;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Skid_";
-                break;
-            case ANIMATION_SONIC_SPINDASH:
-                animationTimerFrameSet = 20;
-                numberOfFrames = 6;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Spindash_";
-                break;
-            case ANIMATION_SONIC_SLEEP:
-                animationTimerFrameSet = 50;
-                numberOfFrames = 4;
-                resetAnimationFrame = 4;
-                resetAnimationTimer = 200;
-                filePath = "src\\game\\resources\\Sonic Sleep_";
-                break;
-            case ANIMATION_SONIC_BORED:
-                animationTimerFrameSet = 25;
-                numberOfFrames = 4;
-                resetAnimationFrame = 2;
-                resetAnimationTimer = 51;
-                filePath = "src\\game\\resources\\Sonic Bored_";
-                break;
-            case ANIMATION_SONIC_PUSH:                
-                animationTimerFrameSet = 40;
-                numberOfFrames = 4;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Push_";
-                break;
-            case ANIMATION_SONIC_SPRING:               
-                animationTimerFrameSet = 10;
-                numberOfFrames = 1;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Spring_";              
-                break;
-            case ANIMATION_SONIC_BATTLE_IDLE:               
-                animationTimerFrameSet = 30;
-                numberOfFrames = 30;
-                resetAnimationFrame = 1;
-                resetAnimationTimer = 1;
-                filePath = "src\\game\\resources\\Sonic Idle_";     
-                break;
-            default:
-                break;
-        }
-    }
-    public void setSonicAnimation(SonicAnimation newAnimation) {
-        animationNumber = newAnimation;
-        animationReset = 0;
-        if(animationReset == 0) {
-            animationTimer = 1;
-            animationFrame = 1;
-            animationReset = 1;
-        }
+    public void setSonicAnimation(AnimationName newAnimation) {
+        currentAnimation = animations.get(newAnimation);
+        animationTimer = 1;
+        animationFrame = 1;
         //System.out.println("Changed animation to "+newAnimation);
     }
     @Override
@@ -207,8 +87,8 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     public void setaddToPictureAL(boolean set) {
         addToPictureAL = set;
     }
-    public SonicAnimation getAnimationNumber() {
-        return animationNumber;
+    public AnimationName getAnimationNumber() {
+        return currentAnimation.getAnimationName();
     }
     
     @Override
@@ -223,23 +103,7 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     }
     @Override
     public String toString() {
-        return "Sonic is playing animationNumber "+animationNumber+"; Current Frame: "+animationFrame+", Current AnimationTimer: "+
+        return "Sonic is playing animationNumber "+currentAnimation.getAnimationName()+"; Current Frame: "+animationFrame+", Current AnimationTimer: "+
                 animationTimer+ ", direction: "+direction+", layer: "+layer;
     }  
-    public enum SonicAnimation {
-        ANIMATION_SONIC_STAND,
-        ANIMATION_SONIC_WAIT,
-        ANIMATION_SONIC_WALK,
-        ANIMATION_SONIC_RUN,
-        ANIMATION_SONIC_TRIPA,
-        ANIMATION_SONIC_JUMP,
-        ANIMATION_SONIC_DUCK,
-        ANIMATION_SONIC_SKID,
-        ANIMATION_SONIC_SPINDASH,
-        ANIMATION_SONIC_SLEEP,
-        ANIMATION_SONIC_BORED,
-        ANIMATION_SONIC_PUSH,
-        ANIMATION_SONIC_SPRING,
-        ANIMATION_SONIC_BATTLE_IDLE
-    }
 }

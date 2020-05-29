@@ -24,53 +24,74 @@ import java.util.ArrayList;
  *
  * @author GeoSonicDash
  */
-public class Sign extends BasicObject implements GUI {
+public class Sign extends SolidObject implements GUI {
     private SignType signType;
     private int dialogIndex;
     private boolean isVisible;
+    private boolean justFinishedDialog;
     private LoadDialogs load;
     private ArrayList<Dialog> dialogChain;
     public Sign(Room objectRoom, SignType signType, int layer, int xRef, int yRef) {
         super(objectRoom);
         this.signType = signType; 
+        this.justFinishedDialog = false;
         this.dialogIndex = -1;
         this.isVisible = false;
         create(layer, xRef, yRef);
     }
+    public Sign(Room objectRoom) {
+        super(objectRoom);
+    }
     private void create(int layer, int xRef, int yRef) {
         String refName = String.valueOf(signType);
         load = new LoadDialogs(refName);
-        dialogChain = load.getDialogChain();
+        dialogChain = load.getDialogChain("READ");
         int length = 0;
         int width = 0;
         Rectangle bottomLeft = null;
         Rectangle bottomRight = null;
-        Rectangle intersectBox = null;
         Image picture = null;
         if(signType == SignType.SIGN_TEMP) {
             length = 28;
             width = 32;
             bottomLeft = new Rectangle(xRef+((length*4)/2)-32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
-            bottomRight = new Rectangle(xRef+((length*4)/2)+32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
-            intersectBox = new Rectangle(xRef, yRef, length*4, width*4);
-            picture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor 1.png");            
+            bottomRight = new Rectangle(xRef+((length*4)/2)+32, yRef+((width*4)/2), 4, ((width*4)/2)+8);            
+            picture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor_2.png");            
         }
+        Rectangle intersectBox = new Rectangle(xRef, yRef, length*4, width*4);
         super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, intersectBox, false, true, picture);
     }
       
+    public void createDialogChain(String refName, String conversation) {
+        this.signType = SignType.SIGN_NPC;
+        this.dialogIndex = -1;
+        this.isVisible = false;
+        load = new LoadDialogs(refName);
+        loadDialogChain(refName, conversation);
+    }
+    
+    public void loadDialogChain(String refName, String conversation) {
+        load.clearSpeechesDialogs();//This removes instance vars from the previous instance of load       
+        //and in turn the previous chunk of dialog
+        dialogChain = load.getDialogChain(conversation);
+        justFinishedDialog = false;
+    }
+    
+    public void resetConversation() {
+        isVisible = false;
+        justFinishedDialog = true;
+        Sonic.setGUIVisible(false);
+        dialogIndex = -1;
+    }
+    
     @Override
     public void standardGUI() {
         
     }
-    
-    @Override
-    public void draw(Graphics2D g2) {        
-        super.draw(g2);
-    }
-    
+        
     @Override
     public void drawGUI(Graphics2D g2) {
-        if(isVisible && dialogIndex < dialogChain.size()) {
+        if(isVisible) {
             dialogChain.get(dialogIndex).draw(g2);
         }
         g2.setColor(Color.WHITE);
@@ -82,27 +103,35 @@ public class Sign extends BasicObject implements GUI {
         super.action();
         if(isVisible) {
             if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
-                dialogIndex++;    
+                dialogIndex++; 
+                if(dialogIndex == dialogChain.size()) {
+                    resetConversation();
+                }
             }            
-            else if(dialogIndex == dialogChain.size()) {
-                isVisible = false;
-                Sonic.setGUIVisible(false);
-                dialogIndex = -1;
-            }
+        }
+        else {
+            /*If the dialog has ended and no new one needs to be loaded, set justFinishedDialog to false
+            since at this point the dialog exchange would have been over for some time*/
+            justFinishedDialog = false;
         }
     }
-    
+         
     @Override
     public void interactWithSonic(OWARemastered owaR) {
+        super.interactWithSonic(owaR);
         if(owaR.getMiddleLeft().intersects(super.getIntersectBox()) && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
             if(dialogIndex == -1) {
+                
                 isVisible = true;
                 Sonic.setGUIVisible(true);
                 dialogIndex++; 
             }
         }
     }
-
+   
+    public boolean justFinishedDialog() {
+        return justFinishedDialog;
+    }
     @Override
     public String toString() {
         return ""+signType+", "+super.getLayer()+", "+super.getXRef()+", "+super.getYRef();
@@ -114,6 +143,7 @@ public class Sign extends BasicObject implements GUI {
     }
         
     public enum SignType {
-        SIGN_TEMP
+        SIGN_TEMP,
+        SIGN_NPC
     }
 }

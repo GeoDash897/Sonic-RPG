@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package game.overworld;
-import game.sonic.PlayerMenu;
 import game.overworld.Room.RoomType;
 import static game.overworld.Room.RoomType.ROOM_SONIC_HOUSE;
 import static game.overworld.Room.RoomType.ROOM_SONIC_TEST;

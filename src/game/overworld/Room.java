@@ -7,8 +7,7 @@ package game.overworld;
 
 import game.SaveLoadObjects;
 import game.gameObjects.BasicObject;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODPLANK;
-import static game.overworld.Ground.GroundType.GRD_SONICHOUSE_WOODSLOPE;
+import static game.overworld.Ground.GroundType.*;
 import game.gui.GUI;
 import game.sonic.PlayerMenu;
 import java.awt.Color;
@@ -81,7 +80,7 @@ public class Room {
             } 
             addGUI(playerMenu);
             SaveLoadObjects.createGameObjectArrayList("TempSave", this);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
+            /*createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
             createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,448,576,1);  
             createTile(GRD_SONICHOUSE_WOODPLANK,1,512,576,1); 
@@ -93,14 +92,14 @@ public class Room {
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,768,576,0);
             createTile(GRD_SONICHOUSE_WOODPLANK,1,768,640,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,832,640,0);*/
-            /*createTile(GRD_SONICHOUSE_SONICBED_00,1,64,576,1);
+            createTile(GRD_SONICHOUSE_SONICBED_00,1,64,576,1);
             createTile(GRD_SONICHOUSE_SONICBED_01,1,64,640,1); 
             createTile(GRD_SONICHOUSE_SONICBED_10,1,128,576,1);  
             createTile(GRD_SONICHOUSE_SONICBED_11,1,128,640,1);
             createTile(GRD_SONICHOUSE_SONICBED_20,1,192,576,1);  
             createTile(GRD_SONICHOUSE_SONICBED_21,1,192,640,1);
             createTile(GRD_SONICHOUSE_SONICBED_30,1,256,576,1);
-            createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);*/
+            createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);
         }
     }
     

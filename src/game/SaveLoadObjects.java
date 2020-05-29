@@ -9,6 +9,8 @@ import game.gameObjects.Monitor;
 import game.gameObjects.Monitor.MonitorType;
 import game.gameObjects.Sign;
 import game.gameObjects.Sign.SignType;
+import game.gameObjects.SkeletonNPC;
+import game.gameObjects.SkeletonNPC.NPCSkeletonType;
 import game.overworld.Room;
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,6 +59,13 @@ public class SaveLoadObjects {
                         Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
                 room.addGameObject(monitor);
                 room.addPicture(monitor);
+                break;
+            case "SkeletonNPC":
+                SkeletonNPC sNPC = new SkeletonNPC(room, NPCSkeletonType.valueOf(lineSplit[2]), Integer.valueOf(lineSplit[3]), 
+                        Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
+                room.addGameObject(sNPC);
+                room.addGUI(sNPC);
+                room.addPicture(sNPC);
                 break;
             default:
                 break;

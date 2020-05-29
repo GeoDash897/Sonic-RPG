@@ -7,6 +7,7 @@ package game.gameObjects;
 
 import game.overworld.Ground;
 import game.overworld.Picture;
+import static game.gameObjects.BasicObject.Direction;
 import game.overworld.Room;
 import game.sonic.OWARemastered;
 import java.awt.Color;
@@ -26,6 +27,7 @@ public class BasicObject implements Picture, Interactable  {
     private int length;
     private int width;
     private int layer;
+    private Direction direction;
     private boolean ground;
     private boolean gravity;
     private boolean bLCollide;
@@ -50,6 +52,7 @@ public class BasicObject implements Picture, Interactable  {
         this.ySpeed = 0;
         this.length = length;
         this.width = width;
+        this.direction = Direction.DIRECTION_RIGHT;
         this.bottomLeft = bottomLeft;
         this.bottomRight = bottomRight;
         this.intersectBox = intersectBox;
@@ -67,6 +70,8 @@ public class BasicObject implements Picture, Interactable  {
         g2.fill(bottomLeft);
         g2.setColor(Color.MAGENTA);
         g2.fill(bottomRight);
+        /*g2.setColor(Color.YELLOW);
+        g2.fill(intersectBox);*/
     }
     
     public void action() {
@@ -74,13 +79,14 @@ public class BasicObject implements Picture, Interactable  {
         bottomRight = new Rectangle((int)(bottomRight.getX()+xSpeed), (int)(bottomRight.getY()+ySpeed), (int)bottomRight.getWidth(), (int)bottomRight.getHeight()); 
         intersectBox = new Rectangle((int)(intersectBox.getX()+xSpeed), (int)(intersectBox.getY()+ySpeed), (int)intersectBox.getWidth(), (int)intersectBox.getHeight());
         if(gravity) {
-            if(!ground) {
-                ySpeed += GRAVITY;
+            if(!ground) {                
                 int xBottomLeft = (int) bottomLeft.getX();
                 int xBottomRight = (int) bottomRight.getX();  
                 int yBottomSensor = (int) (bottomLeft.getY()+bottomLeft.getHeight());
                 int heightBottomLeftIndex = 0;
                 int heightBottomRightIndex = 0;
+                int pixelyL = yBottomSensor;
+                int pixelyR = yBottomSensor;
                 /*int pixelyL = yBottomSensor+80;
                 int pixelyR = yBottomSensor+80;*/
                 Rectangle groundCheckL;
@@ -89,7 +95,7 @@ public class BasicObject implements Picture, Interactable  {
                 Ground highRight = getCorrectTile(yBottomSensor,bottomRight);
                 if(highLeft != null) {
                     heightBottomLeftIndex = (int) Math.abs(((xBottomLeft - highLeft.getXRef())/4));   
-                    //pixelyL = (int) highLeft.getPixelBox(heightBottomLeftIndex).getY();
+                    pixelyL = (int) highLeft.getPixelBox(heightBottomLeftIndex).getY();
                     groundCheckL = highLeft.getPixelBox(heightBottomLeftIndex);
                     if(bottomLeft.intersects(groundCheckL)) {
                         bLCollide = true;
@@ -97,7 +103,7 @@ public class BasicObject implements Picture, Interactable  {
                 }
                 if(highRight != null) {
                     heightBottomRightIndex = (int) Math.abs(((xBottomRight - highRight.getXRef())/4));
-                    //pixelyR = (int) highRight.getPixelBox(heightBottomRightIndex).getY();
+                    pixelyR = (int) highRight.getPixelBox(heightBottomRightIndex).getY();
                     groundCheckR = highRight.getPixelBox(heightBottomRightIndex);
                     if(bottomRight.intersects(groundCheckR)) {
                         bRCollide = true;
@@ -106,16 +112,36 @@ public class BasicObject implements Picture, Interactable  {
                 if(bLCollide || bRCollide) {
                     ground = true;
                     ySpeed = 0;
-                }
-            }            
+                }                 
+                ySpeed += GRAVITY;
+                setCorrectHeight(pixelyL, pixelyR, yBottomSensor);
+            }
         }
         xRef+= (int) xSpeed;
         yRef+= (int) ySpeed;
     }
-
+   
     @Override
     public void interactWithSonic(OWARemastered owaR) {
         
+    }
+    /**
+     * This method corrects the yRef of BasicObject- helps to prevent it from being stuck
+     * halfway into the ground (prevent it from looking wrong).
+     * @param pixelyL the position that the bottomLeft sensor senses (remember its relative to the entire screen).
+     * @param pixelyR the position that the bottomRight sensor senses (remember its relative to the entire screen).
+     * @param yBottomSensor the y position of the bottom of the sensors.
+     */
+    private void setCorrectHeight(int pixelyL, int pixelyR, int yBottomSensor) {
+        if(pixelyL > pixelyR) {
+            yRef = pixelyR-(width*4);
+        }
+        else if(pixelyL < pixelyR) {
+            yRef = pixelyL-(width*4);
+        }
+        else if(pixelyL == pixelyR && pixelyR != yBottomSensor){
+            yRef = pixelyR-(width*4);
+        }
     }
     
     public Ground getCorrectTile(int yBottomSensor, Rectangle sensor) {
@@ -158,5 +184,26 @@ public class BasicObject implements Picture, Interactable  {
     
     public Room getObjectRoom() {
         return objectRoom;
+    }
+    
+    public Direction getDirection() {
+        return direction;
+    }
+    
+    public void setDirection(Direction temp) {
+        direction = temp;
+    }
+    
+    public Image getImage() {
+        return picture;
+    }
+    
+    public void setPicture(Image temp) {
+        picture = temp;
+    }
+    
+    public enum Direction {
+        DIRECTION_LEFT,
+        DIRECTION_RIGHT
     }
 }

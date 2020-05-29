@@ -1,0 +1,1 @@
+ANIMATION_NPCSKELETON_STAND "Skeleton Stand" 1 1 1 1

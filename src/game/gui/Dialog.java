@@ -41,6 +41,11 @@ public class Dialog {
             case "SIGN":
                 length = 25;
                 width = 19;
+                break;
+            case "SKELETON":
+                length = 25;
+                width = 19;
+                break;
             default:
                 break;    
         }
@@ -56,9 +61,9 @@ public class Dialog {
         g2.setColor(Color.BLUE);
         g2.fillRect(0,0,2000,150);
         g2.setColor(Color.WHITE);
-        g2.drawString(speakerName, 50, 135); 
+        g2.drawString(speakerName, 25, 135); 
         drawText(g2);
-        g2.drawImage(speakerPic, 50, 25, length*4, width*4, null);
+        g2.drawImage(speakerPic, 25, 25, length*4, width*4, null);
     }
     /**
      * This makes sure that the text of the dialog are formatted and displayed correctly.

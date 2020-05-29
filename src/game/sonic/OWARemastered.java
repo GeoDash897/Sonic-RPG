@@ -7,6 +7,7 @@ package game.sonic;
 
 import game.GameLoop;
 import game.Launcher;
+import game.animation.Animation;
 import game.gameObjects.SolidObject;
 import game.input.PlayerInput;
 import game.overworld.Ground;
@@ -75,8 +76,8 @@ public class OWARemastered {
     private static SpindashState spindashState;
     
     public OWARemastered() {
-        xDrawCenterSonic = 800;
-        ySpriteCenterSonic = 100;
+        xDrawCenterSonic = 100;
+        ySpriteCenterSonic = 600;
         yLastGround = 0;
         xSpeed = 0;
         ySpeed = 0;
@@ -756,18 +757,18 @@ public class OWARemastered {
             if(grounded && groundSpeed == 0 && angle == 0 && !PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && !PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
                 waitTimer++;
                 if(waitTimer < 988) {
-                    if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_STAND) {
-                        animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_STAND);               
+                    if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_STAND) {
+                        animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_STAND);               
                     }                   
                 }
                 else if(waitTimer >= 998 && waitTimer < 3000) {
-                    if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_WAIT) {
-                        animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_WAIT);               
+                    if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_WAIT) {
+                        animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_WAIT);               
                     }
                 }
                 else if(waitTimer >= 3000 && waitTimer < 3001) {
-                    if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_BORED) {
-                        animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_BORED);               
+                    if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_BORED) {
+                        animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_BORED);               
                     }
                 }
                 else if(waitTimer >= 3000) {
@@ -778,53 +779,53 @@ public class OWARemastered {
                 waitTimer = 0;
             }         
             if(Math.abs(groundSpeed) > 0.5 && Math.abs(groundSpeed) < 6 && (!mLCollide || !mRCollide)) {
-                if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_WALK) {
-                    animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_WALK);    
+                if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_WALK) {
+                    animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_WALK);    
                 }
             }
             else if(Math.abs(groundSpeed) >= 6) {//Controls when Sonic's running animation plays
-                if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_RUN) {
-                    animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_RUN);    
+                if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_RUN) {
+                    animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_RUN);    
                 }
             }
-            if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && mLCollide && animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH) {
-                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH);
+            if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && mLCollide && animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_PUSH) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_PUSH);
             }
-            else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT) && mRCollide && animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH) {
-                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_PUSH);
+            else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT) && mRCollide && animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_PUSH) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_PUSH);
             }
         }
         else {//This resets the waitTimer if the player is ducking/rolling/on ledge/spindashing/etc
             waitTimer = 0;
         }
         if(ledgeState == LedgeState.STATE_LEFTLEDGE && duckState == DuckState.STATE_NODUCK) {
-            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_TRIPA) {
-                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_TRIPA);    
+            if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_TRIPA) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_TRIPA);    
             }
         }
         else if(ledgeState == LedgeState.STATE_RIGHTLEDGE && duckState == DuckState.STATE_NODUCK) {
-            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_TRIPA) {
-                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_TRIPA);    
+            if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_TRIPA) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_TRIPA);    
             }
         }
         if(jumpState == JumpState.STATE_JUMP_UP || jumpState == JumpState.STATE_JUMP_DOWN) {
-            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_JUMP) {
-                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_JUMP);   
+            if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_JUMP) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_JUMP);   
             }
         }
         if(duckState == DuckState.STATE_DUCK && spindashState == SpindashState.STATE_NOSPINDASH) {
-            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_DUCK) {
-                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_DUCK);   
+            if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_DUCK) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_DUCK);   
             }
         }
         else if(duckState == DuckState.STATE_ROLL) {
-            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_JUMP) {
-                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_JUMP);   
+            if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_JUMP) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_JUMP);   
             }
         }
         if(duckState == DuckState.STATE_DUCK && spindashState == SpindashState.STATE_SPINDASH) {
-            if(animation.getAnimationNumber() != AnimationControl.SonicAnimation.ANIMATION_SONIC_SPINDASH) {
-                animation.setSonicAnimation(AnimationControl.SonicAnimation.ANIMATION_SONIC_SPINDASH);   
+            if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_SPINDASH) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_SPINDASH);   
             }
         }
     }
