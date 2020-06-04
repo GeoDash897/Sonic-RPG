@@ -15,7 +15,6 @@ import game.sonic.OWARemastered.DuckState;
 import game.sonic.OWARemastered.JumpState;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,7 +24,6 @@ import java.util.Map;
 public class Monitor extends SolidObject {
     private int animationFrame;
     private int animationTimer;
-    private boolean animationReset;
     private MonitorType monitorType;
     private Map<AnimationName, Animation> animations;
     private Animation currentAnimation;
@@ -50,20 +48,20 @@ public class Monitor extends SolidObject {
             case MONITOR_RING:
                 length = 28;
                 width = 32;
-                bottomLeft = new Rectangle(xRef+((length*4)/2)-32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
-                bottomRight = new Rectangle(xRef+((length*4)/2)+32, yRef+((width*4)/2), 4, ((width*4)/2)+8);                                
+                bottomLeft = new Rectangle(xRef-32, yRef, 4, width*2);
+                bottomRight = new Rectangle(xRef+32, yRef, 4, width*2);                                
                 currentAnimation = animations.get(ANIMATION_MONITORRING_STATIC);
                 break;
             case MONITOR_SPEED:
                 length = 28;
                 width = 32;
-                bottomLeft = new Rectangle(xRef+((length*4)/2)-32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
-                bottomRight = new Rectangle(xRef+((length*4)/2)+32, yRef+((width*4)/2), 4, ((width*4)/2)+8);   
+                bottomLeft = new Rectangle(xRef-32, yRef, 4, width*2);
+                bottomRight = new Rectangle(xRef+32, yRef, 4, width*2);  
                 currentAnimation = animations.get(ANIMATION_MONITORSPEED_STATIC);
             default:
                 break;
         }
-        Rectangle intersectBox = new Rectangle(xRef, yRef, length*4, width*4);
+        Rectangle intersectBox = new Rectangle(xRef-(length*2), yRef-(width*2), length*4, width*4);
         super.createSolidObject(true);
         super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, intersectBox, false, true, picture);
     }
@@ -96,7 +94,7 @@ public class Monitor extends SolidObject {
             super.interactWithSonic(owaR);    
         }
         else if(owaR.getDuckState() == DuckState.STATE_ROLL || owaR.getJumpState() != JumpState.STATE_NOJUMP) {
-            if(owaR.getMiddleLeft().intersects(super.getIntersectBox())) {
+            if(owaR.getIntersectBox().intersects(super.getIntersectBox())) {
                 owaR.setYSpeed(-owaR.getYSpeed());
                 super.getObjectRoom().removeGameObject(this);
                 super.getObjectRoom().removePicture(this);

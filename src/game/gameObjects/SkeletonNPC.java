@@ -21,7 +21,6 @@ import java.util.Map;
 public class SkeletonNPC extends NPC {
     private int animationFrame;
     private int animationTimer;
-    private boolean animationReset;
     private String loadedDialog;
     private NPCSkeletonType npcType;
     private static Map<AnimationName, Animation> animations;
@@ -30,7 +29,6 @@ public class SkeletonNPC extends NPC {
         super(objectRoom);
         this.animationFrame = 1;
         this.animationTimer = 1;
-        this.animationReset = false;
         this.npcType = npcType;
         create(layer, xRef, yRef);
     }
@@ -44,8 +42,8 @@ public class SkeletonNPC extends NPC {
             case NPC_SKELETON:
                 length = 24;
                 width = 48;
-                bottomLeft = new Rectangle(xRef+((length*4)/2)-32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
-                bottomRight = new Rectangle(xRef+((length*4)/2)+32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
+                bottomLeft = new Rectangle(xRef-32,yRef,4,width*2);
+                bottomRight = new Rectangle(xRef+32,yRef,4,width*2);
                 if(animations == null) {
                     animations = LoadAnimations.getAnimationMap(String.valueOf(npcType));    
                 }                
@@ -55,7 +53,7 @@ public class SkeletonNPC extends NPC {
             default:
                 break;
         }
-        Rectangle intersectBox = new Rectangle(xRef, yRef, length*4, width*4);
+        Rectangle intersectBox = new Rectangle(xRef-(length*2), yRef-(width*2), length*4, width*4);
         super.createNPC(String.valueOf(npcType), "MEET", false, true);
         super.createSolidObject(false);
         super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, intersectBox, false, true, picture);

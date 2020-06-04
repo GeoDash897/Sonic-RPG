@@ -8,7 +8,6 @@ package game.sonic;
 import game.GameLoop;
 import game.Launcher;
 import game.animation.Animation;
-import game.gameObjects.SolidObject;
 import game.input.PlayerInput;
 import game.overworld.Ground;
 import game.overworld.Room;
@@ -65,6 +64,7 @@ public class OWARemastered {
     private static Rectangle middleRight;
     private static Rectangle topLeft;
     private static Rectangle topRight;
+    private static Rectangle intersectBox;
     
     private static AnimationControl animation;
     private static Room currentRoom;
@@ -148,7 +148,14 @@ public class OWARemastered {
             middleRight = new Rectangle(xDrawCenterSonic+4,ySpriteCenterSonic-4,40,4);            
         }
         topLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic-84,4,80);
-        topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-84,4,80);
+        topRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic-84,4,80);  
+        //Gets the correct size of interactBox
+        if(jumpState != JumpState.STATE_NOJUMP || duckState != DuckState.STATE_NODUCK) {
+            intersectBox = new Rectangle(xDrawCenterSonic-30, ySpriteCenterSonic-20, 60, 80);
+        }
+        else {
+            intersectBox = new Rectangle(xDrawCenterSonic-29, ySpriteCenterSonic-70, 60, 140);
+        }
         if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT)) {
             leftPress();
         }
@@ -171,7 +178,7 @@ public class OWARemastered {
         /*This resets the duckState if Sonic jumps (this is why is placed here right after the code for jumping),
         and resets spindashRev to 0 (so Sonic won't boost again on ground when he ducks) 
         */
-        if(jumpState != JumpState.STATE_NOJUMP) {
+        if(jumpState != JumpState.STATE_NOJUMP) {            
             duckState = DuckState.STATE_NODUCK;
             spindashRev = 0;
         }
@@ -853,6 +860,10 @@ public class OWARemastered {
         return middleRight;
     }
     
+    public Rectangle getIntersectBox() {
+        return intersectBox;
+    }
+    
     public JumpState getJumpState() {
         return jumpState;
     }
@@ -926,6 +937,8 @@ public class OWARemastered {
             g2.fill(bottomLeft);
             g2.setColor(Color.CYAN);    
             g2.fill(bottomRight);
+            g2.setColor(Color.PINK);
+            g2.fill(intersectBox);
         }          
     }
     

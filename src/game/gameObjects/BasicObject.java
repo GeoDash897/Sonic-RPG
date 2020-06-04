@@ -22,6 +22,14 @@ import java.awt.Rectangle;
 public class BasicObject implements Picture, Interactable  {
     private int xRef;
     private int yRef;
+    private int xDraw;
+    private int yDraw;
+    private int bLXOffsetFromCenter;
+    private int bLYOffsetFromCenter;
+    private int bRXOffsetFromCenter;
+    private int bRYOffsetFromCenter;
+    private int bIXOffsetFromCenter;
+    private int bIYOffsetFromCenter;
     private double xSpeed;
     private double ySpeed;
     private int length;
@@ -50,12 +58,18 @@ public class BasicObject implements Picture, Interactable  {
         this.yRef = yRef;
         this.xSpeed = 0;
         this.ySpeed = 0;
-        this.length = length;
-        this.width = width;
+        this.length = length*4;
+        this.width = width*4;
         this.direction = Direction.DIRECTION_RIGHT;
         this.bottomLeft = bottomLeft;
         this.bottomRight = bottomRight;
         this.intersectBox = intersectBox;
+        this.bLXOffsetFromCenter = (int)(bottomLeft.getX()-xRef);
+        this.bLYOffsetFromCenter = (int)(bottomLeft.getY()-yRef);
+        this.bRXOffsetFromCenter = (int) (bottomRight.getX()-xRef);
+        this.bRYOffsetFromCenter = (int) (bottomRight.getY()-yRef);
+        this.bIXOffsetFromCenter = (int)(intersectBox.getX()-xRef);
+        this.bIYOffsetFromCenter = (int)(intersectBox.getY()-yRef);
         this.ground = ground;
         this.gravity = gravity;
         this.bLCollide = false;
@@ -65,19 +79,22 @@ public class BasicObject implements Picture, Interactable  {
     
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(picture, xRef, yRef, length*4, width*4, null);
+        g2.drawImage(picture, xDraw, yDraw, length, width, null);        
         g2.setColor(Color.RED);
         g2.fill(bottomLeft);
         g2.setColor(Color.MAGENTA);
         g2.fill(bottomRight);
+        g2.fillRect(xRef, yRef,1,1);
         /*g2.setColor(Color.YELLOW);
         g2.fill(intersectBox);*/
     }
     
     public void action() {
-        bottomLeft = new Rectangle((int)(bottomLeft.getX()+xSpeed), (int)(bottomLeft.getY()+ySpeed), (int)bottomLeft.getWidth(), (int)bottomLeft.getHeight());
-        bottomRight = new Rectangle((int)(bottomRight.getX()+xSpeed), (int)(bottomRight.getY()+ySpeed), (int)bottomRight.getWidth(), (int)bottomRight.getHeight()); 
-        intersectBox = new Rectangle((int)(intersectBox.getX()+xSpeed), (int)(intersectBox.getY()+ySpeed), (int)intersectBox.getWidth(), (int)intersectBox.getHeight());
+        xDraw = xRef-(length/2);
+        yDraw = yRef-(width/2);
+        bottomLeft = new Rectangle((int)(xRef+bLXOffsetFromCenter), (int)(yRef+bLYOffsetFromCenter), (int)bottomLeft.getWidth(), (int)bottomLeft.getHeight());
+        bottomRight = new Rectangle((int)(xRef+bRXOffsetFromCenter), (int)(yRef+bRYOffsetFromCenter), (int)bottomRight.getWidth(), (int)bottomRight.getHeight()); 
+        intersectBox = new Rectangle((int)(xRef+bIXOffsetFromCenter), (int)(yRef+bIYOffsetFromCenter), (int)intersectBox.getWidth(), (int)intersectBox.getHeight());
         if(gravity) {
             if(!ground) {                
                 int xBottomLeft = (int) bottomLeft.getX();
@@ -109,11 +126,11 @@ public class BasicObject implements Picture, Interactable  {
                         bRCollide = true;
                     }            
                 }
+                ySpeed += GRAVITY;
                 if(bLCollide || bRCollide) {
                     ground = true;
                     ySpeed = 0;
-                }                 
-                ySpeed += GRAVITY;
+                }                                 
                 setCorrectHeight(pixelyL, pixelyR, yBottomSensor);
             }
         }
@@ -134,13 +151,13 @@ public class BasicObject implements Picture, Interactable  {
      */
     private void setCorrectHeight(int pixelyL, int pixelyR, int yBottomSensor) {
         if(pixelyL > pixelyR) {
-            yRef = pixelyR-(width*4);
+            yRef = pixelyR-(int)bottomLeft.getHeight();
         }
         else if(pixelyL < pixelyR) {
-            yRef = pixelyL-(width*4);
+            yRef = pixelyL-(int)bottomLeft.getHeight();
         }
         else if(pixelyL == pixelyR && pixelyR != yBottomSensor){
-            yRef = pixelyR-(width*4);
+            yRef = pixelyR-(int)bottomLeft.getHeight();
         }
     }
     

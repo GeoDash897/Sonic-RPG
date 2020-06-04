@@ -42,6 +42,12 @@ public class Sign extends SolidObject implements GUI {
     public Sign(Room objectRoom) {
         super(objectRoom);
     }
+    /**
+     * This method is used to create Sign objects ONLY.
+     * @param layer layer of the Sign object, used to organize object in objectRoom's picture ArrayList (occurs in SaveLoadObjects class).
+     * @param xRef the x position of the Sign Object.
+     * @param yRef the y position of the Sign Object.
+     */
     private void create(int layer, int xRef, int yRef) {
         String refName = String.valueOf(signType);
         load = new LoadDialogs(refName);
@@ -54,14 +60,18 @@ public class Sign extends SolidObject implements GUI {
         if(signType == SignType.SIGN_TEMP) {
             length = 28;
             width = 32;
-            bottomLeft = new Rectangle(xRef+((length*4)/2)-32, yRef+((width*4)/2), 4, ((width*4)/2)+8);
-            bottomRight = new Rectangle(xRef+((length*4)/2)+32, yRef+((width*4)/2), 4, ((width*4)/2)+8);            
+            bottomLeft = new Rectangle(xRef-32, yRef, 4, width*2);
+            bottomRight = new Rectangle(xRef+32, yRef, 4, width*2);            
             picture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Speed Monitor_2.png");            
         }
-        Rectangle intersectBox = new Rectangle(xRef, yRef, length*4, width*4);
+        Rectangle intersectBox = new Rectangle(xRef-(length*2), yRef-(width*2), length*4, width*4);
         super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, intersectBox, false, true, picture);
     }
-      
+    /**
+     * This method creates the dialogChain for objects that extend the Sign class (for example: NPC class).
+     * @param refName The name of the text file in {@code games.resources.dialogs} package that dialog is written in.
+     * @param conversation The specific conversation in the text file that is being loaded.
+     */
     public void createDialogChain(String refName, String conversation) {
         this.signType = SignType.SIGN_NPC;
         this.dialogIndex = -1;
@@ -79,7 +89,7 @@ public class Sign extends SolidObject implements GUI {
     
     public void resetConversation() {
         isVisible = false;
-        justFinishedDialog = true;
+        justFinishedDialog = true;//Conversation just ended at this point
         Sonic.setGUIVisible(false);
         dialogIndex = -1;
     }
@@ -119,9 +129,8 @@ public class Sign extends SolidObject implements GUI {
     @Override
     public void interactWithSonic(OWARemastered owaR) {
         super.interactWithSonic(owaR);
-        if(owaR.getMiddleLeft().intersects(super.getIntersectBox()) && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
-            if(dialogIndex == -1) {
-                
+        if(owaR.getIntersectBox().intersects(super.getIntersectBox()) && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
+            if(dialogIndex == -1) {               
                 isVisible = true;
                 Sonic.setGUIVisible(true);
                 dialogIndex++; 

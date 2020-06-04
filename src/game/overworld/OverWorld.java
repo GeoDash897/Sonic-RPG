@@ -18,13 +18,14 @@ import java.util.ArrayList;
 public class OverWorld {    
     private static ArrayList<Room> rooms; 
     private static boolean generateEverything;
-    private static RoomType currentRoom;
+    private static RoomType currentRoomName;
+    private static Room currentRoom;
     private Sonic sonic;
     public OverWorld() {
         rooms = new ArrayList<Room>();
         sonic = new Sonic();         
         generateEverything = false;
-        currentRoom = ROOM_SONIC_HOUSE;
+        currentRoomName = ROOM_SONIC_HOUSE;
     }
     public void standard() {
         if(generateEverything == false) {
@@ -32,7 +33,10 @@ public class OverWorld {
             generate();
         }      
         else if(generateEverything == true) {
-            getCurrentRoom().runRoom();          
+            if(currentRoom != getCurrentRoom()) {
+                currentRoom = getCurrentRoom();
+            }
+            currentRoom.runRoom();          
             sonic.setup(this);             
                            
         }      
@@ -41,7 +45,7 @@ public class OverWorld {
     public void draw(Graphics2D g2) {
         getCurrentRoom().drawRoom(g2);
         sonic.draw(g2);
-        g2.drawString(""+currentRoom,300,200);               
+        g2.drawString(""+currentRoomName,300,200);               
     }
     
     public void generate() {      
@@ -56,7 +60,7 @@ public class OverWorld {
     }
     public Room getCurrentRoom() {
         for(int i = 0; i < rooms.size(); i ++) {
-            if(rooms.get(i).getRoomType() == currentRoom) {
+            if(rooms.get(i).getRoomType() == currentRoomName) {
                 return rooms.get(i);
             }
         }
@@ -64,7 +68,7 @@ public class OverWorld {
     }
     public void setCurrentRoomType(RoomType newRoom) {
         getCurrentRoom().saveRoom();
-        currentRoom = newRoom;
+        currentRoomName = newRoom;
         sonic.addToPictureALAgain();
     }
     public void keyPressed(KeyEvent e) {
