@@ -42,7 +42,7 @@ public class Monitor extends SolidObject {
         Rectangle bottomRight = null;        
         Image picture = null;
         if(animations == null) {
-            animations = LoadAnimations.getAnimationMap(String.valueOf("MONITOR"));                   
+            animations = LoadAnimations.getAnimationMap("MONITOR");                   
         }
         switch(monitorType) {
             case MONITOR_RING:
@@ -93,7 +93,7 @@ public class Monitor extends SolidObject {
         if(owaR.getDuckState() != DuckState.STATE_ROLL && owaR.getJumpState() == JumpState.STATE_NOJUMP) {
             super.interactWithSonic(owaR);    
         }
-        else if(owaR.getDuckState() == DuckState.STATE_ROLL || owaR.getJumpState() != JumpState.STATE_NOJUMP) {
+        if(owaR.getDuckState() == DuckState.STATE_ROLL || owaR.getJumpState() == JumpState.STATE_JUMP_DOWN) {
             if(owaR.getIntersectBox().intersects(super.getIntersectBox())) {
                 owaR.setYSpeed(-owaR.getYSpeed());
                 super.getObjectRoom().removeGameObject(this);

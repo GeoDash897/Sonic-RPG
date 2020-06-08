@@ -85,8 +85,8 @@ public class BasicObject implements Picture, Interactable  {
         g2.setColor(Color.MAGENTA);
         g2.fill(bottomRight);
         g2.fillRect(xRef, yRef,1,1);
-        /*g2.setColor(Color.YELLOW);
-        g2.fill(intersectBox);*/
+        g2.setColor(Color.YELLOW);
+        g2.draw(intersectBox);
     }
     
     public void action() {

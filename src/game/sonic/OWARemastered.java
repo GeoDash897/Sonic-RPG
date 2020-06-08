@@ -74,6 +74,7 @@ public class OWARemastered {
     private static JumpState jumpState;
     private static LedgeState ledgeState;
     private static SpindashState spindashState;
+    private static SpringState springState;
     
     public OWARemastered() {
         xDrawCenterSonic = 100;
@@ -98,6 +99,7 @@ public class OWARemastered {
         ledgeState = LedgeState.STATE_NOLEDGE;
         jumpState = JumpState.STATE_NOJUMP;
         spindashState = SpindashState.STATE_NOSPINDASH;
+        springState = SpringState.STATE_NOSPRING;
         middleLeftIntersect = null;
     }
     
@@ -233,6 +235,9 @@ public class OWARemastered {
             if(xSpeed == 0 && groundSpeed == 0 && duckState == DuckState.STATE_NODUCK && PlayerInput.checkIsPressed(KeyEvent.VK_ENTER)) {
                 PlayerMenu.setVisible(true);
             }
+            if(springState == SpringState.STATE_SPRING) {
+                springState = SpringState.STATE_NOSPRING;
+            }
             /*I'm getting the correct groundSpeed when sonic first is grounded (if grounded == true and 
             jump == STATE_JUMP_DOWN, this means that sonic just landed after a jump*/
             if(jumpState == JumpState.STATE_JUMP_DOWN && angle < 45) {
@@ -272,6 +277,7 @@ public class OWARemastered {
             ySpeed = groundSpeed*-Math.sin(angle);
         }   
         bottomTopCheck();//This needs to go after gravity is calculated (since it affects ySpeed)!
+        //This has to go at the end since the collision booleans are reset in the bottom and side collision methods
         for(int i = 0; i < currentRoom.getGameObjectArrayList().size(); i++) {
             currentRoom.getGameObjectArrayList().get(i).interactWithSonic(this);
         }
@@ -483,8 +489,7 @@ public class OWARemastered {
     }
     
     public void setSonicBottomGameStat(Rectangle sensor, Rectangle collideCheck) {
-        int yBottomSensor = (int) sensor.getY();
-        ySpeed = 0;
+        int yBottomSensor = (int) (sensor.getY()+sensor.getHeight());       
         if(sensor == bottomLeft) {
             bLCollide = true;
         }
@@ -725,7 +730,7 @@ public class OWARemastered {
     }
     
     private void zPress() {       
-        if(grounded && spindashState == SpindashState.STATE_NOSPINDASH && jumpState == JumpState.STATE_NOJUMP) {
+        if(grounded && spindashState == SpindashState.STATE_NOSPINDASH && jumpState == JumpState.STATE_NOJUMP && springState == SpringState.STATE_NOSPRING) {
             jumpState = JumpState.STATE_JUMP_UP;
         }
         if(jumpState == JumpState.STATE_JUMP_UP && ySpriteCenterSonic < yLastGround-390) {
@@ -760,7 +765,7 @@ public class OWARemastered {
     private void changeAnimation() {
         /*Watch out for state conflicts- if one is conflicting with another one, it causes Sonic to freeze on his animation/
         or perform his animation wrong*/
-        if(jumpState == JumpState.STATE_NOJUMP && ledgeState == LedgeState.STATE_NOLEDGE && duckState == DuckState.STATE_NODUCK) {
+        if(jumpState == JumpState.STATE_NOJUMP && springState == SpringState.STATE_NOSPRING && ledgeState == LedgeState.STATE_NOLEDGE && duckState == DuckState.STATE_NODUCK) {
             if(grounded && groundSpeed == 0 && angle == 0 && !PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && !PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
                 waitTimer++;
                 if(waitTimer < 988) {
@@ -835,6 +840,11 @@ public class OWARemastered {
                 animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_SPINDASH);   
             }
         }
+        if(springState == SpringState.STATE_SPRING) {
+            if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_SPRING) {
+                animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_SPRING);   
+            }
+        }
     }
     public int getXCenterSonic() {
         return xDrawCenterSonic;
@@ -880,12 +890,32 @@ public class OWARemastered {
         bRDistanceFromRect = temp;
     }
     
+    public double getXSpeed() {
+        return xSpeed;
+    }
+    
+    public void setXSpeed(double speed) {
+        xSpeed = speed;
+    }
+    
     public double getYSpeed() {
         return ySpeed;
     }
     
     public void setYSpeed(double temp) {
         ySpeed = temp;
+    }
+    
+    public void setGroundSpeed(double speed) {
+        groundSpeed = speed;
+    }
+    
+    public void setJumpState(JumpState state) {
+        jumpState = state;
+    }
+    
+    public void setSpringState(SpringState spring) {
+        springState = spring;
     }
     
     public void drawDebug(Graphics2D g2) {
@@ -963,5 +993,10 @@ public class OWARemastered {
     public enum SpindashState {
         STATE_NOSPINDASH,
         STATE_SPINDASH
+    }
+    
+    public enum SpringState {
+        STATE_NOSPRING,
+        STATE_SPRING
     }
 }

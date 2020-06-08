@@ -11,6 +11,8 @@ import game.gameObjects.Sign;
 import game.gameObjects.Sign.SignType;
 import game.gameObjects.SkeletonNPC;
 import game.gameObjects.SkeletonNPC.NPCSkeletonType;
+import game.gameObjects.Spring;
+import game.gameObjects.Spring.SpringType;
 import game.overworld.Room;
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,6 +68,12 @@ public class SaveLoadObjects {
                 room.addGameObject(sNPC);
                 room.addGUI(sNPC);
                 room.addPicture(sNPC);
+                break;
+            case "Spring":
+                Spring spring = new Spring(room, SpringType.valueOf(lineSplit[2]), Integer.valueOf(lineSplit[3]), 
+                        Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
+                room.addGameObject(spring);
+                room.addPicture(spring);
                 break;
             default:
                 break;

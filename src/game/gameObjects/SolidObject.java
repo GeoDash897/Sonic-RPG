@@ -5,12 +5,10 @@
  */
 package game.gameObjects;
 
-import game.input.PlayerInput;
 import game.overworld.Ground;
 import game.overworld.Room;
 import game.sonic.OWARemastered;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 
 /**
  *
@@ -27,29 +25,27 @@ public class SolidObject extends BasicObject {
     @Override
     public void interactWithSonic(OWARemastered owaR) {
         if(isSolid) {
-            checkCollision(owaR);
+            middleCollision(owaR); 
+            bottomCollision(owaR);
         }
     }
     
-    private void checkCollision(OWARemastered owaR) {
+    public void middleCollision(OWARemastered owaR) {
         Rectangle middleLeft = owaR.getMiddleLeft();
         Rectangle middleRight = owaR.getMiddleRight();
         int xMiddleLeft = (int) middleLeft.getX();
         int xMiddleRight = (int) (middleRight.getX()+middleRight.getWidth());
         if(xMiddleLeft < (int) (super.getIntersectBox().getX()+super.getIntersectBox().getWidth())+4 && middleLeft.intersects(super.getIntersectBox())
-                && !PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {      
+                && owaR.getXSpeed() < 0) {      
             owaR.setCollideLeftStats(super.getIntersectBox());
         }
         else if(xMiddleRight > (int) super.getIntersectBox().getX() && middleRight.intersects(super.getIntersectBox())
-                && middleRight.intersects(super.getIntersectBox()) && !PlayerInput.checkIsPressed(KeyEvent.VK_LEFT)) {      
+                && middleRight.intersects(super.getIntersectBox()) && owaR.getXSpeed() > 0) {      
             owaR.setCollideRightStats(super.getIntersectBox());
         }
-        else {
-            bottomCollision(owaR);
-        }
     }
-    
-    private void bottomCollision(OWARemastered owaR) {
+       
+    public void bottomCollision(OWARemastered owaR) {
         if(owaR.getBottomLeft().intersects(super.getIntersectBox())) {
             owaR.setSonicBottomGameStat(owaR.getBottomLeft(), super.getIntersectBox());
             int bLDistanceFromRect = getDistanceFromGround(owaR, owaR.getBottomLeft());

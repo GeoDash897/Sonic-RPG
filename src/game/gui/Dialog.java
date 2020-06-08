@@ -113,7 +113,7 @@ public class Dialog {
         }
     }
     
-    private static boolean checkFirstLetter(String check) {
+    private boolean checkFirstLetter(String check) {
         boolean checkForSpace = false;
         String firstLetter = String.valueOf(check.charAt(0));
         if(!firstLetter.equals(" ")) {
