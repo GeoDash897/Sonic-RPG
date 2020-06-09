@@ -64,12 +64,18 @@ public class BasicObject implements Picture, Interactable  {
         this.bottomLeft = bottomLeft;
         this.bottomRight = bottomRight;
         this.intersectBox = intersectBox;
-        this.bLXOffsetFromCenter = (int)(bottomLeft.getX()-xRef);
-        this.bLYOffsetFromCenter = (int)(bottomLeft.getY()-yRef);
-        this.bRXOffsetFromCenter = (int) (bottomRight.getX()-xRef);
-        this.bRYOffsetFromCenter = (int) (bottomRight.getY()-yRef);
-        this.bIXOffsetFromCenter = (int)(intersectBox.getX()-xRef);
-        this.bIYOffsetFromCenter = (int)(intersectBox.getY()-yRef);
+        if(bottomLeft != null) {
+            this.bLXOffsetFromCenter = (int)(bottomLeft.getX()-xRef);
+            this.bLYOffsetFromCenter = (int)(bottomLeft.getY()-yRef);
+        }
+        if(bottomRight != null) {
+            this.bRXOffsetFromCenter = (int) (bottomRight.getX()-xRef);
+            this.bRYOffsetFromCenter = (int) (bottomRight.getY()-yRef);
+        }
+        if(intersectBox != null) {
+            this.bIXOffsetFromCenter = (int)(intersectBox.getX()-xRef);
+            this.bIYOffsetFromCenter = (int)(intersectBox.getY()-yRef);
+        }       
         this.ground = ground;
         this.gravity = gravity;
         this.bLCollide = false;
@@ -81,20 +87,32 @@ public class BasicObject implements Picture, Interactable  {
     public void draw(Graphics2D g2) {
         g2.drawImage(picture, xDraw, yDraw, length, width, null);        
         g2.setColor(Color.RED);
-        g2.fill(bottomLeft);
+        if(bottomLeft != null) {
+            g2.fill(bottomLeft);
+        }        
         g2.setColor(Color.MAGENTA);
-        g2.fill(bottomRight);
+        if(bottomRight != null) {
+            g2.fill(bottomRight);
+        }
         g2.fillRect(xRef, yRef,1,1);
         g2.setColor(Color.YELLOW);
-        g2.draw(intersectBox);
+        if(intersectBox != null) {
+            g2.draw(intersectBox);
+        }
     }
     
     public void action() {
         xDraw = xRef-(length/2);
         yDraw = yRef-(width/2);
-        bottomLeft = new Rectangle((int)(xRef+bLXOffsetFromCenter), (int)(yRef+bLYOffsetFromCenter), (int)bottomLeft.getWidth(), (int)bottomLeft.getHeight());
-        bottomRight = new Rectangle((int)(xRef+bRXOffsetFromCenter), (int)(yRef+bRYOffsetFromCenter), (int)bottomRight.getWidth(), (int)bottomRight.getHeight()); 
-        intersectBox = new Rectangle((int)(xRef+bIXOffsetFromCenter), (int)(yRef+bIYOffsetFromCenter), (int)intersectBox.getWidth(), (int)intersectBox.getHeight());
+        if(bottomLeft != null) {
+            bottomLeft = new Rectangle((int)(xRef+bLXOffsetFromCenter), (int)(yRef+bLYOffsetFromCenter), (int)bottomLeft.getWidth(), (int)bottomLeft.getHeight());
+        }
+        if(bottomRight != null) {
+            bottomRight = new Rectangle((int)(xRef+bRXOffsetFromCenter), (int)(yRef+bRYOffsetFromCenter), (int)bottomRight.getWidth(), (int)bottomRight.getHeight()); 
+        }
+        if(intersectBox != null) {
+                    intersectBox = new Rectangle((int)(xRef+bIXOffsetFromCenter), (int)(yRef+bIYOffsetFromCenter), (int)intersectBox.getWidth(), (int)intersectBox.getHeight());
+        }                
         if(gravity) {
             if(!ground) {                
                 int xBottomLeft = (int) bottomLeft.getX();

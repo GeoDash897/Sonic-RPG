@@ -60,8 +60,7 @@ public class SkeletonNPC extends NPC {
     }   
     
     @Override
-    public void action() {
-        super.action();
+    public void action() {       
         switch(npcType) {
             case NPC_SKELETON:
                 if(super.justFinishedDialog() && loadedDialog.equals("MEET")) {
@@ -77,6 +76,7 @@ public class SkeletonNPC extends NPC {
                 break;
         }
         changeAnimation();
+        super.action();
     }   
     
     private void changeAnimation() {

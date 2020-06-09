@@ -25,11 +25,27 @@ public class SolidObject extends BasicObject {
     @Override
     public void interactWithSonic(OWARemastered owaR) {
         if(isSolid) {
-            middleCollision(owaR); 
-            bottomCollision(owaR);
+            collisionCheck(owaR);
         }
     }
     
+    public void collisionCheck(OWARemastered owaR) {
+        Rectangle middleLeft = owaR.getMiddleLeft();
+        Rectangle middleRight = owaR.getMiddleRight();
+        int xMiddleLeft = (int) middleLeft.getX();
+        int xMiddleRight = (int) (middleRight.getX()+middleRight.getWidth());
+        if(xMiddleLeft < (int) (super.getIntersectBox().getX()+super.getIntersectBox().getWidth())+4 && middleLeft.intersects(super.getIntersectBox())
+                && owaR.getXSpeed() < 0) {      
+            owaR.setCollideLeftStats(super.getIntersectBox());
+        }
+        else if(xMiddleRight > (int) super.getIntersectBox().getX() && middleRight.intersects(super.getIntersectBox())
+                && middleRight.intersects(super.getIntersectBox()) && owaR.getXSpeed() > 0) {      
+            owaR.setCollideRightStats(super.getIntersectBox());
+        }
+        else {
+            bottomCollision(owaR);
+        }
+    }
     public void middleCollision(OWARemastered owaR) {
         Rectangle middleLeft = owaR.getMiddleLeft();
         Rectangle middleRight = owaR.getMiddleRight();

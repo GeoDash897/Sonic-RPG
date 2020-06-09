@@ -11,10 +11,10 @@ import game.sonic.*;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-/*
-    Author: GeoDash897  Date:10/5/19    Updated:12/31/19
-*/
-//memes
+/**This class controls what Rooms are in the rooms ArrayList (depends on the area Sonic 
+ * is in).
+ * @author GeoSonicDash
+ */
 public class OverWorld {    
     private static ArrayList<Room> rooms; 
     private static boolean generateEverything;
@@ -27,13 +27,17 @@ public class OverWorld {
         generateEverything = false;
         currentRoomName = ROOM_SONIC_HOUSE;
     }
+    /**
+     * Part of main game loop- generates the correct room ArrayList (if in new area), or runs the logic
+     * of the current room that Sonic is in.
+     */
     public void standard() {
         if(generateEverything == false) {
             //Music.playTestAreaTheme(1, 0);
-            generate();
+            generateRoomAL();
         }      
         else if(generateEverything == true) {
-            if(currentRoom != getCurrentRoom()) {
+            if(currentRoom == null) {
                 currentRoom = getCurrentRoom();
             }
             currentRoom.runRoom();          
@@ -48,17 +52,18 @@ public class OverWorld {
         g2.drawString(""+currentRoomName,300,200);               
     }
     
-    public void generate() {      
+    public void generateRoomAL() {      
         rooms.add(new Room(this, ROOM_SONIC_HOUSE));
-        System.out.println("Everything has been generated");
-        if(rooms.size() == 1) {
+        rooms.add(new Room(this, ROOM_SONIC_TEST));        
+        if(rooms.size() == 2) {
+            System.out.println("Everything has been generated");
             generateEverything = true;    
         }        
     }
     public ArrayList<Room> getRoomsArrayList() {
         return rooms;
     }
-    public Room getCurrentRoom() {
+    public static Room getCurrentRoom() {
         for(int i = 0; i < rooms.size(); i ++) {
             if(rooms.get(i).getRoomType() == currentRoomName) {
                 return rooms.get(i);
@@ -69,7 +74,8 @@ public class OverWorld {
     public void setCurrentRoomType(RoomType newRoom) {
         getCurrentRoom().saveRoom();
         currentRoomName = newRoom;
-        sonic.addToPictureALAgain();
+        currentRoom = getCurrentRoom();
+        sonic.getAnimationControl().addToRoomPictureAL(currentRoom);
     }
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == e.VK_ENTER) {

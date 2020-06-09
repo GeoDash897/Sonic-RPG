@@ -13,7 +13,10 @@ import game.gameObjects.SkeletonNPC;
 import game.gameObjects.SkeletonNPC.NPCSkeletonType;
 import game.gameObjects.Spring;
 import game.gameObjects.Spring.SpringType;
+import game.gameObjects.Warp;
+import game.gameObjects.Warp.WarpType;
 import game.overworld.Room;
+import game.overworld.Room.RoomType;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -74,6 +77,13 @@ public class SaveLoadObjects {
                         Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
                 room.addGameObject(spring);
                 room.addPicture(spring);
+                break;
+            case "Warp":
+                Warp warp = new Warp(room, WarpType.valueOf(lineSplit[2]), RoomType.valueOf(lineSplit[3]), 
+                        Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]),Integer.valueOf(lineSplit[6]), Integer.valueOf(lineSplit[7])
+                ,Integer.valueOf(lineSplit[8]));
+                room.addGameObject(warp);
+                room.addPicture(warp);
                 break;
             default:
                 break;

@@ -14,6 +14,7 @@ import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 
-/**
+/**This is the main game loop where player input, gameObjects, and game logic are processed.
  *
  * @author GeoSonicDash
  */
@@ -47,7 +48,7 @@ public class GameLoop extends JPanel {
         this.isPainting = true;       
         create();
     }
-    
+    //This is where JFrame, Container, playerInput, and OverWorld classes are created for the first time.
     private void create() {
         //creates TempSave.txt- file where everything is temp. saved during gameplay
         createTempSave();

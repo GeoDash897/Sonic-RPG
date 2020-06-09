@@ -11,6 +11,8 @@ import game.gui.GUI;
 import game.input.PlayerInput;
 import game.overworld.Room;
 import game.sonic.OWARemastered;
+import game.sonic.OWARemastered.DuckState;
+import game.sonic.OWARemastered.SpindashState;
 import game.sonic.Sonic;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -27,12 +29,14 @@ import java.util.ArrayList;
 public class Sign extends SolidObject implements GUI {
     private SignType signType;
     private int dialogIndex;
+    private int dialogCooldown;
     private boolean isVisible;
     private boolean justFinishedDialog;
     private LoadDialogs load;
     private ArrayList<Dialog> dialogChain;
     public Sign(Room objectRoom, SignType signType, int layer, int xRef, int yRef) {
         super(objectRoom);
+        this.dialogCooldown = 0;
         this.signType = signType; 
         this.justFinishedDialog = false;
         this.dialogIndex = -1;
@@ -85,14 +89,7 @@ public class Sign extends SolidObject implements GUI {
         //and in turn the previous chunk of dialog
         dialogChain = load.getDialogChain(conversation);
         justFinishedDialog = false;
-    }
-    
-    public void resetConversation() {
-        isVisible = false;
-        justFinishedDialog = true;//Conversation just ended at this point
-        Sonic.setGUIVisible(false);
-        dialogIndex = -1;
-    }
+    }        
     
     @Override
     public void standardGUI() {
@@ -121,7 +118,8 @@ public class Sign extends SolidObject implements GUI {
         }
         else {
             /*If the dialog has ended and no new one needs to be loaded, set justFinishedDialog to false
-            since at this point the dialog exchange would have been over for some time*/
+            since at this point the dialog exchange would have been over for some time- allows the dialog to restart again after it is over
+            */
             justFinishedDialog = false;
         }
     }
@@ -129,15 +127,24 @@ public class Sign extends SolidObject implements GUI {
     @Override
     public void interactWithSonic(OWARemastered owaR) {
         super.interactWithSonic(owaR);
-        if(owaR.getIntersectBox().intersects(super.getIntersectBox()) && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
-            if(dialogIndex == -1) {               
+        if(Sonic.getOWARAllowInput() && owaR.getXSpeed() == 0 && owaR.getDuckState() == DuckState.STATE_NODUCK
+                && owaR.getSpindashState() == SpindashState.STATE_NOSPINDASH && 
+                owaR.getIntersectBox().intersects(super.getIntersectBox()) && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
+            if(dialogIndex == -1 && !justFinishedDialog) {               
                 isVisible = true;
-                Sonic.setGUIVisible(true);
+                Sonic.setOWARAllowInput(false);
                 dialogIndex++; 
             }
         }
     }
    
+    public void resetConversation() {
+        isVisible = false;
+        justFinishedDialog = true;//Conversation just ended at this point
+        Sonic.setOWARAllowInput(true);
+        dialogIndex = -1;
+    }
+    
     public boolean justFinishedDialog() {
         return justFinishedDialog;
     }

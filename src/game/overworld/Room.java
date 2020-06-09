@@ -62,6 +62,7 @@ public class Room {
      * Creates the Ground tiles and DefaultObjects in the room.
      */
     private void createRoom() {
+        pictures.add(new Background(roomType));
         if(roomType == RoomType.ROOM_SONIC_HOUSE) {
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),0,1);
@@ -75,11 +76,6 @@ public class Room {
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),768,1);
             }
-            for(int i = 0; i < 11; i ++) {
-                createTile(GRD_SONICHOUSE_WOODPLANK,1,1472,0+(i*64),1);
-            } 
-            addGUI(playerMenu);
-            SaveLoadObjects.createGameObjectArrayList("TempSave", this);
             /*createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
             createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
             createTile(GRD_SONICHOUSE_WOODSLOPE,1,448,576,1);  
@@ -101,10 +97,17 @@ public class Room {
             createTile(GRD_SONICHOUSE_SONICBED_30,1,256,576,1);
             createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);
         }
+        else if(roomType == RoomType.ROOM_SONIC_TEST) {
+            for(int i = 0; i < 24; i ++) {
+                createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),704,1);
+            }
+        }
+        addGUI(playerMenu);
+        SaveLoadObjects.createGameObjectArrayList("TempSave", this);
     }
     
     /**
-     * Runs draw and action methods of DefaultObjects.
+     * Runs the action methods of DefaultObjects.
      */
     public void runRoom() {         
         for(BasicObject temp : gameObjects) {
@@ -194,6 +197,10 @@ public class Room {
     
     public RoomType getRoomType() {
         return roomType;
+    }
+    
+    public OverWorld getOverWorld() {
+        return overworld;
     }
     
     /**

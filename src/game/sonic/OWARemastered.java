@@ -22,6 +22,8 @@ public class OWARemastered {
     private static int yDrawCenterSonic;
     private static int ySpriteCenterSonic;
     private static int yLastGround;
+    private static int springTimer;
+    private static boolean springLock;
     private static double xSpeed;
     private static double ySpeed;
     private static double groundSpeed;
@@ -38,6 +40,7 @@ public class OWARemastered {
     private static boolean tRCollide;
     private static boolean mLCollide;
     private static boolean mRCollide;
+    private static boolean allowInput;
     private static int bLDistanceFromRect;
     private static int bRDistanceFromRect;
     private static int waitTimer;
@@ -93,6 +96,8 @@ public class OWARemastered {
         bRCollide = false;
         tLCollide = false;
         tRCollide = false;
+        allowInput = true;
+        springTimer = 0;
         bLDistanceFromRect = 0;
         bRDistanceFromRect = 0;
         waitTimer = 0;
@@ -158,23 +163,25 @@ public class OWARemastered {
         else {
             intersectBox = new Rectangle(xDrawCenterSonic-29, ySpriteCenterSonic-70, 60, 140);
         }
-        if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT)) {
+        if(allowInput && PlayerInput.checkIsPressed(KeyEvent.VK_LEFT)) {
             leftPress();
         }
-        else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
+        else if(allowInput && PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
             rightPress();
         }
-        if(PlayerInput.checkIsPressed(KeyEvent.VK_UP)) {
+        if(allowInput && PlayerInput.checkIsPressed(KeyEvent.VK_UP)) {
             ySpeed = -3;
         }
-        else if(PlayerInput.checkIsPressed(KeyEvent.VK_DOWN)) {
+        else if(allowInput && PlayerInput.checkIsPressed(KeyEvent.VK_DOWN)) {
             downPress();
         }
-        performSpindash();
-        if(PlayerInput.checkIsPressed(KeyEvent.VK_Z)) {//Jump has to be calculated before gravity is added to ySpeed
+        if(allowInput) {
+           performSpindash(); 
+        }        
+        if(allowInput && PlayerInput.checkIsPressed(KeyEvent.VK_Z)) {//Jump has to be calculated before gravity is added to ySpeed
             zPress();
         }
-        else if(PlayerInput.checkIsJustReleased(KeyEvent.VK_Z)) {
+        else if(allowInput && PlayerInput.checkIsJustReleased(KeyEvent.VK_Z)) {
             zReleased();
         }           
         /*This resets the duckState if Sonic jumps (this is why is placed here right after the code for jumping),
@@ -185,13 +192,24 @@ public class OWARemastered {
             spindashRev = 0;
         }
         //resets the duckState if groundSpeed is less than abs(0.5) (prevents turning bug from Genesis games)
-        if(!PlayerInput.checkIsPressed(KeyEvent.VK_DOWN) && Math.abs(groundSpeed) < 0.5 && angle == 0) {
+        if(allowInput && !PlayerInput.checkIsPressed(KeyEvent.VK_DOWN) && Math.abs(groundSpeed) < 0.5 && angle == 0) {
             duckState = DuckState.STATE_NODUCK;
         }
         //resets the duckState if the down key is released and Sonic is ducking
-        if(PlayerInput.checkIsJustReleased(KeyEvent.VK_DOWN) && duckState == DuckState.STATE_DUCK && spindashState == SpindashState.STATE_NOSPINDASH) {
+        if(allowInput && PlayerInput.checkIsJustReleased(KeyEvent.VK_DOWN) && duckState == DuckState.STATE_DUCK && spindashState == SpindashState.STATE_NOSPINDASH) {
             duckState = DuckState.STATE_NODUCK;
             
+        }
+        if(springLock) {
+            allowInput = false;
+            if(springTimer < 50) {
+                springTimer++;
+            }
+            else if(springTimer == 50 || (mLCollide || mRCollide)) {
+                springTimer = 0;                  
+                springLock = false;
+                allowInput = true;
+            }
         }
         //Sets correct value for friction
         if(duckState == DuckState.STATE_ROLL) {
@@ -232,7 +250,7 @@ public class OWARemastered {
             spindashRev = 0;
         }  
         if(grounded) {
-            if(xSpeed == 0 && groundSpeed == 0 && duckState == DuckState.STATE_NODUCK && PlayerInput.checkIsPressed(KeyEvent.VK_ENTER)) {
+            if(allowInput && xSpeed == 0 && groundSpeed == 0 && duckState == DuckState.STATE_NODUCK && PlayerInput.checkIsPressed(KeyEvent.VK_ENTER)) {
                 PlayerMenu.setVisible(true);
             }
             if(springState == SpringState.STATE_SPRING) {
@@ -282,8 +300,8 @@ public class OWARemastered {
             currentRoom.getGameObjectArrayList().get(i).interactWithSonic(this);
         }
         xDrawCenterSonic += (int) xSpeed;
-        ySpriteCenterSonic += (int) ySpeed;        
-        changeAnimation();    
+        ySpriteCenterSonic += (int) ySpeed;
+        changeAnimation();            
     }
     
     private void sideCheck() {
@@ -766,7 +784,7 @@ public class OWARemastered {
         /*Watch out for state conflicts- if one is conflicting with another one, it causes Sonic to freeze on his animation/
         or perform his animation wrong*/
         if(jumpState == JumpState.STATE_NOJUMP && springState == SpringState.STATE_NOSPRING && ledgeState == LedgeState.STATE_NOLEDGE && duckState == DuckState.STATE_NODUCK) {
-            if(grounded && groundSpeed == 0 && angle == 0 && !PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && !PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
+            if(allowInput && grounded && groundSpeed == 0 && angle == 0 && !PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && !PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT)) {
                 waitTimer++;
                 if(waitTimer < 988) {
                     if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_STAND) {
@@ -840,7 +858,7 @@ public class OWARemastered {
                 animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_SPINDASH);   
             }
         }
-        if(springState == SpringState.STATE_SPRING) {
+        if(springState == SpringState.STATE_SPRING && !grounded) {
             if(animation.getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_SPRING) {
                 animation.setSonicAnimation(Animation.AnimationName.ANIMATION_SONIC_SPRING);   
             }
@@ -854,6 +872,10 @@ public class OWARemastered {
         return yDrawCenterSonic;
     }
 
+    public void setSpringLock(boolean temp) {
+        springLock = temp;
+    }
+    
     public Rectangle getBottomLeft() {
         return bottomLeft;
     }
@@ -882,6 +904,22 @@ public class OWARemastered {
         return duckState;
     }
     
+    public SpindashState getSpindashState() {
+        return spindashState;
+    }
+    
+    
+    public AnimationControl getAnimationControl() {
+        return animation;
+    }
+    public boolean getAllowInput() {
+        return allowInput;
+    }
+    
+    public void setAllowInput(boolean temp) {
+        allowInput = temp;
+    }
+    
     public void setBLDistanceFromRect(int temp) {
         bLDistanceFromRect = temp;
     }
@@ -905,6 +943,14 @@ public class OWARemastered {
     public void setYSpeed(double temp) {
         ySpeed = temp;
     }
+        
+    public void setXDrawCenterSonic(int temp) {
+        xDrawCenterSonic = temp;
+    }
+    
+    public void setYSpriteCenterSonic(int temp) {
+        ySpriteCenterSonic = temp;
+    }
     
     public void setGroundSpeed(double speed) {
         groundSpeed = speed;
@@ -917,7 +963,7 @@ public class OWARemastered {
     public void setSpringState(SpringState spring) {
         springState = spring;
     }
-    
+        
     public void drawDebug(Graphics2D g2) {
         if(GameLoop.getDebug()) {
             g2.setColor(Color.MAGENTA);

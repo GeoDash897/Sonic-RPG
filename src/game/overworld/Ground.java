@@ -195,10 +195,10 @@ public class Ground implements Picture {
     }
     @Override
     public void draw(Graphics2D g2) {  
-        g2.setColor(Color.CYAN);
+        /*g2.setColor(Color.CYAN);
         for(Rectangle temp : pixelBoxes) {
             g2.draw(temp);
-        }
+        }*/
         g2.setColor(boundary);
         g2.fillRect(xRef, yRef, 64, 1);
         g2.fillRect(xRef, yRef+63, 64, 1);

@@ -26,8 +26,6 @@ public class Sonic {//This is the main Sonic class;
     private static int speed;
     private static int area = 1;    
     private static int owPowerUp = 0;
-    private static int keyDelay = 0;
-    private static boolean guiVisible = false;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
     private static OverWorld overWorld;
@@ -35,6 +33,7 @@ public class Sonic {//This is the main Sonic class;
     private static AnimationControl animation;
     private static Room currentRoom;
     public void setup(OverWorld overworld) {
+        currentRoom = OverWorld.getCurrentRoom();
         if(owaR == null) {
             owaR = new OWARemastered();    
         } 
@@ -42,10 +41,10 @@ public class Sonic {//This is the main Sonic class;
             overWorld = overworld;    
         }
         if(animation == null) {
-            animation =  new AnimationControl();    
+            animation =  new AnimationControl(currentRoom);    
         }       
-        currentRoom = overworld.getCurrentRoom();
-        if(!cutscene && !guiVisible && keyDelay == 0) {     
+        
+        if(!cutscene) {     
             lastXCenterSonic = owaR.getXCenterSonic();
             lastYCenterSonic = owaR.getYCenterSonic();
             owaR.mainMethod(this, currentRoom, animation);   
@@ -53,9 +52,6 @@ public class Sonic {//This is the main Sonic class;
         }
         /*This is helps to prevent multiple actions from running (by different objects) for checkIsPressedOnce(),
         not for checkIsPressedMethods()*/
-        if(keyDelay > 0) {
-            keyDelay = 0;
-        }
     }
     
     public void draw(Graphics2D g2) {
@@ -68,22 +64,14 @@ public class Sonic {//This is the main Sonic class;
         return overWorld;
     }
     
-    public static boolean getGUIVisible() {
-        return guiVisible;
+    public static boolean getOWARAllowInput() {
+        return owaR.getAllowInput();
     }
     
-    public static void setGUIVisible(boolean temp) {
-        guiVisible = temp;
-        resetKeyDelay();
-    }
+    public static void setOWARAllowInput(boolean temp) {
+        owaR.setAllowInput(temp);
+    }   
     
-    private static void resetKeyDelay() {
-        keyDelay = 50;
-    }
-    
-    public void addToPictureALAgain() {
-        animation.setaddToPictureAL(false);
-    }
     public int getAreaNumber() {
         return area;
     }
@@ -95,5 +83,9 @@ public class Sonic {//This is the main Sonic class;
     }
     public void increaseRings(int amount) {
         rings += amount;
+    }
+    
+    public AnimationControl getAnimationControl() {
+        return animation;
     }
 }

@@ -26,30 +26,30 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     private static int animationTimer;
     private static int animationFrame;
     private static int sonicWidth;
-    private static boolean addToPictureAL;
     private static int direction;
     private static Image sonicPicture;
     private static Map<AnimationName, Animation> animations;
     private static Animation currentAnimation;
-    public AnimationControl() {
+    private static Room currentRoom;
+    public AnimationControl(Room temp) {
         animationTimer = 1;
         animationFrame = 1;
         sonicWidth = 288;
-        addToPictureAL = false;
         layer = 1;
         direction = 1; 
         animations = LoadAnimations.getAnimationMap("SONIC");
         currentAnimation = animations.get(AnimationName.ANIMATION_SONIC_STAND);
+        currentRoom = temp;
+        addFirstTime();
+    }
+    
+    private void addFirstTime() {
+        currentRoom.addPicture(this);
     }
     
     public void standard(Room currentRoom, int xCenterSonic, int yCenterSonic) {
-        if(!addToPictureAL) {
-            currentRoom.addPicture(this);
-            addToPictureAL = true;
-        }
         xDrawSonic = xCenterSonic - (sonicWidth/2);
-        yDrawSonic = yCenterSonic - (sonicWidth/2); 
-        
+        yDrawSonic = yCenterSonic - (sonicWidth/2);        
         animationTimer++;
         if(animationTimer%currentAnimation.getAnimationTimerFrameSet() == 0) {
             animationFrame++;
@@ -84,9 +84,12 @@ public class AnimationControl implements Picture {//This will control Sonic's an
         //g2.drawString("animationTimer:"+animationTimer, 1000, 400);
         g2.fillRect(xDrawSonic+(sonicWidth/2),yDrawSonic+(sonicWidth/2)-20,4,4);             
     }
-    public void setaddToPictureAL(boolean set) {
-        addToPictureAL = set;
+    
+    public void addToRoomPictureAL(Room temp) {
+        currentRoom = temp;
+        currentRoom.addPicture(this);
     }
+    
     public AnimationName getAnimationNumber() {
         return currentAnimation.getAnimationName();
     }

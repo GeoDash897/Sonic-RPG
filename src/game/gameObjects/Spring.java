@@ -8,7 +8,6 @@ package game.gameObjects;
 import game.LoadAnimations;
 import game.animation.Animation;
 import game.animation.Animation.AnimationName;
-import static game.animation.Animation.AnimationName.*;
 import game.overworld.Room;
 import game.sonic.OWARemastered;
 import java.awt.Graphics2D;
@@ -38,6 +37,8 @@ public class Spring extends SolidObject {
     private void create(int layer, int xRef, int yRef) {
         int length = 0;
         int width = 0;
+        boolean gravity = false;
+        boolean ground = false;
         Rectangle bottomLeft = null;
         Rectangle bottomRight = null;   
         Rectangle intersectBox = null;
@@ -49,6 +50,8 @@ public class Spring extends SolidObject {
             case SPRING_YELLOWUP:
                 length = 72;
                 width = 72;
+                gravity = true;
+                ground = false;
                 //Spring's actual length is 32 pixels (128 pixels in game) and width is 16 (64 in game)
                 bottomLeft = new Rectangle(xRef-32, yRef, 4, 64);
                 bottomRight = new Rectangle(xRef+32, yRef, 4, 64);
@@ -59,12 +62,44 @@ public class Spring extends SolidObject {
             case SPRING_REDUP:
                 length = 72;
                 width = 72;
+                gravity = true;
+                ground = false;
                 //Spring's actual length is 32 pixels (128 pixels in game) and width is 16 (64 in game)
                 bottomLeft = new Rectangle(xRef-32, yRef, 4, 64);
                 bottomRight = new Rectangle(xRef+32, yRef, 4, 64);
                 intersectBox = new Rectangle(xRef-60,yRef-4, 128, 68);
                 yLaunchSpeed = -16;
                 xLaunchSpeed = 0;           
+                break;
+            case SPRING_YELLOWLEFT:
+                length = 72;
+                width = 72;
+                gravity = false;
+                ground = false;
+                //Spring's actual length is 16 pixels (64 pixels in game) and width is 32 (128 in game)
+                intersectBox = new Rectangle(xRef-28,yRef-60, 64, 128);
+                yLaunchSpeed = 0;
+                xLaunchSpeed = -8; 
+                break;
+            case SPRING_REDLEFT:
+                length = 72;
+                width = 72;
+                gravity = false;
+                ground = false;
+                //Spring's actual length is 16 pixels (64 pixels in game) and width is 32 (128 in game)
+                intersectBox = new Rectangle(xRef-28,yRef-60, 64, 128);
+                yLaunchSpeed = 0;
+                xLaunchSpeed = -16; 
+                break;
+            case SPRING_YELLOWRIGHT:
+                length = 72;
+                width = 72;
+                gravity = false;
+                ground = false;
+                //Spring's actual length is 16 pixels (64 pixels in game) and width is 32 (128 in game)
+                intersectBox = new Rectangle(xRef-36,yRef-60, 64, 128);
+                yLaunchSpeed = 0;
+                xLaunchSpeed = 8; 
                 break;
             default:
                 break;
@@ -74,7 +109,7 @@ public class Spring extends SolidObject {
         springName = String.join("", temp);
         currentAnimation = animations.get(AnimationName.valueOf("ANIMATION_"+springName+"_NORMAL"));
         super.createSolidObject(true);
-        super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, intersectBox, false, true, picture);
+        super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, intersectBox, ground, gravity, picture);
     }
     @Override
     public void draw(Graphics2D g2) {
@@ -105,18 +140,43 @@ public class Spring extends SolidObject {
     }
     @Override
     public void interactWithSonic(OWARemastered owaR) {
-        super.middleCollision(owaR);
-        if(owaR.getXCenterSonic() > (int) super.getIntersectBox().getX() && owaR.getXCenterSonic() < (int) (super.getIntersectBox().getX()+
+        if(springType == SpringType.SPRING_REDUP || springType == SpringType.SPRING_YELLOWUP) {
+            super.middleCollision(owaR); 
+            if(owaR.getXCenterSonic() > (int) super.getIntersectBox().getX() && owaR.getXCenterSonic() < (int) (super.getIntersectBox().getX()+
                 super.getIntersectBox().getWidth())) {
-            if(owaR.getYCenterSonic() < (int)super.getIntersectBox().getY() && owaR.getIntersectBox().intersects(super.getIntersectBox())) {
-                owaR.setYSpeed(yLaunchSpeed);
-                owaR.setXSpeed(xLaunchSpeed);
-                owaR.setGroundSpeed(0);
-                owaR.setJumpState(OWARemastered.JumpState.STATE_NOJUMP);
-                owaR.setSpringState(OWARemastered.SpringState.STATE_SPRING);
-                extend = true;
+                if(owaR.getYCenterSonic() < (int)super.getIntersectBox().getY() && owaR.getIntersectBox().intersects(super.getIntersectBox())) {
+                    performSpring(owaR);
+                }
             }
-        }       
+        }
+        else {
+            if(owaR.getIntersectBox().intersects(super.getIntersectBox())) {
+                performSpring(owaR);
+            }
+        }        
+               
+    }
+    
+    private void performSpring(OWARemastered owaR) {
+        if(yLaunchSpeed != 0) {
+            owaR.setYSpeed(yLaunchSpeed);
+            owaR.setXSpeed(xLaunchSpeed);
+            owaR.setGroundSpeed(0);
+            owaR.setSpringState(OWARemastered.SpringState.STATE_SPRING);
+            owaR.setJumpState(OWARemastered.JumpState.STATE_NOJUMP);           
+        }
+        else {
+            if(xLaunchSpeed < 0) {
+                owaR.getAnimationControl().setDirection(0);
+            }
+            else {
+                owaR.getAnimationControl().setDirection(1);
+            }           
+            owaR.setGroundSpeed(xLaunchSpeed);
+            owaR.setSpringLock(true);
+        }
+        
+        extend = true;
     }
     
     @Override
@@ -126,6 +186,9 @@ public class Spring extends SolidObject {
     
     public enum SpringType {
         SPRING_YELLOWUP,
-        SPRING_REDUP
+        SPRING_REDUP,
+        SPRING_YELLOWLEFT,
+        SPRING_REDLEFT,
+        SPRING_YELLOWRIGHT
     }
 }

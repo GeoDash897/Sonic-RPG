@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
+/**First class of the project, used to create the main game loop.
  *
  * @author GeoSonicDash
  */
@@ -25,6 +25,7 @@ public class Launcher {
     public static void main (String [] args) {      
         Music.standard();  
         System.setProperty("sun.java2d.opengl", "True"); 
+        //Load all custom fonts HERE
         try {
             debugStat = Font.createFont(Font.TRUETYPE_FONT, new File("src\\game\\resources\\clacon.ttf")).deriveFont(25f);
             dialogFont = Font.createFont(Font.TRUETYPE_FONT, new File("src\\game\\resources\\clacon.ttf")).deriveFont(40f);

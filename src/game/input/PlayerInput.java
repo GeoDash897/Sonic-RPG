@@ -35,6 +35,9 @@ public class PlayerInput implements KeyListener {
         keys.put(KeyEvent.VK_ENTER, new Button(KeyEvent.VK_ENTER));
     }
     
+    /**
+     * Updates the variables of Buttons (keyboard input) in keys HashMap.
+     */
     public void standard() {
         for (Map.Entry<Integer, Button> entry : keys.entrySet()) {
             Button button = entry.getValue();
