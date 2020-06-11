@@ -29,16 +29,18 @@ public class PlayerMenu implements GUI {
     private static int currentMenuIndex;
     private static ArrayList<Menu> menus;
     private static Menu currentMenu;
-    public PlayerMenu() {
+    private static Sonic sonic;
+    public PlayerMenu(Sonic temp) {
         visible = false;
         currentMenuIndex = 0;
+        sonic = temp;
         menus = new ArrayList<Menu>(2);
         createMenu();       
     }
     
     private void createMenu() {
         menus.add(0, new Menu(MenuType.MENUTYPE_VERTICAL));
-        menus.get(0).addOption(0, 0, "Hello This is A Test!");
+        menus.get(0).addOption(0, 0, "Status");
         menus.get(0).addOption(0, 1, "Exit");
         menus.add(1, new Menu(MenuType.MENUTYPE_VERTICAL));
         menus.get(1).addOption(0, 0, "Exit");
@@ -92,11 +94,8 @@ public class PlayerMenu implements GUI {
                 g2.fillRect(xRef, yRef, 1050, 600);
                 g2.setFont(statusScreen);
                 g2.setColor(Color.WHITE);
-                g2.drawString("Status", xRef+410, yRef+50);
-                g2.drawString("Level", xRef+30, yRef+150);
-                g2.drawString("EXP", xRef+30, yRef+250);
-                g2.drawString("Money", xRef+30, yRef+350);
-                g2.drawString("ExpToLU", xRef+600, yRef+150);
+                sonic.drawStatusStats(g2, xRef, yRef);                
+                //drawStatusStats(g2, xRef, yRef);
                 g2.setFont(debugStat);                
                 g2.drawString(currentMenu.getChoices().get(0).get(0), xRef+50, yRef+525);
                 g2.drawImage(currentMenu.getSelectionArrow(), xRef+50-14, yRef+525+(currentMenu.getYIndex()*100)-14, 14, 25, null);
@@ -144,7 +143,7 @@ public class PlayerMenu implements GUI {
         if(currentMenu != null) {
             currentMenu.zPress();    
         }       
-        if(currentMenuIndex == 0 && currentMenu.getSelectedChoice().equals("Hello This is A Test!")) {           
+        if(currentMenuIndex == 0 && currentMenu.getSelectedChoice().equals("Status")) {           
             currentMenu.resetMenuPosition();
             currentMenuIndex++;            
         }

@@ -23,8 +23,7 @@ public class Sonic {//This is the main Sonic class;
     private static int maxRings;
     private static int attack;
     private static int defense;
-    private static int speed;
-    private static int area = 1;    
+    private static int speed;   
     private static int owPowerUp = 0;
     private static boolean cutscene = false;
     private static boolean bMenu = false;
@@ -32,32 +31,36 @@ public class Sonic {//This is the main Sonic class;
     private static OWARemastered owaR;
     private static AnimationControl animation;
     private static Room currentRoom;
-    public void setup(OverWorld overworld) {
-        currentRoom = OverWorld.getCurrentRoom();
-        if(owaR == null) {
-            owaR = new OWARemastered();    
-        } 
-        if(overWorld == null) {
-            overWorld = overworld;    
-        }
-        if(animation == null) {
-            animation =  new AnimationControl(currentRoom);    
-        }       
-        
+    private static PlayerMenu playerMenu;
+    public Sonic(OverWorld overworld) {
+        overWorld = overworld;
+        currentRoom = overWorld.getCurrentRoom();
+        owaR = new OWARemastered();               
+        animation =  new AnimationControl(this);    
+        playerMenu = new PlayerMenu(this);
+        currentRoom.addGUI(playerMenu);
+    }
+    public void standard() {          
         if(!cutscene) {     
             lastXCenterSonic = owaR.getXCenterSonic();
             lastYCenterSonic = owaR.getYCenterSonic();
             owaR.mainMethod(this, currentRoom, animation);   
             animation.standard(currentRoom,lastXCenterSonic,lastYCenterSonic);
         }
-        /*This is helps to prevent multiple actions from running (by different objects) for checkIsPressedOnce(),
-        not for checkIsPressedMethods()*/
     }
     
     public void draw(Graphics2D g2) {
         if(owaR != null) {
             owaR.drawDebug(g2);    
         }        
+    }
+    
+    public void drawStatusStats(Graphics2D g2, int xMenu, int yMenu) {
+        g2.drawString("Status: ", xMenu+410, yMenu+50);
+        g2.drawString("Level: "+level, xMenu+30, yMenu+150);
+        g2.drawString("EXP: "+exp, xMenu+30, yMenu+250);
+        g2.drawString("Money: "+coins, xMenu+30, yMenu+350);
+        g2.drawString("ExpToLU: 0", xMenu+600, yMenu+150);
     }
     
     public OverWorld getOverWorld() {
@@ -71,10 +74,10 @@ public class Sonic {//This is the main Sonic class;
     public static void setOWARAllowInput(boolean temp) {
         owaR.setAllowInput(temp);
     }   
-    
-    public int getAreaNumber() {
-        return area;
-    }
+      
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }       
     public int getOWPowerUp() {
         return owPowerUp;
     }
@@ -85,7 +88,11 @@ public class Sonic {//This is the main Sonic class;
         rings += amount;
     }
     
-    public AnimationControl getAnimationControl() {
-        return animation;
+    public void addToNewRoom() {
+        if(currentRoom != overWorld.getCurrentRoom()) {
+            currentRoom = overWorld.getCurrentRoom();
+        }
+        currentRoom.addGUI(playerMenu);
+        animation.addToRoomPictureAL();
     }
 }

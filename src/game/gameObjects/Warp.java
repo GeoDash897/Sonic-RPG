@@ -5,7 +5,6 @@
  */
 package game.gameObjects;
 
-import game.overworld.OverWorld;
 import game.overworld.Room;
 import game.overworld.Room.RoomType;
 import game.sonic.OWARemastered;

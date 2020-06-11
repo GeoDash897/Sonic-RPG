@@ -30,8 +30,8 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     private static Image sonicPicture;
     private static Map<AnimationName, Animation> animations;
     private static Animation currentAnimation;
-    private static Room currentRoom;
-    public AnimationControl(Room temp) {
+    private static Sonic sonic;
+    public AnimationControl(Sonic temp) {
         animationTimer = 1;
         animationFrame = 1;
         sonicWidth = 288;
@@ -39,12 +39,12 @@ public class AnimationControl implements Picture {//This will control Sonic's an
         direction = 1; 
         animations = LoadAnimations.getAnimationMap("SONIC");
         currentAnimation = animations.get(AnimationName.ANIMATION_SONIC_STAND);
-        currentRoom = temp;
+        sonic = temp;
         addFirstTime();
     }
     
     private void addFirstTime() {
-        currentRoom.addPicture(this);
+        sonic.getCurrentRoom().addPicture(this);
     }
     
     public void standard(Room currentRoom, int xCenterSonic, int yCenterSonic) {
@@ -85,9 +85,8 @@ public class AnimationControl implements Picture {//This will control Sonic's an
         g2.fillRect(xDrawSonic+(sonicWidth/2),yDrawSonic+(sonicWidth/2)-20,4,4);             
     }
     
-    public void addToRoomPictureAL(Room temp) {
-        currentRoom = temp;
-        currentRoom.addPicture(this);
+    public void addToRoomPictureAL() {
+        sonic.getCurrentRoom().addPicture(this);
     }
     
     public AnimationName getAnimationNumber() {
@@ -101,8 +100,9 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     public int getDirection() {
         return direction;
     }
-    public void setDirection(int change) {
-        direction = change;
+    public void setDirection(int change) {  
+        setSonicAnimation(currentAnimation.getAnimationName());
+        direction = change;      
     }
     @Override
     public String toString() {

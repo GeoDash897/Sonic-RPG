@@ -87,7 +87,6 @@ public class SaveLoadObjects {
                 break;
             default:
                 break;
-        }
-            
+        }          
     }
 }

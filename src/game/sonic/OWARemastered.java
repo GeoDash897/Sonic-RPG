@@ -650,7 +650,9 @@ public class OWARemastered {
     
     private void leftPress() {
         if(!grounded) {
-            animation.setDirection(0);
+            if(animation.getDirection() == 1) {
+                animation.setDirection(0);
+            }            
             if(xSpeed > -5) {               
                 xSpeed -= AIR;    
             }
@@ -659,7 +661,7 @@ public class OWARemastered {
             }
         }
         else if(grounded) {
-            if(groundSpeed < 0) {//If Sonic's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
+            if(groundSpeed < 0 && animation.getDirection() == 1) {//If Sonic's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
             //completely (skid) before changing direction (can't change direction immediately)
                 animation.setDirection(0);
             }    
@@ -691,7 +693,9 @@ public class OWARemastered {
     
     private void rightPress() {
         if(!grounded) {
-            animation.setDirection(1);
+            if(animation.getDirection() == 0) {
+                animation.setDirection(1);
+            }
             if(xSpeed < 5) {               
                 xSpeed += AIR;    
             }  
@@ -700,7 +704,7 @@ public class OWARemastered {
             }
         }
         else if(grounded) {
-            if(groundSpeed > 0) {//If Sonic's groundSpeed is less than 1, set his direction to 1 (right), this makes it so the player has to stop 
+            if(groundSpeed > 0 && animation.getDirection() == 0) {//If Sonic's groundSpeed is less than 1, set his direction to 1 (right), this makes it so the player has to stop 
             //(completely skid) before changing direction (can't change direction immediately)
                 animation.setDirection(1);
             }

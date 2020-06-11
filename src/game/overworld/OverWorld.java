@@ -5,12 +5,11 @@
  */
 package game.overworld;
 import game.overworld.Room.RoomType;
-import static game.overworld.Room.RoomType.ROOM_SONIC_HOUSE;
-import static game.overworld.Room.RoomType.ROOM_SONIC_TEST;
 import game.sonic.*;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import static game.overworld.Room.RoomType.MEDIVAL_SONIC_HOUSE;
+import static game.overworld.Room.RoomType.MEDIVAL_SONIC_TEST;
 /**This class controls what Rooms are in the rooms ArrayList (depends on the area Sonic 
  * is in).
  * @author GeoSonicDash
@@ -18,14 +17,20 @@ import java.util.ArrayList;
 public class OverWorld {    
     private static ArrayList<Room> rooms; 
     private static boolean generateEverything;
+    private static AreaName currentArea;
     private static RoomType currentRoomName;
     private static Room currentRoom;
-    private Sonic sonic;
+    private static Sonic sonic;
     public OverWorld() {
-        rooms = new ArrayList<Room>();
-        sonic = new Sonic();         
+        rooms = new ArrayList<Room>();                
         generateEverything = false;
-        currentRoomName = ROOM_SONIC_HOUSE;
+        currentArea = AreaName.AREA_MEDIVAL;
+        currentRoomName = MEDIVAL_SONIC_HOUSE;
+        generateRoomAL();/*This needs to be run first in order to have an AL of rooms that Sonic
+        can access (needed to obtain currentRoom- used to add Sonic's picture to pictureAL)*/
+        if(sonic == null) {
+            sonic = new Sonic(this); 
+        } 
     }
     /**
      * Part of main game loop- generates the correct room ArrayList (if in new area), or runs the logic
@@ -33,16 +38,16 @@ public class OverWorld {
      */
     public void standard() {
         if(generateEverything == false) {
+            System.out.println("Code Ran");
             //Music.playTestAreaTheme(1, 0);
-            generateRoomAL();
+            generateRoomAL();//This generates correctRoomAL if the area changed           
         }      
         else if(generateEverything == true) {
             if(currentRoom == null) {
                 currentRoom = getCurrentRoom();
             }
             currentRoom.runRoom();          
-            sonic.setup(this);             
-                           
+            sonic.standard();                                        
         }      
     }   
     
@@ -53,9 +58,13 @@ public class OverWorld {
     }
     
     public void generateRoomAL() {      
-        rooms.add(new Room(this, ROOM_SONIC_HOUSE));
-        rooms.add(new Room(this, ROOM_SONIC_TEST));        
-        if(rooms.size() == 2) {
+        int roomLimit = 0;
+        if(currentArea == AreaName.AREA_MEDIVAL) {
+            roomLimit = 2;
+            rooms.add(new Room(this, AreaName.AREA_MEDIVAL, MEDIVAL_SONIC_HOUSE));
+            rooms.add(new Room(this, AreaName.AREA_MEDIVAL, MEDIVAL_SONIC_TEST));    
+        }            
+        if(rooms.size() == roomLimit) {
             System.out.println("Everything has been generated");
             generateEverything = true;    
         }        
@@ -63,7 +72,7 @@ public class OverWorld {
     public ArrayList<Room> getRoomsArrayList() {
         return rooms;
     }
-    public static Room getCurrentRoom() {
+    public Room getCurrentRoom() {
         for(int i = 0; i < rooms.size(); i ++) {
             if(rooms.get(i).getRoomType() == currentRoomName) {
                 return rooms.get(i);
@@ -75,14 +84,10 @@ public class OverWorld {
         getCurrentRoom().saveRoom();
         currentRoomName = newRoom;
         currentRoom = getCurrentRoom();
-        sonic.getAnimationControl().addToRoomPictureAL(currentRoom);
+        sonic.addToNewRoom();
     }
-    public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == e.VK_ENTER) {
-            setCurrentRoomType(ROOM_SONIC_TEST);
-        }
-        if(e.getKeyCode() == e.VK_C) { 
-            setCurrentRoomType(ROOM_SONIC_HOUSE);
-        }
-    }
+    
+    public enum AreaName {
+        AREA_MEDIVAL  
+    };
 }

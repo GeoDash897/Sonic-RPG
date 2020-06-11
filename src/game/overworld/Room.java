@@ -9,7 +9,7 @@ import game.SaveLoadObjects;
 import game.gameObjects.BasicObject;
 import static game.overworld.Ground.GroundType.*;
 import game.gui.GUI;
-import game.sonic.PlayerMenu;
+import game.overworld.OverWorld.AreaName;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -24,8 +24,8 @@ import java.util.Map;
  * @author GeoSonicDash
  */
 public class Room {
-    private static PlayerMenu playerMenu;
     private RoomType roomType;
+    private AreaName area;
     private ArrayList<Map<Integer, Ground>> groundGrid;
     private ArrayList<Picture> pictures;
     private ArrayList<GUI> guis;
@@ -41,17 +41,15 @@ public class Room {
      * @param roomType the type of room being created- influences the 
      * DefaultObjects and the Ground tiles that are going to be created in the room.
      */
-    public Room(OverWorld overworld, RoomType roomType) {
+    public Room(OverWorld overworld, AreaName area, RoomType roomType) {
         this.overworld = overworld;
         this.roomType = roomType;   
+        this.area = area;
         this.groundGrid = new ArrayList<Map<Integer, Ground>>();
         this.pictures = new ArrayList<Picture>();
         this.guis = new ArrayList<GUI>();
         this.gameObjects = new ArrayList<BasicObject>();
-        this.slo = new SaveLoadObjects();
-        if(playerMenu == null) {
-            playerMenu = new PlayerMenu();    
-        }        
+        this.slo = new SaveLoadObjects();    
         if(draw == null) {
             draw = new Draw();   
         }       
@@ -63,7 +61,7 @@ public class Room {
      */
     private void createRoom() {
         pictures.add(new Background(roomType));
-        if(roomType == RoomType.ROOM_SONIC_HOUSE) {
+        if(roomType == RoomType.MEDIVAL_SONIC_HOUSE) {
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),0,1);
             }
@@ -97,12 +95,11 @@ public class Room {
             createTile(GRD_SONICHOUSE_SONICBED_30,1,256,576,1);
             createTile(GRD_SONICHOUSE_SONICBED_31,1,256,640,1);
         }
-        else if(roomType == RoomType.ROOM_SONIC_TEST) {
+        else if(roomType == RoomType.MEDIVAL_SONIC_TEST) {
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),704,1);
             }
         }
-        addGUI(playerMenu);
         SaveLoadObjects.createGameObjectArrayList("TempSave", this);
     }
     
@@ -184,7 +181,20 @@ public class Room {
     }
     
     public void addPicture(Picture add) {
-        pictures.add(add);
+        /*This checks to make sure sonic's picture isn't added more than once into the room's guiAL,
+        if the sonic's picture isn't in it (meaning the player didn't enter it yet), add it
+        I don't want to clear it out since it would be redunant (why clear out all of the pictures, just
+        to add them again if the player returned to a previous room).
+        This is also a good failsafe if something is accidently added again*/
+        boolean check = false;
+        for(int i = 0; i < pictures.size(); i++) {
+            if(add == pictures.get(i)) {
+                check = true;
+            }
+        }
+        if(!check) {
+            pictures.add(add);
+        }       
     }
     
     public void removePicture(Picture index) {
@@ -192,7 +202,24 @@ public class Room {
     }
     
     public void addGUI(GUI add) {
-        guis.add(add);
+        /*This checks to make sure playerMenu isn't added more than once into the room's guiAL,
+        if the playerMenu isn't in it (meaning the player didn't enter it yet), add it
+        I don't want to clear it out since it would be redunant (why clear out all of the GUIS, just
+        to add them again if the player returned to a previous room).
+        This is also a good failsafe if something is accidently added again*/
+        boolean check = false;
+        for(int i = 0; i < guis.size(); i++) {
+            if(add == guis.get(i)) {
+                check = true;
+            }
+        }
+        if(!check) {
+            guis.add(add);
+        }       
+    }
+    
+    public AreaName getAreaName() {
+        return area;
     }
     
     public RoomType getRoomType() {
@@ -206,12 +233,12 @@ public class Room {
     /**
      * The type of rooms that are in the game:
      * <ul>
-     * <li> {@code ROOM_SONIC_HOUSE} - where the player starts at the beginning of the game. This is where
+     * <li> {@code MEDIVAL_SONIC_HOUSE} - where the player starts at the beginning of the game. This is where
      * Sonic lives- a one room house.
      * </ul>
      */
     public enum RoomType {
-        ROOM_SONIC_HOUSE,
-        ROOM_SONIC_TEST
+        MEDIVAL_SONIC_HOUSE,
+        MEDIVAL_SONIC_TEST
     };
 }
