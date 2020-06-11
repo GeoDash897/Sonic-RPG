@@ -30,4 +30,4 @@ However, we never went over how to create and display animations in Java. This c
 
 *Look at Sonic go!*
 
-This is one of the aspects that I am *stll* the most proud of when it comes to this project. The title screen is made of 2 main compontents- the palmtrees, and the ground. Implementing the scrolling consisted of 2 steps: shifting over the images a certain distance and then resetting them back to their original position. I added the parallax effect by shifting over the palmtrees at a slower rate.
+This is one of the aspects that I am *still* the most proud of when it comes to this project. The title screen is made of 2 main compontents- the palmtrees, and the ground. Implementing the scrolling consisted of 2 steps: shifting over the images a certain distance and then resetting them back to their original position. I added the parallax effect by shifting over the palmtrees at a slower rate.
