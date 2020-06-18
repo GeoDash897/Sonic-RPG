@@ -100,7 +100,10 @@ public class BasicObject implements Picture, Interactable  {
             g2.draw(intersectBox);
         }
     }
-    
+    /**Runs basicObject game logic every game loop- controls: bottomLeft, bottomRight, and 
+     * intersectBox rectangles, gravity, and collision with the ground. 
+     * 
+     */
     public void action() {
         xDraw = xRef-(length/2);
         yDraw = yRef-(width/2);

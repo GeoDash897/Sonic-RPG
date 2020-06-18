@@ -18,7 +18,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import game.gui.GUI;
 
-/**
+/**Controls the player's over world menu.
  *
  * @author GeoSonicDash
  */
@@ -41,12 +41,17 @@ public class PlayerMenu implements GUI {
     private void createMenu() {
         menus.add(0, new Menu(MenuType.MENUTYPE_VERTICAL));
         menus.get(0).addOption(0, 0, "Status");
+        //menus.get(0).addOption(0, 1, "Inventory"); 
         menus.get(0).addOption(0, 1, "Exit");
         menus.add(1, new Menu(MenuType.MENUTYPE_VERTICAL));
         menus.get(1).addOption(0, 0, "Exit");
         System.out.println("Code Here");
         currentMenu = menus.get(currentMenuIndex);
     }
+    
+    /**Controls the logic of the current {@code Menu} that is displayed.
+     * 
+     */
     @Override
     public void standardGUI() {        
         if(visible) {  

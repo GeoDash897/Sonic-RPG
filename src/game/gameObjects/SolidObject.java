@@ -10,7 +10,7 @@ import game.overworld.Room;
 import game.sonic.OWARemastered;
 import java.awt.Rectangle;
 
-/**
+/**Controls SolidObject implementation- controls collisions with Sonic.
  *
  * @author GeoSonicDash
  */
@@ -75,6 +75,13 @@ public class SolidObject extends BasicObject {
         owaR.getLedgeGameObject(super.getIntersectBox());
     } 
     
+    /**Gets the correct distance from the Ground tile-used in triggering Sonic's ledge animation.
+     * 
+     * @param owaR object of {@code OWARemastered} class.
+     * @param sensor one of Sonic's bottom sensors (either bottomLeft or bottomRight) that is being checked.
+     * It determines which distanceFromRect value is being found.
+     * @return the distance from the sensor being checked to the nearest Ground tile (maximum distance being 64).
+     */
     private int getDistanceFromGround(OWARemastered owaR, Rectangle sensor) {
         int xBottomSensor = 0;
         int yBottomSensor = (int) (sensor.getY()+80);

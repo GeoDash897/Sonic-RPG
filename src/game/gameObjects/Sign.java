@@ -22,21 +22,19 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-/**
+/**Controls Sign implementation- controls viewing readable objects.
  *
  * @author GeoSonicDash
  */
 public class Sign extends SolidObject implements GUI {
     private SignType signType;
     private int dialogIndex;
-    private int dialogCooldown;
     private boolean isVisible;
     private boolean justFinishedDialog;
     private LoadDialogs load;
     private ArrayList<Dialog> dialogChain;
     public Sign(Room objectRoom, SignType signType, int layer, int xRef, int yRef) {
         super(objectRoom);
-        this.dialogCooldown = 0;
         this.signType = signType; 
         this.justFinishedDialog = false;
         this.dialogIndex = -1;
@@ -46,6 +44,7 @@ public class Sign extends SolidObject implements GUI {
     public Sign(Room objectRoom) {
         super(objectRoom);
     }
+    
     /**
      * This method is used to create Sign objects ONLY.
      * @param layer layer of the Sign object, used to organize object in objectRoom's picture ArrayList (occurs in SaveLoadObjects class).
@@ -85,10 +84,11 @@ public class Sign extends SolidObject implements GUI {
     }
     
     public void loadDialogChain(String refName, String conversation) {
-        load.clearSpeechesDialogs();//This removes instance vars from the previous instance of load       
-        //and in turn the previous chunk of dialog
+        load.clearSpeechesDialogs();//This empties the previous dialogChain's dialog and speech arrayLists
         dialogChain = load.getDialogChain(conversation);
         justFinishedDialog = false;
+        /*The previous dialog (the one stored prior to clearSpeechesDialogs() method ran)
+        would have been long done by now, so set boolean to false*/
     }        
     
     @Override
@@ -108,15 +108,7 @@ public class Sign extends SolidObject implements GUI {
     @Override
     public void action() {
         super.action();
-        if(isVisible) {
-            if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
-                dialogIndex++; 
-                if(dialogIndex == dialogChain.size()) {
-                    resetConversation();
-                }
-            }            
-        }
-        else {
+        if(justFinishedDialog) {            
             /*If the dialog has ended and no new one needs to be loaded, set justFinishedDialog to false
             since at this point the dialog exchange would have been over for some time- allows the dialog to restart again after it is over
             */
@@ -127,14 +119,24 @@ public class Sign extends SolidObject implements GUI {
     @Override
     public void interactWithSonic(OWARemastered owaR) {
         super.interactWithSonic(owaR);
+        /*I moved navigating through the dialogs to here instead of action since it would make no sense
+        (OWARemastered ins't disabled when dialog is displayed, meaning that this method still runs, making
+        there be no reason to have it in action anymore. Also, it is much better to understand)*/
+        
+        /*First if statement displays the sign's text and disables Sonic's normal movement, the others control
+        navigating through the sign's text*/
         if(Sonic.getOWARAllowInput() && owaR.getXSpeed() == 0 && owaR.getDuckState() == DuckState.STATE_NODUCK
-                && owaR.getSpindashState() == SpindashState.STATE_NOSPINDASH && 
-                owaR.getIntersectBox().intersects(super.getIntersectBox()) && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
-            if(dialogIndex == -1 && !justFinishedDialog) {               
+                && owaR.getSpindashState() == SpindashState.STATE_NOSPINDASH && owaR.getIntersectBox().intersects(super.getIntersectBox())
+                && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X) && dialogIndex == -1 && !justFinishedDialog) {
                 isVisible = true;
                 Sonic.setOWARAllowInput(false);
                 dialogIndex++; 
-            }
+        }
+        else if(dialogIndex >= 0 && dialogIndex < dialogChain.size()-1 && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {               
+            dialogIndex++; 
+        }
+        else if(dialogIndex == dialogChain.size()-1 && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
+            resetConversation();
         }
     }
    

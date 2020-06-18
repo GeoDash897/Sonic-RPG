@@ -15,8 +15,8 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.Map;
 
-/**
- *
+/**Controls Spring implementation- controls spring animations and behaviors when 
+ *interacting with Sonic (launching him)
  * @author GeoSonicDash
  */
 public class Spring extends SolidObject {
@@ -34,6 +34,11 @@ public class Spring extends SolidObject {
         create(layer, xRef, yRef);
     }        
     
+    /**This method is used to create Spring objects ONLY.
+     * @param layer layer of the Spring object, used to organize object in objectRoom's picture ArrayList (occurs in SaveLoadObjects class).
+     * @param xRef the x position of the Spring Object.
+     * @param yRef the y position of the Spring Object.
+     */
     private void create(int layer, int xRef, int yRef) {
         int length = 0;
         int width = 0;
@@ -114,7 +119,6 @@ public class Spring extends SolidObject {
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
-        g2.drawString("animationTimer " +animationTimer, 300, 350);
     }
     @Override
     public void action() {
@@ -127,6 +131,8 @@ public class Spring extends SolidObject {
             currentAnimation = animations.get(AnimationName.valueOf("ANIMATION_"+springName+"_NORMAL"));
         }
         else if(extend) {
+            /*Change the spring's animation to extend for a certain amount of time, then return it to its
+            normal animation (non-extended version)*/
             if(animationTimer < 75) {
                 animationTimer++;
                 currentAnimation = animations.get(AnimationName.valueOf("ANIMATION_"+springName+"_EXTEND"));
@@ -157,6 +163,10 @@ public class Spring extends SolidObject {
                
     }
     
+    /**Controls launching Sonic at the right speed after he intersects with a spring.
+     * 
+     * @param owaR instance of {@code OWARemastered}- used to obtain Sonic's overworld variables.
+     */
     private void performSpring(OWARemastered owaR) {
         if(yLaunchSpeed != 0) {
             owaR.setYSpeed(yLaunchSpeed);

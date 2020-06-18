@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class controls creating and managing rooms- creating all of the 
- * Ground tiles of the room, controls creating the DefaultObjects 
- * needed to be created (sends to SaveLoadObjects class), and runs the room
- * (runs the action methods of the DefaultObjects as well as drawing methods for them).
+ * This class controls creating and managing a {@code Room}- a single over world screen
+ * in the game.
+ * It stores and maintains the {@code Ground} tiles and gameObjects of the room, as well as
+ * runs the logic of the room (runs the action methods of the gameObjects as well as drawing methods for them).
  * @author GeoSonicDash
  */
 public class Room {
@@ -74,18 +74,6 @@ public class Room {
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),768,1);
             }
-            /*createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1,448,576,1);  
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,512,576,1); 
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1,512,512,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,576,512,1);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,640,512,1);
-            /*createTile(GRD_SONICHOUSE_WOODSLOPE,1,704,512,0);    
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,704,576,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1,768,576,0);
-            createTile(GRD_SONICHOUSE_WOODPLANK,1,768,640,1);
-            createTile(GRD_SONICHOUSE_WOODSLOPE,1,832,640,0);*/
             createTile(GRD_SONICHOUSE_SONICBED_00,1,64,576,1);
             createTile(GRD_SONICHOUSE_SONICBED_01,1,64,640,1); 
             createTile(GRD_SONICHOUSE_SONICBED_10,1,128,576,1);  
@@ -99,8 +87,24 @@ public class Room {
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),704,1);
             }
+            for(int i = 0; i < 11; i ++) {
+                createTile(GRD_SONICHOUSE_WOODPLANK,1,1472,0+(i*64),1);
+            }
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,384,640,1);           
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,448,640,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,448,576,1);  
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,512,576,1); 
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,512,512,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,576,512,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,640,512,1);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,704,512,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,768,512,0);    
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,768,576,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,832,576,0);
+            createTile(GRD_SONICHOUSE_WOODPLANK,1,832,640,1);
+            createTile(GRD_SONICHOUSE_WOODSLOPE,1,896,640,0);
         }
-        SaveLoadObjects.createGameObjectArrayList("TempSave", this);
+        SaveLoadObjects.createGameObjectArrayList("Area1", this);
     }
     
     /**
@@ -117,6 +121,9 @@ public class Room {
         }
     }
     
+    /**
+     * Draws all of the game elements in the current Room (Ground tiles, gameObjects, Sonic)
+     */
     public void drawRoom(Graphics2D g2) {
         for(int i = 0; i < gameObjects.size(); i++) {
             g2.drawString(gameObjects.get(i).toString(),500, 100+(25*i));
@@ -235,6 +242,7 @@ public class Room {
      * <ul>
      * <li> {@code MEDIVAL_SONIC_HOUSE} - where the player starts at the beginning of the game. This is where
      * Sonic lives- a one room house.
+     * </li>
      * </ul>
      */
     public enum RoomType {

@@ -8,7 +8,7 @@ package game.animation;
 import java.awt.Image;
 import java.awt.Toolkit;
 
-/**
+/**Controls specific animation of game element.
  *
  * @author GeoSonicDash
  */

@@ -5,7 +5,6 @@
  */
 package game.overworld;
 
-import game.sonic.Sonic;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -13,7 +12,8 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 
-/**
+/**Represents a 64 x 64 tile in {@code Room} that acts as solid ground,
+ * has no special properties like gameObjects do.
  *
  * @author GeoSonicDash
  */
@@ -28,7 +28,6 @@ public class Ground implements Picture {
     private int layer;
     private int angle;
     private int direction;
-    private boolean loadFile;
     private String groundName;
     private Color boundary;
     private Image groundPicture;
@@ -44,6 +43,10 @@ public class Ground implements Picture {
         this.pixelBoxes = new ArrayList<Rectangle>(16);
         create();
     }
+    
+    /**Creates the {@code Ground} tile, including its arrayList of height values and pixelBoxes arrayList.
+     * 
+     */
     private void create() {
         groundName = String.valueOf(groundType);
         /*NOTE!- When creating the height values of tiles, try to not have any height values of 0 for the pixelBoxes (it makes comparing tiles a lot
@@ -107,90 +110,101 @@ public class Ground implements Picture {
         }
         createPixelBoxesArrayList();
     }
+    
+    /**Creates the rectangles of the {@code Ground} tile based on the heightValues arrayList.
+     * 
+     */
     private void createPixelBoxesArrayList() {
         for(int i = 0; i < heightValues.size(); i++ ) {                
             pixelBoxes.add(new Rectangle((xRef+(i*4)),(yRef+64-(heightValues.get(i)*4)),4,(heightValues.get(i)*4)));
         }
     }
     private void setSonicBedHeightValues(int part) {
-        if(part == 01 || part == 11 || part == 21 || part == 31) {
-            setBlock();   
-        } 
-        else if(part == 00) {
-            heightValues.add(16);
-            heightValues.add(16);
-            heightValues.add(16);
-            heightValues.add(16);
-            heightValues.add(16);
-            heightValues.add(16);
-            heightValues.add(8);
-            heightValues.add(8);
-            heightValues.add(8);
-            heightValues.add(8);
-            heightValues.add(8);
-            heightValues.add(8);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            createPixelBoxesArrayList();
-        }
-        else if(part == 10) {
-            heightValues.add(4);
-            heightValues.add(4);
-            heightValues.add(4);
-            heightValues.add(4); 
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            createPixelBoxesArrayList();
-        }
-        else if(part == 20) {
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6); 
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            createPixelBoxesArrayList();
-        }
-        else if(part == 30) {
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6); 
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(6);
-            heightValues.add(5);
-            heightValues.add(5);
-            heightValues.add(4);
-            heightValues.add(4);
-            heightValues.add(3);
-            heightValues.add(3);
-            createPixelBoxesArrayList();
+        switch (part) {
+            case 01:
+            case 11:
+            case 21:
+            case 31:
+                setBlock();
+                break;
+            case 00:
+                heightValues.add(16);
+                heightValues.add(16);
+                heightValues.add(16);
+                heightValues.add(16);
+                heightValues.add(16);
+                heightValues.add(16);
+                heightValues.add(8);
+                heightValues.add(8);
+                heightValues.add(8);
+                heightValues.add(8);
+                heightValues.add(8);
+                heightValues.add(8);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                createPixelBoxesArrayList();
+                break;
+            case 10:
+                heightValues.add(4);
+                heightValues.add(4);
+                heightValues.add(4);
+                heightValues.add(4);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                createPixelBoxesArrayList();
+                break;
+            case 20:
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                createPixelBoxesArrayList();
+                break;
+            case 30:
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(6);
+                heightValues.add(5);
+                heightValues.add(5);
+                heightValues.add(4);
+                heightValues.add(4);
+                heightValues.add(3);
+                heightValues.add(3);
+                createPixelBoxesArrayList();
+                break;
+            default:
+                break;
         }
     }
     @Override
@@ -234,8 +248,16 @@ public class Ground implements Picture {
     public ArrayList<Integer> getHeightValues() {
         return heightValues;
     }
+    
+    /**Returns specific {@code Rectangle} from {@code pixelBoxes} arrayList.
+     * 
+     * @param selection specific index of the {@code pixelBoxes} arrayList.
+     * @return the {@code Rectangle} of index in {@code pixelBoxes} arrayList.
+     */
     public Rectangle getPixelBox(int selection) {
-        
+        /*If index selection in heightValues arrayList is 0 that means that there is 
+        no Rectangle at that index in pixelBoxes arrayList.
+        If that is the case, find the next lowest rectangle in pixelBoxes arrayList.*/
         if(heightValues.get(selection) == 0) {
             int min = Integer.MAX_VALUE;
             int minPosition = 0;
@@ -254,11 +276,23 @@ public class Ground implements Picture {
     public ArrayList<Rectangle> getPixelBoxes() {
         return pixelBoxes;
     }
-    //Compares tiles in same column
+    
+    /**Compares two {@code Ground} tiles in the same column based on their heights.
+     * 
+     * @param xBottomSensor the x position of the game element's sensor
+     * that is checking for the correct Ground tile (either the left one or the right one) that is interacting with it.
+     * @param tile1 the first tile that is being checked.
+     * @param tile2 the second tile that is being checked.
+     * @param layer the layer of the game element that is checking for Ground tiles (can be Sonic or a gameObject like Monitors).
+     * @return the correct {@code Ground} tile that is interacting with game element's sensor (one that closest to game element).
+     */
     public static Ground compareSCTile(int xBottomSensor, Ground tile1, Ground tile2, int layer) {
-        //Change it so it initially sets each rectangle to null, this changes if this or other is not null (and gets rect)
         Rectangle rectTile1 = null;
         Rectangle rectTile2 = null;
+        /*If tile1 is not null and is in the same layer as game element, get the 
+        correct Rectangle from Rectangle arrayList of tile*/
+        /*Correct index of arrayList is based on the difference between xBottomSensor and 
+        the xRef of tile (the upper left corner of the tile) divided by 4*/
         if(tile1 != null && tile1.getLayer() == layer) {
             int heightIndex = (int) Math.abs((xBottomSensor-tile1.getXRef())/4);
             rectTile1 = tile1.getPixelBox(heightIndex);    
@@ -269,6 +303,8 @@ public class Ground implements Picture {
         }
         /*System.out.println("rectTile1: "+rectTile1);
         System.out.println("rectTile2: "+rectTile2);*/
+        
+        //Compare the heights of the tiles, return the tile that is lower on the screen.
         /*If the rectangle is null, that means that: 
         1. the specific index of a tile (that exists) doesn't have a rectangle
         2. the tile does not exist
@@ -287,10 +323,19 @@ public class Ground implements Picture {
         else if(rectTile1 == null && rectTile2 != null) {
             return tile2;
         }
+        //Return nothing if there is no tiles to compare.
         return null;       
     }
+    
+    /**Compares two {@code Ground} tiles in different columns based on their heights.
+     * 
+     * @param xBottomLeft the x position of the game element's left sensor.
+     * @param xBottomRight the x position of the game element's right sensor.
+     * @param tile1 first tile that is being checked.
+     * @param tile2 the second tile that is being checked.
+     * @return the correct {@code Ground} tile that is interacting with game element's sensor (one that closest to game element).
+     */
     public static Ground compareDCTile(int xBottomLeft, int xBottomRight, Ground tile1, Ground tile2) {
-        //Change it so it initially sets each rectangle to null, this changes if this or other is not null (and gets rect)
         Rectangle rectTile1 = null;
         Rectangle rectTile2 = null;
         if(tile1 != null) {
@@ -311,6 +356,8 @@ public class Ground implements Picture {
                 rectTile2 = tile2.getPixelBox(heightIndex);    
             }
         }
+         
+        //Compare the heights of the tiles, return the tile that is lower on the screen.
         /*If the rectangle is null, that means that: 
         1. the specific index of a tile (that exists) doesn't have a rectangle
         2. the tile does not exist

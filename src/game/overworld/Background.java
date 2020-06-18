@@ -10,7 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 
-/**
+/**Controls obtaining/storing/drawing the correct background image for each {@code Room}.
  *
  * @author GeoSonicDash
  */

@@ -14,7 +14,6 @@ import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,7 +21,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.swing.JPanel;
 
 /**This is the main game loop where player input, gameObjects, and game logic are processed.
@@ -35,7 +33,6 @@ public class GameLoop extends JPanel {
     private static String title;
     private static boolean debug; 
     private static boolean isPainting;  
-    private ArrayList<Thread> objectThreads;
     private File temp;
     private OverWorld overWorld;
     private PlayerInput pIRemade;
@@ -68,11 +65,9 @@ public class GameLoop extends JPanel {
     }
     
     public void createTempSave() {
+        //Copies everything from local save file to a newly created temp save file
         File local = new File("src/game/Area1.txt");
         temp = new File("src/game/TempSave.txt");
-        if(objectThreads == null) {
-            objectThreads = new ArrayList<Thread>();
-        }
         try {
             if(!temp.exists()) {
                 temp.createNewFile();
@@ -103,6 +98,7 @@ public class GameLoop extends JPanel {
             g2.setRenderingHints(rh);
             g2.setFont(debugStat);
             g2.setColor(Color.CYAN); 
+            //Controls if debug stats are displayed
             if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_ESCAPE)) {
                 debug = !debug;
             }

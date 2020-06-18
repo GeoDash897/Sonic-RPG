@@ -1,6 +1,7 @@
+DIALOG
 MEET
-SKELETON::It is has been a long time since I have seen a mortal in
- this realm...Whatever reason you have to be here child must be very important...
+SKELETON::It is has been a long time since I have seen a mortal...
+ Whatever reason you have to be here child must be very important...
 BREAK
 SONIC_NORMAL::You betcha! Do you know where I could find a guide? I'm kinda new to this place.
 BREAK
@@ -19,8 +20,11 @@ RETURN-END
 GREET
 SONIC_NORMAL::Hey, Mr.Skeleton Man! I have a quick question for you.
 BREAK
-SKELETON::For your information mortal, I have a real name!
+SKELETON::For your information, I have a real name!
 BREAK
 SONIC_NORMAL::Sorry about that, didn't mean to anger you. What's you name?
 BREAK
 GREET-END
+
+ANIMATION
+ANIMATION_NPCSKELETON_STAND "Skeleton Stand" 1 1 1 1

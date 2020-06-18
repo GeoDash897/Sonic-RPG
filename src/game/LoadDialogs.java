@@ -62,24 +62,31 @@ public class LoadDialogs {
     }
     
     private void getDialogChunk(String conversation) {
-        File file = new File("src/game/resources/dialogs/"+refName+".txt");
+        File file = new File("src/game/resources/gameInfo/"+refName+".txt");
         try {
             if(!file.exists()) {
                 file.createNewFile();
             }  
             BufferedReader br = new BufferedReader(new FileReader(file));
             String currentLine = br.readLine();
-            String section = "";
+            String area = "";
+            String dialogGroup = "";
             boolean endLoop = false;
+            //The loop ends if there are no lines of text or if all the dialog is read
             while(!endLoop && currentLine != null) {
-                if(section.equals(conversation) && !currentLine.equals(conversation+"-END")) {
+                /*I have to check to see if the Buffered Reader is in the DIALOG section of the game element's text file
+                before checking for a specific conversation (get specific chunk)*/
+                if(area.equals("DIALOG") && dialogGroup.equals(conversation) && !currentLine.equals(conversation+"-END")) {
                     chunk+=currentLine;    
                 }
-                else if(currentLine.equals(conversation)) {
-                    section = conversation;
+                else if(area.equals("DIALOG") && currentLine.equals(conversation)) {
+                    dialogGroup = conversation;
                 }
-                else if(currentLine.equals(conversation+"-END")) {
+                else if(area.equals("DIALOG") && currentLine.equals(conversation+"-END")) {
                     endLoop = true;
+                }
+                else if(currentLine.equals("DIALOG")) {
+                    area = currentLine;
                 }
                 currentLine = br.readLine();
             }

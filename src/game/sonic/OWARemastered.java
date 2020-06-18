@@ -16,6 +16,10 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
+/**Controls Sonic's movement, physics, and actions in the overworld.
+ * 
+ * @author GeoSonicDash
+ */
 public class OWARemastered {
 
     private static int xDrawCenterSonic;
@@ -79,7 +83,7 @@ public class OWARemastered {
     private static SpindashState spindashState;
     private static SpringState springState;
     
-    public OWARemastered() {
+    public OWARemastered(Sonic son, AnimationControl aniC) {
         xDrawCenterSonic = 100;
         ySpriteCenterSonic = 600;
         yLastGround = 0;
@@ -106,14 +110,16 @@ public class OWARemastered {
         spindashState = SpindashState.STATE_NOSPINDASH;
         springState = SpringState.STATE_NOSPRING;
         middleLeftIntersect = null;
+        sonic = son;
+        animation = aniC;
     }
     
-    public void mainMethod(Sonic son, Room cR, AnimationControl ani){
+    public void mainMethod(Room cR){
+        //Get current Room that Sonic is currently in
         currentRoom = cR;
-        animation = ani;
-        sonic = son;
         yDrawCenterSonic = ySpriteCenterSonic + 16;
         ledgeState = LedgeState.STATE_NOLEDGE;
+        //Controls when Sonic is considered on the ground or not
         if(bLCollide && bRCollide) {
             grounded = true;
         }
@@ -123,6 +129,8 @@ public class OWARemastered {
         else if(!bLCollide && !bRCollide) {
             grounded = false;
         }
+        /*Creates the correct sensors of Sonic depending on his state(being on the ground,
+        being in the air, colliding with a slope, etc*/
         if(!collideWithSlopeL && !collideWithSlopeR) {
             bottomLeft = new Rectangle(xDrawCenterSonic-36,ySpriteCenterSonic,4,80);    
             bottomRight = new Rectangle(xDrawCenterSonic+36,ySpriteCenterSonic,4,80); 
@@ -200,9 +208,10 @@ public class OWARemastered {
             duckState = DuckState.STATE_NODUCK;
             
         }
+        //Prevent input for certain amount of time after hitting a sideways spring
         if(springLock) {
             allowInput = false;
-            if(springTimer < 50) {
+            if(springTimer < 50 && !mLCollide && !mRCollide) {
                 springTimer++;
             }
             else if(springTimer == 50 || (mLCollide || mRCollide)) {
@@ -211,7 +220,7 @@ public class OWARemastered {
                 allowInput = true;
             }
         }
-        //Sets correct value for friction
+        //Sets correct value for friction (for rolling and not rolling)
         if(duckState == DuckState.STATE_ROLL) {
             friction = ROLLFRICTION;           
             if(Math.signum(groundSpeed) == Math.signum(Math.sin(angle))) {//Checks if Sonic is rolling uphill
@@ -304,6 +313,9 @@ public class OWARemastered {
         changeAnimation();            
     }
     
+    /**Controls when sideCollision methods are run.
+     * 
+     */
     private void sideCheck() {
         mLCollide = false;
         mRCollide = false;
@@ -324,6 +336,10 @@ public class OWARemastered {
             }
         }
     }
+    
+    /**Controls when bottomCollision and topCollision methods are run.
+     * 
+     */
     private void bottomTopCheck() {
         bLCollide = false;
         bRCollide = false;
@@ -414,7 +430,13 @@ public class OWARemastered {
         //Get's Sonic's ledges
         getLedgeGround(highLeft, highRight);        
     } 
-    
+    /**Sets Sonic's ledge state depending on his position compared to the {@code Ground} tiles he 
+     * is interacting with (the state determines if the Ledge animation is played and what actions
+     * he can do)
+     * 
+     * @param highLeft {@code Ground} tile that {@code bottomLeft} sensor is currently interacting with.
+     * @param highRight {@code Ground} tile that {@code bottomLeft} sensor is currently interacting with.
+     */
     private void getLedgeGround(Ground highLeft, Ground highRight) {
         //Get's Sonic's ledges
         if(grounded && xSpeed == 0 && angle == 0 && bLCollide && !bRCollide && bRDistanceFromRect >= 48) {
@@ -434,6 +456,11 @@ public class OWARemastered {
         } 
     }
     
+    /**Sets Sonic's ledge state depending on his position compared to the Rectangle {@code intersectBox}
+     * of the gameObject that he is interacting with.
+     * 
+     * @param intersectBox the intersectBox of the gameObject that Sonic is interacting with.
+     */
     public void getLedgeGameObject(Rectangle intersectBox){
         if(grounded && xSpeed == 0 && angle == 0 && bLCollide && !bRCollide && bRDistanceFromRect >= 48) {
             if(xDrawCenterSonic >= (int) (intersectBox.getX()+intersectBox.getWidth()+4) && animation.getDirection() == 1) {
@@ -448,6 +475,12 @@ public class OWARemastered {
         }
     }
     
+    /**Gets the correct {@code Ground} tile that Sonic's sensor is interacting with/colliding with- determines what variables
+     * to use when comparing the heights of each tile that Sonic is interacting with (one for each bottom {@code sensor}).
+     * @param yBottomSensor the bottom of the sensor that being checked
+     * @param sensor the rectangle of the sensor.
+     * @return the correct {@code Ground} tile that {@code sensor} is interacting with.
+     */
     private Ground getCorrectTile(int yBottomSensor, Rectangle sensor) {
         int xBottomSensor = (int) sensor.getX();     
         /*if(sensor == bottomLeft) {
@@ -490,6 +523,14 @@ public class OWARemastered {
         return null;
     }
     
+    /**Sets Sonic's y position variables and angle variables based on the correct {@code Ground} tile he
+     * is interacting with.
+     * @param heightIndex the index of the Rectangle in the {@code pixelBoxes} arrayList that Sonic's 
+     * sensor is interacting with (depends on the {@code Ground} tile).
+     * @param pixelHeight the correct y position that Sonic needs to be set to (depends on the {@code Ground} tile).
+     * @param yBottomSensor the y position at the bottom of Sonic's bottom sensors.
+     * @param highest the correct {@code Ground} tile that Sonic is interacting with.
+     */
     private void setSonicGroundStat(int heightIndex, int pixelHeight, int yBottomSensor, Ground highest) {     
         if(highest != null) {
             Rectangle collideCheck = highest.getPixelBox(heightIndex);
@@ -506,6 +547,11 @@ public class OWARemastered {
         }        
     }
     
+    /**Sets Sonic's y position variables and collision variables based on the gameObject he is
+     * interacting with.
+     * @param sensor the {@code Rectangle} sensor that is currently being checked.
+     * @param collideCheck the intersectBox of the gameObject that Sonic is currently interacting with.
+     */
     public void setSonicBottomGameStat(Rectangle sensor, Rectangle collideCheck) {
         int yBottomSensor = (int) (sensor.getY()+sensor.getHeight());       
         if(sensor == bottomLeft) {
@@ -649,6 +695,7 @@ public class OWARemastered {
     }
     
     private void leftPress() {
+        //Note!- Sonic can turn instantly in air, but NOT on the ground
         if(!grounded) {
             if(animation.getDirection() == 1) {
                 animation.setDirection(0);
@@ -661,16 +708,15 @@ public class OWARemastered {
             }
         }
         else if(grounded) {
-            if(groundSpeed < 0 && animation.getDirection() == 1) {//If Sonic's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
-            //completely (skid) before changing direction (can't change direction immediately)
-                animation.setDirection(0);
-            }    
             /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
-            he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)
-            */                      
-            if(grounded && groundSpeed == 0 && mLCollide && animation.getDirection() == 1) {
+            he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)*/     
+            if(animation.getDirection() == 1 && mLCollide && grounded && groundSpeed == 0) {
                 animation.setDirection(0);
             }
+            else if(animation.getDirection() == 1 && !mLCollide && groundSpeed < 0) {//If Sonic's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
+            //completely (skid) before changing direction (can't change direction immediately)
+                animation.setDirection(0);
+            }                    
             if(groundSpeed > 0) {
                 if(duckState == DuckState.STATE_NODUCK) {
                     groundSpeed -= DECELERATION;    
@@ -692,6 +738,7 @@ public class OWARemastered {
     }
     
     private void rightPress() {
+        //Note!- Sonic can turn instantly in air, but NOT on the ground
         if(!grounded) {
             if(animation.getDirection() == 0) {
                 animation.setDirection(1);
@@ -704,16 +751,17 @@ public class OWARemastered {
             }
         }
         else if(grounded) {
-            if(groundSpeed > 0 && animation.getDirection() == 0) {//If Sonic's groundSpeed is less than 1, set his direction to 1 (right), this makes it so the player has to stop 
-            //(completely skid) before changing direction (can't change direction immediately)
-                animation.setDirection(1);
-            }
             /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
             he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)
             */
-            if(grounded && groundSpeed == 0 && mRCollide && animation.getDirection() == 0) {
+            if(animation.getDirection() == 0 && mRCollide && groundSpeed == 0) {
                 animation.setDirection(1);
             }
+            else if(animation.getDirection() == 0 && !mRCollide && groundSpeed > 0) {//If Sonic's groundSpeed is less than 1, set his direction to 1 (right), this makes it so the player has to stop 
+            //(completely skid) before changing direction (can't change direction immediately)
+                animation.setDirection(1);
+            }
+            //Controls appropiate acceleration/decaceleration depending on Sonic's direction.
             if(groundSpeed < 0) {
                 if(duckState == DuckState.STATE_NODUCK) {
                     groundSpeed += DECELERATION;    
@@ -735,6 +783,7 @@ public class OWARemastered {
     }    
     
     private void downPress() {
+        //Change Sonic's duck state depending on groundSpeed (if he is ducking or rolling) 
         if(grounded) {
             if(angle == 0) {
                 if(Math.abs(groundSpeed) < 1) {
@@ -755,6 +804,8 @@ public class OWARemastered {
         if(grounded && spindashState == SpindashState.STATE_NOSPINDASH && jumpState == JumpState.STATE_NOJUMP && springState == SpringState.STATE_NOSPRING) {
             jumpState = JumpState.STATE_JUMP_UP;
         }
+        /*If Sonic is jumping up and is below the maximum jump height, continue jumping, if he is, stop moving 
+        up (even if z is still being pressed)*/
         if(jumpState == JumpState.STATE_JUMP_UP && ySpriteCenterSonic < yLastGround-390) {
             if(ySpeed < -4) {
                 ySpeed = -4;
@@ -766,7 +817,7 @@ public class OWARemastered {
                 ySpeed = -JUMP;    
             }      
             else {
-                //I have to fix when Sonic jumps on a slope
+                //I have to fix when Sonic jumps on a slope (or not)- depends on what I want to do
                 ySpeed = -JUMP;    
             }
             grounded = false;
@@ -1026,27 +1077,27 @@ public class OWARemastered {
         STATE_NOLEDGE,
         STATE_LEFTLEDGE,
         STATE_RIGHTLEDGE,
-    } 
+    };
     
     public enum JumpState {
         STATE_NOJUMP,
         STATE_JUMP_UP,
         STATE_JUMP_DOWN,
-    }
+    };
     
     public enum DuckState {
         STATE_NODUCK,
         STATE_DUCK,
         STATE_ROLL
-    }
+    };
     
     public enum SpindashState {
         STATE_NOSPINDASH,
         STATE_SPINDASH
-    }
+    };
     
     public enum SpringState {
         STATE_NOSPRING,
         STATE_SPRING
-    }
+    };
 }

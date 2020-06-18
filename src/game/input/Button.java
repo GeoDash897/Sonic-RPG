@@ -8,7 +8,7 @@ package game.input;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-/**
+/**Represents a key on the keyboard.
  *
  * @author GeoSonicDash
  */
@@ -21,6 +21,10 @@ public class Button {
         this.keyInt = keyInt;
         this.buttonReleaseTimer = 5;
     }
+    
+    /**Runs the buttonPressedTimer and buttonReleasedTimer for 
+     * the button.
+     */
     public void standard() { 
         if(buttonPressed) {
             if(buttonReleaseTimer > 0) {

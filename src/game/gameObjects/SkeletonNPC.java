@@ -14,7 +14,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.Map;
 
-/**
+/**Controls SkeletonNPC implementation- controls specific dialogs and animations for SkeletonNPC.
  *
  * @author GeoSonicDash
  */
@@ -32,6 +32,13 @@ public class SkeletonNPC extends NPC {
         this.npcType = npcType;
         create(layer, xRef, yRef);
     }
+    
+    /**
+     * This method is used to create SkeletonNPC objects ONLY.
+     * @param layer layer of the SkeletonNPC object, used to organize object in objectRoom's picture ArrayList (occurs in SaveLoadObjects class).
+     * @param xRef the x position of the SkeletonNPC Object.
+     * @param yRef the y position of the SkeletonNPC Object.
+     */
     private void create(int layer, int xRef, int yRef) {
         int length = 0;
         int width = 0;
@@ -54,6 +61,7 @@ public class SkeletonNPC extends NPC {
                 break;
         }
         Rectangle intersectBox = new Rectangle(xRef-(length*2), yRef-(width*2), length*4, width*4);
+        //Sets of the variables for the correct classes.
         super.createNPC(String.valueOf(npcType), "MEET", false, true);
         super.createSolidObject(false);
         super.createObject(layer, xRef, yRef, length, width, bottomLeft, bottomRight, intersectBox, false, true, picture);
@@ -63,6 +71,7 @@ public class SkeletonNPC extends NPC {
     public void action() {       
         switch(npcType) {
             case NPC_SKELETON:
+                //If the current dialog has been completed, load the next conversation
                 if(super.justFinishedDialog() && loadedDialog.equals("MEET")) {
                     super.loadDialogChain(String.valueOf(npcType),"RETURN");
                     loadedDialog = "RETURN";

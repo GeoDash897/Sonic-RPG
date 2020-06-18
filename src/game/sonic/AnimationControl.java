@@ -10,15 +10,15 @@ import game.LoadAnimations;
 import game.animation.Animation;
 import game.animation.Animation.AnimationName;
 import game.overworld.Picture;
-import game.overworld.Room;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.Map;
 
-/*
-    Author: GeoDash897  Date:10/5/19    Updated:10/5/19
-*/
+/**Controls the animations of Sonic- stores it and changes it to the correct animation.
+ * 
+ * @author GeoSonicDash
+ */
 public class AnimationControl implements Picture {//This will control Sonic's animations
     private static int xDrawSonic;
     private static int yDrawSonic;
@@ -42,12 +42,22 @@ public class AnimationControl implements Picture {//This will control Sonic's an
         sonic = temp;
         addFirstTime();
     }
-    
+    /**This adds Sonic's picture to the room that he spawns into.
+     * 
+     */
     private void addFirstTime() {
         sonic.getCurrentRoom().addPicture(this);
     }
     
-    public void standard(Room currentRoom, int xCenterSonic, int yCenterSonic) {
+    /**Sets the x and y position for drawing Sonic's {@code Image},
+     * increments the time of the current {@code Animation} that
+     * is playing, and sets the correct {@code Image} that should be displayed
+     * for the current {@code Animation}.
+     * 
+     * @param xCenterSonic x of Sonic (based on the center).
+     * @param yCenterSonic y of Sonic (based on the center).
+     */
+    public void standard(int xCenterSonic, int yCenterSonic) {
         xDrawSonic = xCenterSonic - (sonicWidth/2);
         yDrawSonic = yCenterSonic - (sonicWidth/2);        
         animationTimer++;

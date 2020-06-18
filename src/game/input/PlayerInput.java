@@ -12,7 +12,7 @@ import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/**This class controls player input (input from the keyboard)
  *
  * @author GeoSonicDash
  */
@@ -44,7 +44,10 @@ public class PlayerInput implements KeyListener {
             button.standard();
         }
     }
-
+    
+    /**
+     * Draws the variables of the current key(s) that are pressed.
+     */
     public void draw(Graphics2D g2) {
         if(GameLoop.getDebug()) {
             for (Map.Entry<Integer, Button> entry : keys.entrySet()) {

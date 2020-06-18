@@ -7,11 +7,12 @@ package game.sonic;
 import game.overworld.OverWorld;
 import game.overworld.Room;
 import java.awt.Graphics2D;
-/*
-    Author: GeoDash897  Date:10/5/19    Updated:10/5/19
-*/
-public class Sonic {//This is the main Sonic class; 
-    //this will run all the other classes related to Sonic (Animation, Inventory,etc)
+
+/**This is the main Sonic class. It runs all the other classes related to Sonic (Animation, Inventory, etc)
+ * 
+ * @author GeoSonicDash
+ */
+public class Sonic {
     private static int lastXCenterSonic;
     private static int lastYCenterSonic;
     private static int level;
@@ -34,18 +35,18 @@ public class Sonic {//This is the main Sonic class;
     private static PlayerMenu playerMenu;
     public Sonic(OverWorld overworld) {
         overWorld = overworld;
-        currentRoom = overWorld.getCurrentRoom();
-        owaR = new OWARemastered();               
+        currentRoom = overWorld.getCurrentRoom();                   
         animation =  new AnimationControl(this);    
         playerMenu = new PlayerMenu(this);
         currentRoom.addGUI(playerMenu);
+        owaR = new OWARemastered(this, animation);   
     }
     public void standard() {          
         if(!cutscene) {     
             lastXCenterSonic = owaR.getXCenterSonic();
             lastYCenterSonic = owaR.getYCenterSonic();
-            owaR.mainMethod(this, currentRoom, animation);   
-            animation.standard(currentRoom,lastXCenterSonic,lastYCenterSonic);
+            owaR.mainMethod(currentRoom);   
+            animation.standard(lastXCenterSonic,lastYCenterSonic);
         }
     }
     
@@ -88,6 +89,9 @@ public class Sonic {//This is the main Sonic class;
         rings += amount;
     }
     
+    /**Adds Sonic's picture and GUI to the new {@code Room} that Sonic is in.
+     * 
+     */
     public void addToNewRoom() {
         if(currentRoom != overWorld.getCurrentRoom()) {
             currentRoom = overWorld.getCurrentRoom();

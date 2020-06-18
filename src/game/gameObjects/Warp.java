@@ -11,8 +11,7 @@ import game.sonic.OWARemastered;
 import java.awt.Image;
 import java.awt.Rectangle;
 
-/**
- *
+/**Controls Warp implementation- controls warping Sonic to another room.
  * @author GeoSonicDash
  */
 public class Warp extends BasicObject {
@@ -29,6 +28,12 @@ public class Warp extends BasicObject {
         create(layer, xRef, yRef);
     }
     
+    /**
+     * This method is used to create Warp objects ONLY.
+     * @param layer layer of the Warp object, used to organize object in objectRoom's picture ArrayList (occurs in SaveLoadObjects class).
+     * @param xRef the x position of the Warp Object.
+     * @param yRef the y position of the Warp Object.
+     */
     private void create(int layer, int xRef, int yRef) {
         int length = 0;
         int width = 0;
@@ -48,6 +53,8 @@ public class Warp extends BasicObject {
     
     @Override
     public void interactWithSonic(OWARemastered owaR) {
+        /*It sets the currentRoom first (allows Sonic's picture to be added to the 
+        the other Room's picture arrayList), and then changes Sonic's position*/
         if(owaR.getIntersectBox().intersects(super.getIntersectBox())) {
             super.getObjectRoom().getOverWorld().setCurrentRoomType(pointRoom);
             owaR.setXDrawCenterSonic(xWarp);

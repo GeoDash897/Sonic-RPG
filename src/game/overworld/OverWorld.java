@@ -32,8 +32,7 @@ public class OverWorld {
             sonic = new Sonic(this); 
         } 
     }
-    /**
-     * Part of main game loop- generates the correct room ArrayList (if in new area), or runs the logic
+    /**Part of main game loop- generates the correct room ArrayList (if in new area), or runs the logic
      * of the current room that Sonic is in.
      */
     public void standard() {
@@ -46,15 +45,18 @@ public class OverWorld {
             if(currentRoom == null) {
                 currentRoom = getCurrentRoom();
             }
-            currentRoom.runRoom();          
-            sonic.standard();                                        
+            sonic.standard(); 
+            currentRoom.runRoom();                                                            
         }      
-    }   
+    }  
     
+    /**Part of main game loop- runs the drawing methods for current {@code Room} and Sonic
+     * @param g2 {@code Graphics2D} needed for drawing.
+     */
     public void draw(Graphics2D g2) {
-        getCurrentRoom().drawRoom(g2);
+        currentRoom.drawRoom(g2);
         sonic.draw(g2);
-        g2.drawString(""+currentRoomName,300,200);               
+        //g2.drawString(""+currentRoomName,300,200);               
     }
     
     public void generateRoomAL() {      
@@ -62,7 +64,7 @@ public class OverWorld {
         if(currentArea == AreaName.AREA_MEDIVAL) {
             roomLimit = 2;
             rooms.add(new Room(this, AreaName.AREA_MEDIVAL, MEDIVAL_SONIC_HOUSE));
-            rooms.add(new Room(this, AreaName.AREA_MEDIVAL, MEDIVAL_SONIC_TEST));    
+            rooms.add(new Room(this, AreaName.AREA_MEDIVAL, MEDIVAL_SONIC_TEST));
         }            
         if(rooms.size() == roomLimit) {
             System.out.println("Everything has been generated");
@@ -80,6 +82,14 @@ public class OverWorld {
         }
         return null;
     }
+    
+    /**Changes from current {@code Room} to a new {@Room}.
+     * <p>Process of transitioning (at the moment):</p> 
+     * 1. All of the gameObjects in the current {@code Room} are saved to text file.
+     * <p>2. {@code currentRoomName} and {@code currentRoom} are set based on {@code newRoom} </p> 
+     * <p>3. Current room variables in {@code sonic} package are updated to match changes. </p> 
+     * @param newRoom the {@code RoomType} of the room being transitioned to.
+     */
     public void setCurrentRoomType(RoomType newRoom) {
         getCurrentRoom().saveRoom();
         currentRoomName = newRoom;

@@ -1,9 +1,10 @@
+DIALOG
 READ
 SIGN::This is a picture of Sonic and Tails that is worn and torn with age. They are grinning at the camera and look
  like they are having a fun time. In the background there is a huge desert,
  with rolling dunes far into the distance. Tall skyscapers and buildings with bright lights and signs hover 
  behind them. People are shuffling in the foreground and the background of the picture as well- some laughing, 
- others talking, and few doing some.....questionable stuff. In the corner of the picture there is a blurred object 
+ others talking, and few of them are gambling their lives away. In the corner of the picture there is a blurred object 
  that looks like an alien arm, but it's too hard to make out. In the other corner, there are the numbers '01 in 
  old, smudged black ink.
 BREAK

@@ -11,8 +11,10 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 
-/**
- *
+/**Represents section of a gameObject's dialog that can be displayed on the 
+ *screen at once.
+ * Dialog includes: specific section of text, the name of the speaker, and an 
+ * image of the speaker (if there is any).
  * @author GeoSonicDash
  */
 public class Dialog {

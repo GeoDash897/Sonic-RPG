@@ -14,8 +14,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- *
+/**Controls very basic menu functions- drawing, navigating, and selecting options 
+ * (which are Strings).
  * @author GeoSonicDash
  */
 public class Menu {
@@ -30,25 +30,7 @@ public class Menu {
         menuType = mT;
         choices = new ArrayList<HashMap<Integer, String>>();  
         selectedOption = "";
-    }
-    
-    public void standard() {
-        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_LEFT)) {
-            leftPress();
-        } 
-        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_RIGHT)) {
-            rightPress();
-        }
-        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_UP)) {
-            upPress();
-        }
-        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_DOWN)) {
-            downPress();
-        }
-        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_Z)) {
-            zPress();
-        }
-    }
+    }   
     
     public void draw(Graphics2D g2) {
         g2.setColor(Color.WHITE);
@@ -89,6 +71,13 @@ public class Menu {
         selectedOption = choices.get(xIndex).get(yIndex);
     }
     
+    /**Adds option to a specific index of the menu.
+     * The index of the option can change depending on what kind of {@code MenuType} the 
+     * menu is (you can't have an xIndex greater than 0 for a vertical Menu).
+     * @param xIndex the xIndex of the menu option.
+     * @param yIndex the yIndex of the menu option.
+     * @param option the menu option itself.
+     */
     public void addOption(int xIndex, int yIndex, String option) {
         if(menuType != MenuType.MENUTYPE_VERTICAL && xIndex > choices.size()-1) {
             choices.add(new HashMap<Integer, String>());    

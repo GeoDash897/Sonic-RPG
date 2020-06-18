@@ -17,7 +17,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.Map;
 
-/**
+/**Controls implementation of Monitor gameObject.
  *
  * @author GeoSonicDash
  */
