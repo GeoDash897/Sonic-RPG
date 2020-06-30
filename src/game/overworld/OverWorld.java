@@ -83,7 +83,7 @@ public class OverWorld {
         return null;
     }
     
-    /**Changes from current {@code Room} to a new {@Room}.
+    /**Changes from current {@code Room} to a new {@code Room}.
      * <p>Process of transitioning (at the moment):</p> 
      * 1. All of the gameObjects in the current {@code Room} are saved to text file.
      * <p>2. {@code currentRoomName} and {@code currentRoom} are set based on {@code newRoom} </p> 

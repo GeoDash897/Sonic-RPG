@@ -6,6 +6,8 @@
 package game.items;
 
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,24 +18,44 @@ public class DefaultItem {
     private int yRef;
     private int length;
     private int width;
-    private int itemBaseCost;
-    private int itemBaseSell;
     private String itemName;
     private String itemDescription;
     private Image itemPicture;
-    public DefaultItem() {
-        
+    private ItemType itemType;
+    public DefaultItem(ArrayList<String> stats, ItemType itemType) {
+        this.xRef = Integer.valueOf(stats.get(1));
+        this.yRef = Integer.valueOf(stats.get(2));
+        this.length = Integer.valueOf(stats.get(3));
+        this.width = Integer.valueOf(stats.get(4));
+        this.itemName = stats.get(5).replaceAll("_", " ");
+        this.itemDescription = stats.get(stats.size()-1);
+        this.itemPicture = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\"+stats.get(6).replaceAll("_", " ")+".png");
+        this.itemType = itemType;
     }
-    public void createItem(int xRef, int yRef, int length, int width, int itemBaseCost, int itemBaseSell, String itemName, String itemDescription
-    ,Image itemPicture) {
-        this.xRef = xRef;
-        this.yRef = yRef;
-        this.length = length;
-        this.width = width;
-        this.itemBaseCost = itemBaseCost;
-        this.itemBaseSell = itemBaseSell;
-        this.itemName = itemName;
-        this.itemDescription = itemDescription;
-        this.itemPicture = itemPicture;
+    
+    public String getName() {
+        return itemName;
     }
+    
+    public Image getImage() {
+        return itemPicture;
+    }
+    
+    public ItemType getItemType() {
+        return itemType;
+    }
+
+    public String getItemDescription() {
+        return itemDescription;
+    }
+    
+    @Override
+    public String toString() {
+        return itemDescription;
+    }
+    
+    public enum ItemType {
+        ITEMTYPE_DEFAULT,
+        ITEMTYPE_SELLABLE
+    };
 }

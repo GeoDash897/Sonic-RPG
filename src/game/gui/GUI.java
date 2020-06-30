@@ -15,4 +15,5 @@ public interface GUI {
     public void standardGUI();
     void drawGUI(Graphics2D g2);   
     public boolean isVisible();
+    public void setVisible(boolean isVisible);
 }

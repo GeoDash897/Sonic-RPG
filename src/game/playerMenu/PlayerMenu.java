@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package game.sonic;
+package game.playerMenu;
 
+import game.playerMenu.OWMenuManager;
 import static game.Launcher.debugStat;
 import static game.Launcher.statusScreen;
 import game.gui.Menu;
@@ -23,29 +24,26 @@ import game.gui.GUI;
  * @author GeoSonicDash
  */
 public class PlayerMenu implements GUI {
-    private static int xRef;
-    private static int yRef;
-    private static boolean visible;
-    private static int currentMenuIndex;
-    private static ArrayList<Menu> menus;
-    private static Menu currentMenu;
-    private static Sonic sonic;
-    public PlayerMenu(Sonic temp) {
+    private int xRef;
+    private int yRef;
+    private boolean visible;
+    private int currentMenuIndex;
+    private ArrayList<Menu> menus;
+    private Menu currentMenu;
+    private OWMenuManager owMManager;
+    public PlayerMenu(OWMenuManager owMManager) {
         visible = false;
         currentMenuIndex = 0;
-        sonic = temp;
-        menus = new ArrayList<Menu>(2);
+        this.owMManager = owMManager;
+        menus = new ArrayList<Menu>(3);
         createMenu();       
     }
     
     private void createMenu() {
         menus.add(0, new Menu(MenuType.MENUTYPE_VERTICAL));
         menus.get(0).addOption(0, 0, "Status");
-        //menus.get(0).addOption(0, 1, "Inventory"); 
-        menus.get(0).addOption(0, 1, "Exit");
-        menus.add(1, new Menu(MenuType.MENUTYPE_VERTICAL));
-        menus.get(1).addOption(0, 0, "Exit");
-        System.out.println("Code Here");
+        menus.get(0).addOption(0, 1, "Inventory"); 
+        menus.add(1, new Menu(MenuType.MENUTYPE_VERTICAL));   
         currentMenu = menus.get(currentMenuIndex);
     }
     
@@ -53,29 +51,22 @@ public class PlayerMenu implements GUI {
      * 
      */
     @Override
-    public void standardGUI() {        
-        if(visible) {  
-            if(Sonic.getOWARAllowInput()) {
-                Sonic.setOWARAllowInput(false);
-                System.out.println(Sonic.getOWARAllowInput());
-            }
-            if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_LEFT)) {
-                leftPress();
-            } 
-            if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_RIGHT)) {
-                rightPress();
-            }
-            if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_UP)) {
-                upPress();
-            }
-            if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_DOWN)) {
-                downPress();
-            }
-            if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
-                xPress();
-            }    
-            currentMenu = menus.get(currentMenuIndex);
-        }        
+    public void standardGUI() {                   
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_LEFT)) {
+            leftPress();
+        } 
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_RIGHT)) {
+            rightPress();
+        }
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_UP)) {
+            upPress();
+        }
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_DOWN)) {
+            downPress();
+        }
+        if(PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
+            xPress();
+        }                     
     }   
     @Override
     public void drawGUI(Graphics2D g2) {
@@ -90,7 +81,8 @@ public class PlayerMenu implements GUI {
                     for(int j = 0; j < currentMenu.getChoices().get(i).size(); j++) {
                         g2.drawString(currentMenu.getChoices().get(i).get(j), xRef+50, yRef+100+(j*100));
                     }
-                }   g2.drawImage(currentMenu.getSelectionArrow(), xRef+50-14, yRef+100+(currentMenu.getYIndex()*100)-14, 14, 25, null);
+                }
+                g2.drawImage(currentMenu.getSelectionArrow(), xRef+50-14, yRef+100+(currentMenu.getYIndex()*100)-14, 14, 25, null);
                 break;
             case 1:
                 xRef = 250;
@@ -99,14 +91,13 @@ public class PlayerMenu implements GUI {
                 g2.fillRect(xRef, yRef, 1050, 600);
                 g2.setFont(statusScreen);
                 g2.setColor(Color.WHITE);
-                sonic.drawStatusStats(g2, xRef, yRef);                
-                //drawStatusStats(g2, xRef, yRef);
+                owMManager.getSonic().drawStatusStats(g2, xRef, yRef);                
                 g2.setFont(debugStat);                
                 g2.drawString(currentMenu.getChoices().get(0).get(0), xRef+50, yRef+525);
                 g2.drawImage(currentMenu.getSelectionArrow(), xRef+50-14, yRef+525+(currentMenu.getYIndex()*100)-14, 14, 25, null);
                 Image temp = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Victory Pose B.gif");
                 g2.drawImage(temp,xRef+200,yRef-30,576,576,null); 
-                break;
+                break;                
             default:
                 break;
         }
@@ -118,11 +109,12 @@ public class PlayerMenu implements GUI {
     @Override
     public boolean isVisible() {
         return visible;
-    }
-    
-    public static void setVisible(boolean temp) {
-        visible = temp;
-    }
+    }    
+
+    @Override
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }      
     
     public void leftPress() {
         if(currentMenu != null)
@@ -146,22 +138,24 @@ public class PlayerMenu implements GUI {
     
     public void xPress() {
         if(currentMenu != null) {
-            currentMenu.zPress();    
+            currentMenu.xPress();    
         }       
         if(currentMenuIndex == 0 && currentMenu.getSelectedChoice().equals("Status")) {           
             currentMenu.resetMenuPosition();
             currentMenuIndex++;            
         }
-        if(currentMenuIndex != 0 && currentMenu.getSelectedChoice().equals("Exit")) {
+        else if(currentMenuIndex == 0 && currentMenu.getSelectedChoice().equals("Inventory")) {           
+            currentMenu.resetMenuPosition();
+            owMManager.switchMenu(1);
+        } 
+        if(currentMenuIndex == 0 && currentMenu.getSelectedChoice().equals("Exit")) {
+            currentMenu.resetMenuPosition();              
+            owMManager.exitMenu();
+        } 
+        else if(currentMenuIndex == 1 && currentMenu.getSelectedChoice().equals("Exit")) {
             currentMenu.resetMenuPosition();
             currentMenuIndex--;
         }
-        else if(currentMenuIndex == 0 && currentMenu.getSelectedChoice().equals("Exit")) {
-            currentMenu.resetMenuPosition();
-            visible = false;
-            if(!Sonic.getOWARAllowInput()) {
-                Sonic.setOWARAllowInput(true);
-            }
-        }
+        currentMenu = menus.get(currentMenuIndex);
     }
 }

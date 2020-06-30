@@ -5,14 +5,11 @@
  */
 package game.gui;
 
-import game.input.PlayerInput;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**Controls very basic menu functions- drawing, navigating, and selecting options 
  * (which are Strings).
@@ -22,13 +19,15 @@ public class Menu {
     private MenuType menuType;
     private int xIndex;
     private int yIndex;
-    private ArrayList<HashMap<Integer, String>> choices;  
+    private ArrayList<ArrayList<String>> choices;  
     private Image selectionArrow;
     private String selectedOption;
     public Menu(MenuType mT) {
         selectionArrow = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Selection Arrow.png");
         menuType = mT;
-        choices = new ArrayList<HashMap<Integer, String>>();  
+        choices = new ArrayList<ArrayList<String>>();  
+        choices.add(new ArrayList<String>());
+        choices.get(0).add(0, "Exit");
         selectedOption = "";
     }   
     
@@ -67,7 +66,7 @@ public class Menu {
         } 
     }        
     
-    public void zPress() {
+    public void xPress() {
         selectedOption = choices.get(xIndex).get(yIndex);
     }
     
@@ -80,15 +79,33 @@ public class Menu {
      */
     public void addOption(int xIndex, int yIndex, String option) {
         if(menuType != MenuType.MENUTYPE_VERTICAL && xIndex > choices.size()-1) {
-            choices.add(new HashMap<Integer, String>());    
+            choices.add(new ArrayList<String>());    
             yIndex = 0;
         }
-        else if(menuType == MenuType.MENUTYPE_VERTICAL && choices.isEmpty()) {
-            choices.add(new HashMap<Integer, String>());
-            xIndex = 0;    
+        else if(menuType == MenuType.MENUTYPE_VERTICAL) {
+            xIndex = 0;
+            if(yIndex < 0) {
+                yIndex = 0;
+            }
         }
-        choices.get(xIndex).put(yIndex, option);
-        
+        choices.get(xIndex).add(yIndex, option);
+    }
+    
+    public void swapOption(int originalX, int originalY, int newX, int newY) {
+        if(menuType == MenuType.MENUTYPE_VERTICAL && choices.get(originalX).get(originalY) != null) {
+            if(newX == 0 && newY >= 0 && newY <= choices.get(originalX).size()) {
+                String optionAtOldSpot = choices.get(originalX).get(originalY);
+                String optionAtNewSpot = choices.get(newX).get(newY);
+                choices.get(newX).remove(newY);
+                choices.get(newX).add(newY, optionAtOldSpot);
+                choices.get(originalX).remove(originalY);
+                choices.get(originalX).add(originalY, optionAtNewSpot);
+            }
+        }
+    }
+    
+    public void removeOption(int xIndex, int yIndex) {
+        choices.get(xIndex).remove(yIndex);
     }
     
     public void setSelectedChoice(String temp) {
@@ -117,7 +134,7 @@ public class Menu {
         return selectionArrow;
     }
     
-    public ArrayList<HashMap<Integer, String>> getChoices() {
+    public ArrayList<ArrayList<String>> getChoices() {
         return choices;
     }
     
@@ -125,5 +142,19 @@ public class Menu {
         MENUTYPE_VERTICAL,
         MENUTYPE_HORIZONTAL,
         MENUTYPE_GRID
+    }
+    
+    @Override
+    public String toString() {
+        String temp = "";
+        for(int i = 0; i < choices.size(); i++) {
+            for(int j = 0; j < choices.get(i).size(); j++) {
+                System.out.print(choices.get(i).get(j));
+                System.out.println("  ");
+            }
+            System.out.println("");
+        }
+        System.out.println("");
+        return temp;
     }
 }

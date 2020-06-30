@@ -260,7 +260,7 @@ public class OWARemastered {
         }  
         if(grounded) {
             if(allowInput && xSpeed == 0 && groundSpeed == 0 && duckState == DuckState.STATE_NODUCK && PlayerInput.checkIsPressed(KeyEvent.VK_ENTER)) {
-                PlayerMenu.setVisible(true);
+                sonic.getOwMManager().setVisible(true);
             }
             if(springState == SpringState.STATE_SPRING) {
                 springState = SpringState.STATE_NOSPRING;

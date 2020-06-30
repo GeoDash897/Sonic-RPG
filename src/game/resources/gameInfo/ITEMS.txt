@@ -1,0 +1,12 @@
+SELLABLE:POTION
+0 0 25 25 Potion Potion 10 5
+POTION DESCRIPTION
+This is a pretty crap item, not
+ going to lie. It heals 5 health.
+POTION DESCRIPTION-END
+SELLABLE:BIG_POTION
+0 0 25 25 Big_Potion Big_Potion 11 6 
+BIG_POTION DESCRIPTION
+This potion is slightly better than the
+ regular potion. It tastes better?...
+BIG_POTION DESCRIPTION-END

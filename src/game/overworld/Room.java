@@ -38,6 +38,7 @@ public class Room {
      * Creates room Object (it's the constructor of the Room class).
      * @param overworld passed from OverWorld class, used here to send
      * instance of overworld to the DefaultObjects.
+     * @param area the name of the area that the {@code Room} belongs to.
      * @param roomType the type of room being created- influences the 
      * DefaultObjects and the Ground tiles that are going to be created in the room.
      */
@@ -123,6 +124,7 @@ public class Room {
     
     /**
      * Draws all of the game elements in the current Room (Ground tiles, gameObjects, Sonic)
+     * @param g2 {@code Graphics2D} object needed for drawing.
      */
     public void drawRoom(Graphics2D g2) {
         for(int i = 0; i < gameObjects.size(); i++) {

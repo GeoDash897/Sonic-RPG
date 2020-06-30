@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package game.sonic;
+import game.playerMenu.OWMenuManager;
+import game.items.Inventory;
 import game.overworld.OverWorld;
 import game.overworld.Room;
 import java.awt.Graphics2D;
@@ -30,15 +32,19 @@ public class Sonic {
     private static boolean bMenu = false;
     private static OverWorld overWorld;
     private static OWARemastered owaR;
+    private static Inventory itemInventory;
+    private static Inventory keyInventory;
     private static AnimationControl animation;
     private static Room currentRoom;
-    private static PlayerMenu playerMenu;
+    private OWMenuManager owMManager;
     public Sonic(OverWorld overworld) {
         overWorld = overworld;
-        currentRoom = overWorld.getCurrentRoom();                   
+        currentRoom = overWorld.getCurrentRoom();      
+        itemInventory = new Inventory(30);
+        keyInventory = new Inventory(5);
         animation =  new AnimationControl(this);    
-        playerMenu = new PlayerMenu(this);
-        currentRoom.addGUI(playerMenu);
+        owMManager = new OWMenuManager(this);
+        currentRoom.addGUI(owMManager);
         owaR = new OWARemastered(this, animation);   
     }
     public void standard() {          
@@ -66,6 +72,18 @@ public class Sonic {
     
     public OverWorld getOverWorld() {
         return overWorld;
+    }
+    
+    public Inventory getItemInventory() {
+        return itemInventory;
+    }
+    
+    public Inventory getKeyInventory() {
+        return keyInventory;
+    }
+    
+    public OWMenuManager getOwMManager() {
+        return owMManager;
     }
     
     public static boolean getOWARAllowInput() {
@@ -96,7 +114,7 @@ public class Sonic {
         if(currentRoom != overWorld.getCurrentRoom()) {
             currentRoom = overWorld.getCurrentRoom();
         }
-        currentRoom.addGUI(playerMenu);
+        currentRoom.addGUI(owMManager);
         animation.addToRoomPictureAL();
     }
 }

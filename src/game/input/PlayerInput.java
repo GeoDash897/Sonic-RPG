@@ -47,6 +47,7 @@ public class PlayerInput implements KeyListener {
     
     /**
      * Draws the variables of the current key(s) that are pressed.
+     * @param g2 {@code Graphics2D} object needed for drawing.
      */
     public void draw(Graphics2D g2) {
         if(GameLoop.getDebug()) {

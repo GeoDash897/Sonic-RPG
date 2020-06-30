@@ -159,6 +159,11 @@ public class Sign extends SolidObject implements GUI {
     public boolean isVisible() {
         return isVisible;
     }
+
+    @Override
+    public void setVisible(boolean isVisible) {
+        this.isVisible = isVisible;
+    }
         
     public enum SignType {
         SIGN_TEMP,
