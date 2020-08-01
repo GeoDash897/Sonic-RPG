@@ -20,18 +20,18 @@ import java.util.Map;
  * @author GeoSonicDash
  */
 public class AnimationControl implements Picture {//This will control Sonic's animations
-    private static int xDrawSonic;
-    private static int yDrawSonic;
-    private static int layer;
-    private static int animationTimer;
-    private static int animationFrame;
-    private static int sonicWidth;
-    private static int direction;
-    private static Image sonicPicture;
-    private static Map<AnimationName, Animation> animations;
-    private static Animation currentAnimation;
-    private static Sonic sonic;
-    public AnimationControl(Sonic temp) {
+    private int xDrawSonic;
+    private int yDrawSonic;
+    private int layer;
+    private int animationTimer;
+    private int animationFrame;
+    private int sonicWidth;
+    private int direction;
+    private Image sonicPicture;
+    private Map<AnimationName, Animation> animations;
+    private Animation currentAnimation;
+    private static PlayerManager manager;
+    public AnimationControl(PlayerManager man) {
         animationTimer = 1;
         animationFrame = 1;
         sonicWidth = 288;
@@ -39,14 +39,14 @@ public class AnimationControl implements Picture {//This will control Sonic's an
         direction = 1; 
         animations = LoadAnimations.getAnimationMap("SONIC");
         currentAnimation = animations.get(AnimationName.ANIMATION_SONIC_STAND);
-        sonic = temp;
+        manager = man;
         addFirstTime();
     }
     /**This adds Sonic's picture to the room that he spawns into.
      * 
      */
     private void addFirstTime() {
-        sonic.getCurrentRoom().addPicture(this);
+        manager.getCurrentRoom().addPicture(this);
     }
     
     /**Sets the x and y position for drawing Sonic's {@code Image},
@@ -96,7 +96,7 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     }
     
     public void addToRoomPictureAL() {
-        sonic.getCurrentRoom().addPicture(this);
+        manager.getCurrentRoom().addPicture(this);
     }
     
     public AnimationName getAnimationNumber() {

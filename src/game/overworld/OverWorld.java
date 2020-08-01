@@ -20,7 +20,7 @@ public class OverWorld {
     private static AreaName currentArea;
     private static RoomType currentRoomName;
     private static Room currentRoom;
-    private static Sonic sonic;
+    private static PlayerManager manager;
     public OverWorld() {
         rooms = new ArrayList<Room>();                
         generateEverything = false;
@@ -28,8 +28,8 @@ public class OverWorld {
         currentRoomName = MEDIVAL_SONIC_HOUSE;
         generateRoomAL();/*This needs to be run first in order to have an AL of rooms that Sonic
         can access (needed to obtain currentRoom- used to add Sonic's picture to pictureAL)*/
-        if(sonic == null) {
-            sonic = new Sonic(this); 
+        if(manager == null) {
+            manager = new PlayerManager(this); 
         } 
     }
     /**Part of main game loop- generates the correct room ArrayList (if in new area), or runs the logic
@@ -45,7 +45,7 @@ public class OverWorld {
             if(currentRoom == null) {
                 currentRoom = getCurrentRoom();
             }
-            sonic.standard(); 
+            manager.standard(); 
             currentRoom.runRoom();                                                            
         }      
     }  
@@ -55,7 +55,7 @@ public class OverWorld {
      */
     public void draw(Graphics2D g2) {
         currentRoom.drawRoom(g2);
-        sonic.draw(g2);
+        manager.draw(g2);
         //g2.drawString(""+currentRoomName,300,200);               
     }
     
@@ -94,7 +94,7 @@ public class OverWorld {
         getCurrentRoom().saveRoom();
         currentRoomName = newRoom;
         currentRoom = getCurrentRoom();
-        sonic.addToNewRoom();
+        manager.addToNewRoom();
     }
     
     public enum AreaName {

@@ -6,7 +6,7 @@
 package game.playerMenu;
 
 import game.gui.GUI;
-import game.sonic.Sonic;
+import game.sonic.PlayerManager;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
@@ -19,9 +19,9 @@ public class OWMenuManager implements GUI {
     private int index;
     private boolean isVisible;
     private ArrayList<GUI> guis;
-    private Sonic sonic;
-    public OWMenuManager(Sonic sonic) {
-        this.sonic = sonic;
+    private PlayerManager manager;
+    public OWMenuManager(PlayerManager manager) {
+        this.manager = manager;
         this.index = 0;
         guis = new ArrayList<GUI>(2);
         guis.add(new PlayerMenu(this));
@@ -30,8 +30,8 @@ public class OWMenuManager implements GUI {
     @Override
     public void standardGUI() {
         if(isVisible) {
-            if(Sonic.getOWARAllowInput()) {
-                Sonic.setOWARAllowInput(false);
+            if(manager.getCharacter(0).getOWARAllowInput()) {
+                manager.getCharacter(0).setOWARAllowInput(false);
             }
             guis.get(index).standardGUI();
         }        
@@ -49,16 +49,16 @@ public class OWMenuManager implements GUI {
     public void exitMenu() {
         isVisible = false;
         index = 0;
-        Sonic.setOWARAllowInput(true);
+        manager.getCharacter(0).setOWARAllowInput(true);
+    }
+    
+    public PlayerManager getPlayerManager() {
+        return manager;
     }
     
     @Override
     public boolean isVisible() {
         return isVisible;
-    }
-    
-    public Sonic getSonic() {
-        return sonic;
     }
 
     @Override

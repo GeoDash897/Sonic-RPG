@@ -5,7 +5,6 @@
  */
 package game.playerMenu;
 
-import game.playerMenu.OWMenuManager;
 import static game.Launcher.debugStat;
 import static game.Launcher.dialogFont;
 import static game.Launcher.statusScreen;
@@ -49,9 +48,9 @@ public class InventoryMenu implements GUI {
     }
     
     private void createMenu() {
-        menus.put(MenuName.MENUNAME_INVENTORY_ITEM, owMManager.getSonic().getItemInventory().getInventoryMenu());
+        menus.put(MenuName.MENUNAME_INVENTORY_ITEM, owMManager.getPlayerManager().getInventory(0).getInventoryMenu());
         drawMenuTrigger.put(MenuName.MENUNAME_INVENTORY_ITEM, true);
-        menus.put(MenuName.MENUNAME_INVENTORY_KEY, owMManager.getSonic().getKeyInventory().getInventoryMenu());
+        menus.put(MenuName.MENUNAME_INVENTORY_KEY, owMManager.getPlayerManager().getInventory(1).getInventoryMenu());
         drawMenuTrigger.put(MenuName.MENUNAME_INVENTORY_KEY, false);
         menus.put(MenuName.MENUNAME_ITEM_MENU, new Menu(MenuType.MENUTYPE_VERTICAL));
         drawMenuTrigger.put(MenuName.MENUNAME_ITEM_MENU, false);
@@ -198,10 +197,10 @@ public class InventoryMenu implements GUI {
     public Menu getRightMenu() {   
         switch(currentMenuName) {
             case MENUNAME_INVENTORY_ITEM:
-                item = owMManager.getSonic().getItemInventory().retriveItem(currentMenu.getYIndex());
+                item = owMManager.getPlayerManager().getInventory(0).retriveItem(currentMenu.getYIndex());
             break;
             case MENUNAME_INVENTORY_KEY:
-                item = owMManager.getSonic().getKeyInventory().retriveItem(currentMenu.getYIndex());
+                item = owMManager.getPlayerManager().getInventory(1).retriveItem(currentMenu.getYIndex());
             break;
         }       
         ItemType temp = item.getItemType();
@@ -327,10 +326,10 @@ public class InventoryMenu implements GUI {
         else if(currentMenuName == MenuName.MENUNAME_ITEM_MENU && currentMenu.getSelectedChoice().equals("Use")) {     
             int yCurrentItemPosition = menus.get(previous).getYIndex();
             if(previous == MenuName.MENUNAME_INVENTORY_ITEM) {
-                 owMManager.getSonic().getItemInventory().removeItem(yCurrentItemPosition);
+                 owMManager.getPlayerManager().getInventory(0).removeItem(yCurrentItemPosition);
             }
             else if(previous == MenuName.MENUNAME_INVENTORY_KEY) {
-                 owMManager.getSonic().getKeyInventory().removeItem(yCurrentItemPosition);
+                 owMManager.getPlayerManager().getInventory(1).removeItem(yCurrentItemPosition);
             }
             currentMenu.resetMenuPosition();         
             drawMenuTrigger.put(MenuName.MENUNAME_INVENTORY_ITEM, true);

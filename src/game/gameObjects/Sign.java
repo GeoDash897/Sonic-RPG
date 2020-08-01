@@ -13,7 +13,7 @@ import game.overworld.Room;
 import game.sonic.OWARemastered;
 import game.sonic.OWARemastered.DuckState;
 import game.sonic.OWARemastered.SpindashState;
-import game.sonic.Sonic;
+import game.sonic.PlayerManager.OWPosition;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -122,28 +122,29 @@ public class Sign extends SolidObject implements GUI {
         /*I moved navigating through the dialogs to here instead of action since it would make no sense
         (OWARemastered ins't disabled when dialog is displayed, meaning that this method still runs, making
         there be no reason to have it in action anymore. Also, it is much better to understand)*/
-        
-        /*First if statement displays the sign's text and disables Sonic's normal movement, the others control
-        navigating through the sign's text*/
-        if(Sonic.getOWARAllowInput() && owaR.getXSpeed() == 0 && owaR.getDuckState() == DuckState.STATE_NODUCK
-                && owaR.getSpindashState() == SpindashState.STATE_NOSPINDASH && owaR.getIntersectBox().intersects(super.getIntersectBox())
-                && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X) && dialogIndex == -1 && !justFinishedDialog) {
-                isVisible = true;
-                Sonic.setOWARAllowInput(false);
+        if(owaR.getOWPosition() == OWPosition.OWPOSITION_FRONT) {
+            /*First if statement displays the sign's text and disables PlayerCharacter's normal movement, the others control
+            navigating through the sign's text*/
+            if(owaR.getAllowInput() && owaR.getXSpeed() == 0 && owaR.getDuckState() == DuckState.STATE_NODUCK
+                    && owaR.getSpindashState() == SpindashState.STATE_NOSPINDASH && owaR.getIntersectBox().intersects(super.getIntersectBox())
+                    && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X) && dialogIndex == -1 && !justFinishedDialog) {
+                    isVisible = true;
+                    owaR.setAllowInput(false);
+                    dialogIndex++; 
+            }
+            else if(dialogIndex >= 0 && dialogIndex < dialogChain.size()-1 && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {               
                 dialogIndex++; 
-        }
-        else if(dialogIndex >= 0 && dialogIndex < dialogChain.size()-1 && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {               
-            dialogIndex++; 
-        }
-        else if(dialogIndex == dialogChain.size()-1 && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
-            resetConversation();
-        }
+            }
+            else if(dialogIndex == dialogChain.size()-1 && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
+                resetConversation(owaR);
+            }
+        }       
     }
    
-    public void resetConversation() {
+    public void resetConversation(OWARemastered owaR) {
         isVisible = false;
         justFinishedDialog = true;//Conversation just ended at this point
-        Sonic.setOWARAllowInput(true);
+        owaR.setAllowInput(true);
         dialogIndex = -1;
     }
     

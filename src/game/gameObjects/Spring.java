@@ -148,9 +148,9 @@ public class Spring extends SolidObject {
     public void interactWithSonic(OWARemastered owaR) {
         if(springType == SpringType.SPRING_REDUP || springType == SpringType.SPRING_YELLOWUP) {
             super.middleCollision(owaR); 
-            if(owaR.getXCenterSonic() > (int) super.getIntersectBox().getX() && owaR.getXCenterSonic() < (int) (super.getIntersectBox().getX()+
+            if(owaR.getXCenterPlayer() > (int) super.getIntersectBox().getX() && owaR.getXCenterPlayer() < (int) (super.getIntersectBox().getX()+
                 super.getIntersectBox().getWidth())) {
-                if(owaR.getYCenterSonic() < (int)super.getIntersectBox().getY() && owaR.getIntersectBox().intersects(super.getIntersectBox())) {
+                if(owaR.getYCenterPlayer() < (int)super.getIntersectBox().getY() && owaR.getIntersectBox().intersects(super.getIntersectBox())) {
                     performSpring(owaR);
                 }
             }

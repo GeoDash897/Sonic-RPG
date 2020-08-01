@@ -5,7 +5,6 @@
  */
 package game.playerMenu;
 
-import game.playerMenu.OWMenuManager;
 import static game.Launcher.debugStat;
 import static game.Launcher.statusScreen;
 import game.gui.Menu;
@@ -26,16 +25,18 @@ import game.gui.GUI;
 public class PlayerMenu implements GUI {
     private int xRef;
     private int yRef;
+    private int statusPosition;
     private boolean visible;
     private int currentMenuIndex;
     private ArrayList<Menu> menus;
     private Menu currentMenu;
     private OWMenuManager owMManager;
     public PlayerMenu(OWMenuManager owMManager) {
-        visible = false;
-        currentMenuIndex = 0;
+        this.visible = false;
+        this.currentMenuIndex = 0;
+        this.statusPosition = 0;
         this.owMManager = owMManager;
-        menus = new ArrayList<Menu>(3);
+        this.menus = new ArrayList<Menu>(3);
         createMenu();       
     }
     
@@ -91,7 +92,7 @@ public class PlayerMenu implements GUI {
                 g2.fillRect(xRef, yRef, 1050, 600);
                 g2.setFont(statusScreen);
                 g2.setColor(Color.WHITE);
-                owMManager.getSonic().drawStatusStats(g2, xRef, yRef);                
+                owMManager.getPlayerManager().getCharacter(statusPosition).drawStatusStats(g2, xRef, yRef);                
                 g2.setFont(debugStat);                
                 g2.drawString(currentMenu.getChoices().get(0).get(0), xRef+50, yRef+525);
                 g2.drawImage(currentMenu.getSelectionArrow(), xRef+50-14, yRef+525+(currentMenu.getYIndex()*100)-14, 14, 25, null);
@@ -117,8 +118,17 @@ public class PlayerMenu implements GUI {
     }      
     
     public void leftPress() {
-        if(currentMenu != null)
-        currentMenu.leftPress();
+        statusPosition--;
+        if(statusPosition  == -1) {
+            statusPosition = owMManager.getPlayerManager().getPartySize()-1;
+        }
+        else if(statusPosition == owMManager.getPlayerManager().getPartySize()-1) {
+            statusPosition = 0;
+        }
+            
+        if(currentMenu != null) {
+           currentMenu.leftPress(); 
+        }        
     }
     
     public void rightPress() {
@@ -149,6 +159,7 @@ public class PlayerMenu implements GUI {
             owMManager.switchMenu(1);
         } 
         if(currentMenuIndex == 0 && currentMenu.getSelectedChoice().equals("Exit")) {
+            statusPosition = 0;
             currentMenu.resetMenuPosition();              
             owMManager.exitMenu();
         } 

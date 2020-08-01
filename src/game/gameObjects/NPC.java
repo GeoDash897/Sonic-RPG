@@ -43,11 +43,11 @@ public class NPC extends Sign {
     public void interactWithSonic(OWARemastered owaR) {
         super.interactWithSonic(owaR);
         //Controls turning of NPC
-        if(turnable && Math.abs(owaR.getXCenterSonic()-super.getXRef()) <= 100) {
-            if(super.getDirection() == Direction.DIRECTION_LEFT && owaR.getXCenterSonic() >= super.getXRef()) {
+        if(turnable && Math.abs(owaR.getXCenterPlayer()-super.getXRef()) <= 100) {
+            if(super.getDirection() == Direction.DIRECTION_LEFT && owaR.getXCenterPlayer() >= super.getXRef()) {
                 super.setDirection(Direction.DIRECTION_RIGHT);
             }
-            else if(super.getDirection() == Direction.DIRECTION_RIGHT && owaR.getXCenterSonic() < super.getXRef()) {
+            else if(super.getDirection() == Direction.DIRECTION_RIGHT && owaR.getXCenterPlayer() < super.getXRef()) {
                 super.setDirection(Direction.DIRECTION_LEFT);
             }            
         }       
