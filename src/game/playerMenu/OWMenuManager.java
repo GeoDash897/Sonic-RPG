@@ -6,7 +6,7 @@
 package game.playerMenu;
 
 import game.gui.GUI;
-import game.sonic.PlayerManager;
+import game.player.PlayerManager;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 

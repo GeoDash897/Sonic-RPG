@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 package game.overworld;
+import game.player.PlayerManager;
 import game.overworld.Room.RoomType;
-import game.sonic.*;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import static game.overworld.Room.RoomType.MEDIVAL_SONIC_HOUSE;
@@ -37,7 +37,6 @@ public class OverWorld {
      */
     public void standard() {
         if(generateEverything == false) {
-            System.out.println("Code Ran");
             //Music.playTestAreaTheme(1, 0);
             generateRoomAL();//This generates correctRoomAL if the area changed           
         }      

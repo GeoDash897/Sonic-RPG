@@ -7,10 +7,6 @@ package game;
 
 import game.gameObjects.Monitor;
 import game.gameObjects.Monitor.MonitorType;
-import game.gameObjects.Sign;
-import game.gameObjects.Sign.SignType;
-import game.gameObjects.SkeletonNPC;
-import game.gameObjects.SkeletonNPC.NPCSkeletonType;
 import game.gameObjects.Spring;
 import game.gameObjects.Spring.SpringType;
 import game.gameObjects.Warp;
@@ -52,26 +48,26 @@ public class SaveLoadObjects {
     private static void createObject(String[] lineSplit, Room room) {
         String objectType = lineSplit[1].substring(0, lineSplit[1].length()-1);
         switch(objectType) {
-            case "Sign":
+            /*case "Sign":
                 Sign sign = new Sign(room, SignType.valueOf(lineSplit[2]), Integer.valueOf(lineSplit[3]), 
                         Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
                 room.addGameObject(sign);
                 room.addGUI(sign);
                 room.addPicture(sign);
-                break;
+                break;*/
             case "Monitor":
                 Monitor monitor = new Monitor(room, MonitorType.valueOf(lineSplit[2]), Integer.valueOf(lineSplit[3]), 
                         Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
                 room.addGameObject(monitor);
                 room.addPicture(monitor);
                 break;
-            case "SkeletonNPC":
+            /*case "SkeletonNPC":
                 SkeletonNPC sNPC = new SkeletonNPC(room, NPCSkeletonType.valueOf(lineSplit[2]), Integer.valueOf(lineSplit[3]), 
                         Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));
                 room.addGameObject(sNPC);
                 room.addGUI(sNPC);
                 room.addPicture(sNPC);
-                break;
+                break;*/
             case "Spring":
                 Spring spring = new Spring(room, SpringType.valueOf(lineSplit[2]), Integer.valueOf(lineSplit[3]), 
                         Integer.valueOf(lineSplit[4]), Integer.valueOf(lineSplit[5]));

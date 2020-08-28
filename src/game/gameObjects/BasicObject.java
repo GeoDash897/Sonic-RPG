@@ -9,7 +9,10 @@ import game.overworld.Ground;
 import game.overworld.Picture;
 import static game.gameObjects.BasicObject.Direction;
 import game.overworld.Room;
-import game.sonic.OWARemastered;
+import game.defunct.OWARemastered;
+import game.player.BasicOWA;
+import game.player.mario.MarioOWA;
+import game.player.sonic.SonicOWA;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -160,9 +163,15 @@ public class BasicObject implements Picture, Interactable  {
     }
    
     @Override
-    public void interactWithSonic(OWARemastered owaR) {
-        
+    public void interactWithMario(MarioOWA owaM) {
+        //Empty Space
     }
+    
+    @Override
+    public void interactWithSonic(SonicOWA owaS) {
+        //Empty Space
+    }
+    
     /**
      * This method corrects the yRef of BasicObject- helps to prevent it from being stuck
      * halfway into the ground (prevent it from looking wrong).

@@ -9,7 +9,12 @@ import game.LoadAnimations;
 import game.animation.Animation;
 import game.animation.Animation.AnimationName;
 import game.overworld.Room;
-import game.sonic.OWARemastered;
+import game.defunct.OWARemastered;
+import game.player.BasicOWA;
+import game.player.BasicOWA.SpringState;
+import game.player.mario.MarioOWA;
+import game.player.sonic.SonicOWA;
+import game.player.sonic.SonicOWA.RollState;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -144,46 +149,59 @@ public class Spring extends SolidObject {
         }
         super.setPicture(currentAnimation.getAnimationArray()[0]);
     }
+    
     @Override
-    public void interactWithSonic(OWARemastered owaR) {
+    public void interactWithMario(MarioOWA owaM) {
+        interactWithSpring(owaM);
+    }
+    
+    @Override
+    public void interactWithSonic(SonicOWA owaS) {
+        interactWithSpring(owaS);
+        if(owaS.getSpringState() == SpringState.STATE_SPRING) {
+            owaS.setRollState(RollState.STATE_NOROLL);
+        }
+    }
+    
+    public void interactWithSpring(BasicOWA owaB) {
         if(springType == SpringType.SPRING_REDUP || springType == SpringType.SPRING_YELLOWUP) {
-            super.middleCollision(owaR); 
-            if(owaR.getXCenterPlayer() > (int) super.getIntersectBox().getX() && owaR.getXCenterPlayer() < (int) (super.getIntersectBox().getX()+
+            super.middleCollision(owaB); 
+            if(owaB.getXDrawCenterPlayer() > (int) super.getIntersectBox().getX() && owaB.getXDrawCenterPlayer() < (int) (super.getIntersectBox().getX()+
                 super.getIntersectBox().getWidth())) {
-                if(owaR.getYCenterPlayer() < (int)super.getIntersectBox().getY() && owaR.getIntersectBox().intersects(super.getIntersectBox())) {
-                    performSpring(owaR);
+                if(owaB.getYSpriteCenterPlayer() < (int)super.getIntersectBox().getY() && owaB.getIntersectBox().intersects(super.getIntersectBox())) {
+                    performSpring(owaB);
                 }
             }
         }
         else {
-            if(owaR.getIntersectBox().intersects(super.getIntersectBox())) {
-                performSpring(owaR);
+            if(owaB.getIntersectBox().intersects(super.getIntersectBox())) {
+                performSpring(owaB);
             }
         }        
                
     }
     
-    /**Controls launching Sonic at the right speed after he intersects with a spring.
+    /**Controls launching the player at the right speed after he intersects with a spring.
      * 
-     * @param owaR instance of {@code OWARemastered}- used to obtain Sonic's overworld variables.
+     * @param owaB instance of {@code BasicOWA}- used to obtain the player's overworld variables.
      */
-    private void performSpring(OWARemastered owaR) {
+    private void performSpring(BasicOWA owaB) {
         if(yLaunchSpeed != 0) {
-            owaR.setYSpeed(yLaunchSpeed);
-            owaR.setXSpeed(xLaunchSpeed);
-            owaR.setGroundSpeed(0);
-            owaR.setSpringState(OWARemastered.SpringState.STATE_SPRING);
-            owaR.setJumpState(OWARemastered.JumpState.STATE_NOJUMP);           
+            owaB.setYSpeed(yLaunchSpeed);
+            owaB.setXSpeed(xLaunchSpeed);
+            owaB.setGroundSpeed(0);
+            owaB.setSpringState(BasicOWA.SpringState.STATE_SPRING);
+            owaB.setJumpState(BasicOWA.JumpState.STATE_NOJUMP);           
         }
         else {
             if(xLaunchSpeed < 0) {
-                owaR.getAnimationControl().setDirection(0);
+                owaB.getAnimationControl().setDirection(0);
             }
             else {
-                owaR.getAnimationControl().setDirection(1);
+                owaB.getAnimationControl().setDirection(1);
             }           
-            owaR.setGroundSpeed(xLaunchSpeed);
-            owaR.setSpringLock(true);
+            owaB.setGroundSpeed(xLaunchSpeed);
+            owaB.setSpringLock(true);
         }
         
         extend = true;

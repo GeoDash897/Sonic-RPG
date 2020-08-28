@@ -7,9 +7,11 @@ package game.gameObjects;
 
 import game.overworld.Room;
 import game.overworld.Room.RoomType;
-import game.sonic.OWARemastered;
-import game.sonic.PlayerManager;
-import game.sonic.PlayerManager.OWPosition;
+import game.player.BasicOWA;
+import game.player.PlayerManager;
+import game.player.PlayerManager.OWPosition;
+import game.player.mario.MarioOWA;
+import game.player.sonic.SonicOWA;
 import java.awt.Image;
 import java.awt.Rectangle;
 
@@ -54,23 +56,24 @@ public class Warp extends BasicObject {
     }
     
     @Override
-    public void interactWithSonic(OWARemastered owaR) {
-        /*It sets the currentRoom first (allows Sonic's picture to be added to the 
-        the other Room's picture arrayList), and then changes Sonic's position*/
-        if(owaR.getOWPosition() == OWPosition.OWPOSITION_FRONT && owaR.getIntersectBox().intersects(super.getIntersectBox())) {
+    public void interactWithMario(MarioOWA owaM) {
+        interactWithWarp(owaM);
+    }
+    
+    @Override
+    public void interactWithSonic(SonicOWA owaS) {
+        interactWithWarp(owaS);
+    }
+    
+    public void interactWithWarp(BasicOWA owaB) {
+        /*It sets the currentRoom first (allows the player's picture to be added to the 
+        the other Room's picture arrayList), and then changes the player's position*/
+        if(owaB.getOWPosition() == OWPosition.OWPOSITION_FRONT && owaB.getIntersectBox().intersects(super.getIntersectBox())) {
             super.getObjectRoom().getOverWorld().setCurrentRoomType(pointRoom);
-            if(owaR.getPartner() == null) {
-                owaR.setXDrawCenterSonic(xWarp);
+            if(owaB.getPartner() == null) {
+                owaB.setXDrawCenterPlayer(xWarp);
                 if(yWarp != -1) {
-                    owaR.setYSpriteCenterSonic(yWarp);   
-                }
-            }
-            else {
-                owaR.setXDrawCenterSonic(xWarp);
-                owaR.getPartner().getOWARemastered().setXDrawCenterSonic(xWarp);
-                if(yWarp != -1) {
-                    owaR.setYSpriteCenterSonic(yWarp);   
-                    owaR.getPartner().getOWARemastered().setYSpriteCenterSonic(yWarp);
+                    owaB.setYSpriteCenterPlayer(yWarp);   
                 }
             }
         }

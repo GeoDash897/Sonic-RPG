@@ -12,8 +12,6 @@ import game.gui.Menu.MenuType;
 import game.input.PlayerInput;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import game.gui.GUI;
@@ -94,10 +92,8 @@ public class PlayerMenu implements GUI {
                 g2.setColor(Color.WHITE);
                 owMManager.getPlayerManager().getCharacter(statusPosition).drawStatusStats(g2, xRef, yRef);                
                 g2.setFont(debugStat);                
-                g2.drawString(currentMenu.getChoices().get(0).get(0), xRef+50, yRef+525);
-                g2.drawImage(currentMenu.getSelectionArrow(), xRef+50-14, yRef+525+(currentMenu.getYIndex()*100)-14, 14, 25, null);
-                Image temp = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Sonic Victory Pose B.gif");
-                g2.drawImage(temp,xRef+200,yRef-30,576,576,null); 
+                g2.drawString(currentMenu.getChoices().get(0).get(0), xRef+50, yRef+575);
+                g2.drawImage(currentMenu.getSelectionArrow(), xRef+50-14, yRef+575+(currentMenu.getYIndex()*100)-14, 14, 25, null);                
                 break;                
             default:
                 break;

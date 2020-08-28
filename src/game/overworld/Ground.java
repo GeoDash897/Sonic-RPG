@@ -5,6 +5,7 @@
  */
 package game.overworld;
 
+import game.player.mario.MarioOWA;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -381,6 +382,15 @@ public class Ground implements Picture {
         }
         return null;    
     }
+    
+    public void hammerCollide(MarioOWA owaM) {
+        for(Rectangle pixelBox : pixelBoxes) {
+            if(owaM.getHammerHitbox().intersects(pixelBox)) {
+                owaM.setHammerState(MarioOWA.HammerState.STATE_PAUSEHAMMER);
+            }
+        }
+    }
+    
     @Override
     public String toString() {
         return "xIndex: "+xIndex+", yIndex: "+yIndex+", GroundType:"+groundType.toString()+", Layer: "+layer;

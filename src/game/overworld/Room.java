@@ -12,6 +12,8 @@ import game.gui.GUI;
 import game.overworld.OverWorld.AreaName;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,7 @@ public class Room {
     private SaveLoadObjects slo;
     private OverWorld overworld;    
     private static Draw draw;
+    private static Image temp;
     
     /**
      * Creates room Object (it's the constructor of the Room class).
@@ -53,6 +56,7 @@ public class Room {
         this.slo = new SaveLoadObjects();    
         if(draw == null) {
             draw = new Draw();   
+            temp = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Test.png");
         }       
         createRoom();
     }
@@ -137,6 +141,7 @@ public class Room {
             }
         }             
         Draw.drawInLayers(g2, pictures, guis);
+        g2.drawImage(temp, 1000, 448, 360, 360, null);
     }
     
     public void saveRoom() {

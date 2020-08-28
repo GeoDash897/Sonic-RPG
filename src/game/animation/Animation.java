@@ -67,7 +67,23 @@ public class Animation {
         return animationName;
     }
     
+    @Override
+    public String toString() {
+        return animationName.toString();
+    }
+    
     public enum AnimationName {
+        ANIMATION_MARIO_STAND,
+        ANIMATION_MARIO_THINK,
+        ANIMATION_MARIO_WALK,
+        ANIMATION_MARIO_RUN,       
+        ANIMATION_MARIO_PANIC,
+        ANIMATION_MARIO_JUMPUP,
+        ANIMATION_MARIO_JUMPDOWN,
+        ANIMATION_MARIO_DUCK,
+        ANIMATION_MARIO_SLEEP,
+        ANIMATION_MARIO_PUSH,
+        ANIMATION_MARIO_HAMMER,
         ANIMATION_SONIC_STAND,
         ANIMATION_SONIC_WAIT,
         ANIMATION_SONIC_WALK,

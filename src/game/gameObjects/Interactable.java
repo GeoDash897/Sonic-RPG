@@ -5,12 +5,14 @@
  */
 package game.gameObjects;
 
-import game.sonic.OWARemastered;
+import game.player.mario.MarioOWA;
+import game.player.sonic.SonicOWA;
 
 /**
  *
  * @author GeoSonicDash
  */
 public interface Interactable {
-    void interactWithSonic(OWARemastered owaR);
+    void interactWithSonic(SonicOWA owaS);
+    void interactWithMario(MarioOWA owaM);
 }
