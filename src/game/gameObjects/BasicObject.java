@@ -9,8 +9,6 @@ import game.overworld.Ground;
 import game.overworld.Picture;
 import static game.gameObjects.BasicObject.Direction;
 import game.overworld.Room;
-import game.defunct.OWARemastered;
-import game.player.BasicOWA;
 import game.player.mario.MarioOWA;
 import game.player.sonic.SonicOWA;
 import java.awt.Color;

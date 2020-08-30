@@ -103,7 +103,7 @@ public class Monitor extends SolidObject {
             }
         }
         else if(owaM.getHammerState() == HammerState.STATE_HAMMER) {
-            if(owaM.getHammerHitbox().intersects(super.getIntersectBox())) {
+            if(owaM.checkValidHammerHit(super.getIntersectBox())) {
                 super.getObjectRoom().removeGameObject(this);
                 super.getObjectRoom().removePicture(this);
             }

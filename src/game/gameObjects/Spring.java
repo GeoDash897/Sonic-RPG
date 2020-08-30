@@ -9,7 +9,6 @@ import game.LoadAnimations;
 import game.animation.Animation;
 import game.animation.Animation.AnimationName;
 import game.overworld.Room;
-import game.defunct.OWARemastered;
 import game.player.BasicOWA;
 import game.player.BasicOWA.SpringState;
 import game.player.mario.MarioOWA;
@@ -195,7 +194,7 @@ public class Spring extends SolidObject {
         }
         else {
             if(xLaunchSpeed < 0) {
-                owaB.getAnimationControl().setDirection(0);
+                owaB.getAnimationControl().setDirection(-1);
             }
             else {
                 owaB.getAnimationControl().setDirection(1);

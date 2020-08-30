@@ -531,7 +531,7 @@ public class BasicOWA {
         }
         else if(grounded && xSpeed == 0 && angle == 0 && !bLCollide && bRCollide && bLDistanceFromRect >= 48) {
             if(highRight != null) {
-                if(xDrawCenterPlayer <= highRight.getXRef()-4 && animation.getDirection() == 0) {
+                if(xDrawCenterPlayer <= highRight.getXRef()-4 && animation.getDirection() == -1) {
                     ledgeState = LedgeState.STATE_LEFTLEDGE;    
                 }
             }
@@ -551,7 +551,7 @@ public class BasicOWA {
             
         }
         else if(grounded && xSpeed == 0 && angle == 0 && !bLCollide && bRCollide && bLDistanceFromRect >= 48) {
-            if(xDrawCenterPlayer <= intersectBox.getX()-4 && animation.getDirection() == 0) {
+            if(xDrawCenterPlayer <= intersectBox.getX()-4 && animation.getDirection() == -1) {
                 ledgeState = LedgeState.STATE_LEFTLEDGE;    
             }
         }
@@ -561,7 +561,7 @@ public class BasicOWA {
         //Note!- The player can turn instantly in air, but NOT on the ground
         if(!grounded) {
             if(animation.getDirection() == 1) {
-                animation.setDirection(0);
+                animation.setDirection(-1);
             }            
             if(xSpeed > -5) {               
                 xSpeed -= AIR;    
@@ -649,11 +649,11 @@ public class BasicOWA {
             /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
             he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)*/     
             if(animation.getDirection() == 1 && mLCollide && grounded && groundSpeed == 0) {
-                animation.setDirection(0);
+                animation.setDirection(-1);
             }
             else if(animation.getDirection() == 1 && !mLCollide && groundSpeed < 0) {//If Sonic's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
             //completely (skid) before changing direction (can't change direction immediately)
-                animation.setDirection(0);
+                animation.setDirection(-1);
             }          
             if(groundSpeed > 0) {
                 if(duckState == DuckState.STATE_NODUCK) {
@@ -675,7 +675,7 @@ public class BasicOWA {
     public void rightPressNotGround() {
         //Note!- The player can turn instantly in air, but NOT on the ground
         if(!grounded) {
-            if(animation.getDirection() == 0) {
+            if(animation.getDirection() == -1) {
                 animation.setDirection(1);
             }
             if(xSpeed < 5) {               

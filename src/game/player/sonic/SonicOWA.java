@@ -257,7 +257,7 @@ public class SonicOWA extends BasicOWA {
         } 
         if(spindashState == SpindashState.STATE_SPINDASH && PlayerInput.checkIsJustReleased(KeyEvent.VK_DOWN)) {
             //I changed the initial groundSpeed from 8 to 10 since the spindash was too weak
-            if(super.getAnimationControl().getDirection() == 0) {
+            if(super.getAnimationControl().getDirection() == -1) {
                 super.setGroundSpeed(-10 - ((int)(spindashRev) / 2));//Negative since Sonic would be facing left
             }
             else if(super.getAnimationControl().getDirection() == 1) {
@@ -278,11 +278,11 @@ public class SonicOWA extends BasicOWA {
             /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
             he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)*/     
             if(super.getAnimationControl().getDirection() == 1 && super.getMLCollide() && super.getGroundSpeed() == 0) {
-                super.getAnimationControl().setDirection(0);
+                super.getAnimationControl().setDirection(-1);
             }
             else if(super.getAnimationControl().getDirection() == 1 && !super.getMLCollide() && super.getGroundSpeed() < 0) {//If Sonic's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
             //completely (skid) before changing direction (can't change direction immediately)
-                super.getAnimationControl().setDirection(0);
+                super.getAnimationControl().setDirection(-1);
             }   
             //Controls appropiate acceleration/decaceleration depending on Sonic's direction.
             double groundSp = super.getGroundSpeed();
@@ -316,10 +316,10 @@ public class SonicOWA extends BasicOWA {
             /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
             he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)
             */
-            if(super.getAnimationControl().getDirection() == 0 && super.getMRCollide() && super.getGroundSpeed() == 0) {
+            if(super.getAnimationControl().getDirection() == -1 && super.getMRCollide() && super.getGroundSpeed() == 0) {
                 super.getAnimationControl().setDirection(1);
             }
-            else if(super.getAnimationControl().getDirection() == 0 && !super.getMRCollide() && super.getGroundSpeed() > 0) {//If Sonic's groundSpeed is less than 1, set his direction to 1 (right), this makes it so the player has to stop 
+            else if(super.getAnimationControl().getDirection() == -1 && !super.getMRCollide() && super.getGroundSpeed() > 0) {//If Sonic's groundSpeed is less than 1, set his direction to 1 (right), this makes it so the player has to stop 
             //(completely skid) before changing direction (can't change direction immediately)
                 super.getAnimationControl().setDirection(1);
             }

@@ -27,7 +27,6 @@ public class MarioOWA extends BasicOWA {
     private int xHammerHitbox;
     private int yHammerHitbox;
     private int sideHammerHitbox;
-    private int hammerMulti;
     private int waitTimer;
     private int hammerTimer;
     
@@ -42,7 +41,6 @@ public class MarioOWA extends BasicOWA {
         this.xHammerHitbox = -128;
         this.yHammerHitbox = -128;
         this.sideHammerHitbox = 48;
-        this.hammerMulti = 1;
     }
     
     public void mainMethod(Room cR) {
@@ -211,18 +209,17 @@ public class MarioOWA extends BasicOWA {
         }
     }   
     
-    private void performHammer() { 
+    private void performHammer() {
+        int tempMulti = super.getAnimationControl().getDirection();
         if(super.isGrounded() && super.getAngle() == 0 && super.getDuckState() == DuckState.STATE_NODUCK 
         && hammerState == HammerState.STATE_NOHAMMER && PlayerInput.checkIsPressedOnce(KeyEvent.VK_X)) {
             //Make sure the hammer's hitBox moves in the right direction (left of Mario or right of him)
             super.setGroundSpeed(0);
             super.setXSpeed(0);
-            if(super.getAnimationControl().getDirection() == 0) {
-                hammerMulti = -1;
+            if(super.getAnimationControl().getDirection() == -1) {
                 xHammerHitbox = super.getXDrawCenterPlayer() + 64;
             }
             else {
-                hammerMulti = 1;
                 xHammerHitbox = super.getXDrawCenterPlayer() - 124;
             }
             hammerState = HammerState.STATE_HAMMER;           
@@ -234,18 +231,18 @@ public class MarioOWA extends BasicOWA {
         if(hammerState == HammerState.STATE_HAMMER && hammerTimer < 49) {           
             //Moves the hammer's hitbox along with the hammer's arc
             if(hammerTimer%1 == 0 && hammerTimer < 15) {
-                xHammerHitbox += (hammerMulti * 4);
+                xHammerHitbox += (tempMulti * 4);
                 yHammerHitbox -= 8;
             }
             else if(hammerTimer%1 == 0 && hammerTimer >= 15 && hammerTimer < 30) {
-                xHammerHitbox += (hammerMulti * 4);
+                xHammerHitbox += (tempMulti * 4);
             }
             else if(hammerTimer%1 == 0 && hammerTimer >= 30 && hammerTimer < 49) {
-                xHammerHitbox += (hammerMulti * 4);
+                xHammerHitbox += (tempMulti * 4);
                 yHammerHitbox += 8;
             }     
             int xBottomIndex = 0;
-            if(super.getAnimationControl().getDirection() == 0) {
+            if(super.getAnimationControl().getDirection() == -1) {
                 xBottomIndex = xHammerHitbox/64;
             }
             else {
@@ -276,6 +273,10 @@ public class MarioOWA extends BasicOWA {
         }
     }
     
+    public boolean checkValidHammerHit(Rectangle intersect) {
+        return hammerTimer == 48 && hammerHitbox.intersects(intersect);
+    }
+    
     public void leftPress() {
         //Note!- Mario can turn instantly in air, but NOT on the ground
         if(!super.isGrounded()) {
@@ -285,11 +286,11 @@ public class MarioOWA extends BasicOWA {
             /*Added to fix bug where if Mario was against a wall, tapped the another direction and then pushed toward the wall,
             he would be pushing the wrong way (this is because Sonic can't change his direction since his groundSpeed would be 0)*/     
             if(super.getAnimationControl().getDirection() == 1 && super.getMLCollide() && super.getGroundSpeed() == 0) {
-                super.getAnimationControl().setDirection(0);
+                super.getAnimationControl().setDirection(-1);
             }
             else if(super.getAnimationControl().getDirection() == 1 && !super.getMLCollide() && super.getGroundSpeed() < 0) {//If Mario's groundSpeed is less than 0, set his direction to 0 (left), this makes it so the player has to stop 
             //completely (skid) before changing direction (can't change direction immediately)
-                super.getAnimationControl().setDirection(0);
+                super.getAnimationControl().setDirection(-1);
             }   
             //Controls appropiate acceleration/decaceleration depending on Mario's direction.
             double groundSp = super.getGroundSpeed();
@@ -319,10 +320,10 @@ public class MarioOWA extends BasicOWA {
             /*Added to fix bug where if Sonic was against a wall, tapped the another direction and then pushed toward the wall,
             he would be pushing the wrong way (this is because Mario can't change his direction since his groundSpeed would be 0)
             */
-            if(super.getAnimationControl().getDirection() == 0 && super.getMRCollide() && super.getGroundSpeed() == 0) {
+            if(super.getAnimationControl().getDirection() == -1 && super.getMRCollide() && super.getGroundSpeed() == 0) {
                 super.getAnimationControl().setDirection(1);
             }
-            else if(super.getAnimationControl().getDirection() == 0 && !super.getMRCollide() && super.getGroundSpeed() > 0) {//If Mario's groundSpeed is less than 1, set his direction to 1 (right), this makes it so the player has to stop 
+            else if(super.getAnimationControl().getDirection() == -1 && !super.getMRCollide() && super.getGroundSpeed() > 0) {//If Mario's groundSpeed is less than 1, set his direction to 1 (right), this makes it so the player has to stop 
             //(completely skid) before changing direction (can't change direction immediately)
                 super.getAnimationControl().setDirection(1);
             }

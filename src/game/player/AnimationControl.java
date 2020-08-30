@@ -82,7 +82,7 @@ public class AnimationControl implements Picture {//This will control Sonic's an
                 animationTimer = currentAnimation.getResetAnimationTimer();
             }
         }       
-        if(direction == 0) {
+        if(direction == -1) {
             characterPicture = currentAnimation.getLeftAnimationArray()[animationFrame-1];
         }
         else {

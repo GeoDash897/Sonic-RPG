@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package game.player;
-import game.defunct.OWARemastered;
 import game.player.PlayerManager.OWPosition;
 import game.player.mario.MarioOWA;
 import game.player.sonic.SonicOWA;
@@ -33,7 +32,6 @@ public class PlayerCharacter {
     private boolean cutscene = false;
     private boolean bMenu = false;
     private static PlayerManager manager;   
-    private OWARemastered owaR;
     private MarioOWA marioOWA;
     private SonicOWA sonicOWA;
     private OWPosition owPosition;
@@ -73,10 +71,7 @@ public class PlayerCharacter {
         }
     }
     
-    public void draw(Graphics2D g2) {
-        if(owaR != null) {
-            //owaR.drawDebug(g2);    
-        }  
+    public void draw(Graphics2D g2) { 
         //sonicOWA.drawDebug(g2);
         marioOWA.drawDebug(g2);
     }
@@ -103,10 +98,6 @@ public class PlayerCharacter {
     
     public AnimationControl getAnimationControl() {
         return animation;
-    }
-    
-    public OWARemastered getOWARemastered() {
-        return owaR;
     }
     
     public boolean getOWARAllowInput() {
