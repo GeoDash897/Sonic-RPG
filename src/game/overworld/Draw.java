@@ -27,10 +27,12 @@ public class Draw {
         for(int i = 0; i < listOfObjects.size(); i++) { 
             listOfObjects.get(i).draw(g2);
         }
-        for(GUI temp : guis) {
-            if(temp.isVisible()) {
-               temp.drawGUI(g2);
-            }
-        }
+        if(guis != null) {
+            for(GUI temp : guis) {
+                if(temp.isVisible()) {
+                   temp.drawGUI(g2);
+                }
+            } 
+        }       
     }
 }

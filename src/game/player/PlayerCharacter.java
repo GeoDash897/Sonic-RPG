@@ -6,6 +6,7 @@
 package game.player;
 import game.player.PlayerManager.OWPosition;
 import game.player.mario.MarioOWA;
+import game.player.randomBattle.PlayerBattleCharacter;
 import game.player.sonic.SonicOWA;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -28,29 +29,32 @@ public class PlayerCharacter {
     private int attack;
     private int defense;
     private int speed;   
-    private int owPowerUp = 0;
     private boolean cutscene = false;
     private boolean bMenu = false;
+    
     private static PlayerManager manager;   
     private MarioOWA marioOWA;
-    private SonicOWA sonicOWA;
-    private OWPosition owPosition;
-    private PlayerName playerName;
+    private SonicOWA sonicOWA;   
     private AnimationControl animation;
+    private PlayerBattleCharacter playerBC;
+    
+    private PlayerName playerName;
+    private OWPosition owPosition;
+    
     public PlayerCharacter(PlayerManager man, PlayerName playerName, OWPosition owPosition, int x, int y) {
         manager = man;
         this.playerName = playerName;
         this.owPosition = owPosition;
         this.animation =  new AnimationControl(manager, this);      
         if(playerName == PlayerName.PLAYERNAME_SONIC) {
-            //this.owaR = new OWARemastered(man, owPosition, animation, x, y);
             this.sonicOWA = new SonicOWA(man, owPosition, animation, x, y);           
         }
         else if(playerName == PlayerName.PLAYERNAME_MARIO) {
-            this.marioOWA = new MarioOWA(man, owPosition, animation, x, y);       
-        }       
+            this.marioOWA = new MarioOWA(man, owPosition, animation, x, y);              
+        }    
+        this.playerBC = new PlayerBattleCharacter(this);
     }
-    public void standard() {          
+    public void OWAStandard() {          
         if(!cutscene) {     
             if(playerName == PlayerName.PLAYERNAME_SONIC) {
                 lastXCenterPlayer = sonicOWA.getXDrawCenterPlayer();
@@ -62,15 +66,10 @@ public class PlayerCharacter {
                 lastYCenterPlayer = marioOWA.getYDrawCenterSonic();
                 marioOWA.mainMethod(manager.getCurrentRoom());
             }
-            /*if(playerName == PlayerName.PLAYERNAME_SONIC) {
-                lastXCenterPlayer = owaR.getXCenterPlayer();
-                lastYCenterPlayer = owaR.getYCenterPlayer();
-                owaR.mainMethod(manager.getCurrentRoom());
-            }*/
             animation.standard(lastXCenterPlayer,lastYCenterPlayer);
         }
     }
-    
+       
     public void draw(Graphics2D g2) { 
         //sonicOWA.drawDebug(g2);
         marioOWA.drawDebug(g2);
@@ -100,6 +99,10 @@ public class PlayerCharacter {
         return animation;
     }
     
+    public PlayerBattleCharacter getPlayerBattleCharacter() {
+        return playerBC;
+    }
+    
     public boolean getOWARAllowInput() {
         if(manager.getCharacter(0).getPlayerName() == PlayerName.PLAYERNAME_SONIC) {
             return sonicOWA.isInputAllowed();
@@ -116,24 +119,12 @@ public class PlayerCharacter {
         else {
             marioOWA.setAllowInput(temp);
         }
-    }   
-          
-    public int getOWPowerUp() {
-        return owPowerUp;
-    }
-    
-    public void changeOWPowerUp(int change) {
-        owPowerUp = change;
-    }
+    }             
     
     public PlayerName getPlayerName() {
         return playerName;
     }
-    
-    public void increaseRings(int amount) {
-        rings += amount;
-    }
-    
+   
     public enum PlayerName {
         PLAYERNAME_SONIC,
         PLAYERNAME_MARIO

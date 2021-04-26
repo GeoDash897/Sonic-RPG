@@ -5,7 +5,6 @@
  */
 package game.overworld;
 
-import game.overworld.Room.RoomType;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -16,18 +15,18 @@ import java.awt.Toolkit;
  */
 public class Background implements Picture {
     private Image background;
-    public Background(RoomType roomType) {
-        getImage(roomType);
+    public Background(String fileName) {
+        getImage(fileName);
     }
     
-    private void getImage(RoomType roomType) {
-        String temp = String.valueOf(roomType);
+    private void getImage(String fileName) {
+        String temp = String.valueOf(fileName);
         background = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\backgrounds\\"+temp+" Background.png");
     }
     
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(background, 0, 0, 1920, 1080, null);
+        g2.drawImage(background, -250, 0, 1920, 1080, null);
     }
 
     @Override

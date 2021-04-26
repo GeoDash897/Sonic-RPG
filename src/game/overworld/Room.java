@@ -10,10 +10,8 @@ import game.gameObjects.BasicObject;
 import static game.overworld.Ground.GroundType.*;
 import game.gui.GUI;
 import game.overworld.OverWorld.AreaName;
-import java.awt.Color;
+import game.randombattle.RandomBattle;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,14 +26,17 @@ import java.util.Map;
 public class Room {
     private RoomType roomType;
     private AreaName area;
+    
     private ArrayList<Map<Integer, Ground>> groundGrid;
     private ArrayList<Picture> pictures;
     private ArrayList<GUI> guis;
     private ArrayList<BasicObject> gameObjects;
+    
     private SaveLoadObjects slo;
-    private OverWorld overworld;    
+    private OverWorld overworld;   
+    private RandomBattle randomBattle;
+    
     private static Draw draw;
-    private static Image temp;
     
     /**
      * Creates room Object (it's the constructor of the Room class).
@@ -53,10 +54,10 @@ public class Room {
         this.pictures = new ArrayList<Picture>();
         this.guis = new ArrayList<GUI>();
         this.gameObjects = new ArrayList<BasicObject>();
-        this.slo = new SaveLoadObjects();    
+        this.slo = new SaveLoadObjects();  
+        this.randomBattle = null;
         if(draw == null) {
-            draw = new Draw();   
-            temp = Toolkit.getDefaultToolkit().getImage("src\\game\\resources\\Test.png");
+            draw = new Draw();              
         }       
         createRoom();
     }
@@ -65,7 +66,7 @@ public class Room {
      * Creates the Ground tiles and DefaultObjects in the room.
      */
     private void createRoom() {
-        pictures.add(new Background(roomType));
+        pictures.add(new Background(roomType.toString()));
         if(roomType == RoomType.MEDIVAL_SONIC_HOUSE) {
             for(int i = 0; i < 24; i ++) {
                 createTile(GRD_SONICHOUSE_WOODPLANK,1,0+(i*64),0,1);
@@ -115,15 +116,20 @@ public class Room {
     /**
      * Runs the action methods of DefaultObjects.
      */
-    public void runRoom() {         
-        for(BasicObject temp : gameObjects) {
+    public void runRoom() {
+        if(randomBattle == null) {
+            randomBattle = new RandomBattle(this);
+            randomBattle.firstTimeSetUp();
+        }
+        /*for(BasicObject temp : gameObjects) {
             temp.action();
         }
         for(GUI temp : guis) {
             if(temp.isVisible()) {
                temp.standardGUI();
             }
-        }
+        }*/
+        randomBattle.battleStandard();
     }
     
     /**
@@ -131,7 +137,7 @@ public class Room {
      * @param g2 {@code Graphics2D} object needed for drawing.
      */
     public void drawRoom(Graphics2D g2) {
-        for(int i = 0; i < gameObjects.size(); i++) {
+        /*for(int i = 0; i < gameObjects.size(); i++) {
             g2.drawString(gameObjects.get(i).toString(),500, 100+(25*i));
         }
         g2.setColor(Color.MAGENTA);
@@ -140,8 +146,8 @@ public class Room {
                 g2.drawRect(0+(i*64), 0+(j*64), 64, 64);
             }
         }             
-        Draw.drawInLayers(g2, pictures, guis);
-        g2.drawImage(temp, 1000, 448, 360, 360, null);
+        Draw.drawInLayers(g2, pictures, guis);*/
+        randomBattle.draw(g2);
     }
     
     public void saveRoom() {
@@ -230,6 +236,10 @@ public class Room {
         if(!check) {
             guis.add(add);
         }       
+    }
+    
+    public RandomBattle getRandomBattle() {
+        return randomBattle;
     }
     
     public AreaName getAreaName() {
