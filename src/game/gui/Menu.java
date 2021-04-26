@@ -35,7 +35,8 @@ public class Menu {
         g2.setColor(Color.WHITE);
         g2.drawString("xIndex: "+xIndex, 1250, 400);
         g2.drawString("yIndex: "+yIndex, 1250, 425);
-        g2.drawString("String: "+selectedOption, 1250, 450);
+        g2.drawString("Selected Choice: "+selectedOption, 1250, 450);
+        g2.drawString("Highlighted Choice: "+choices.get(xIndex).get(yIndex), 1250, 475);
     }
     
     public void leftPress() {
@@ -88,7 +89,12 @@ public class Menu {
                 yIndex = 0;
             }
         }
-        choices.get(xIndex).add(yIndex, option);
+        try {
+            choices.get(xIndex).set(yIndex, option);
+        }
+        catch(IndexOutOfBoundsException  ex) {
+            choices.get(xIndex).add(yIndex, option);
+        }
     }
     
     public void swapOption(int originalX, int originalY, int newX, int newY) {
@@ -104,16 +110,24 @@ public class Menu {
         }
     }
     
+    public String getOption(int xIndex, int yIndex) {
+        return choices.get(xIndex).get(yIndex);
+    }
+    
     public void removeOption(int xIndex, int yIndex) {
         choices.get(xIndex).remove(yIndex);
+    }
+    
+    public String getSelectedChoice() {
+        return selectedOption;
     }
     
     public void setSelectedChoice(String temp) {
         selectedOption = temp;
     }
     
-    public String getSelectedChoice() {
-        return selectedOption;
+    public String getHighlightedChoice() {
+        return choices.get(xIndex).get(yIndex);
     }
     
     public int getXIndex() {
@@ -146,15 +160,9 @@ public class Menu {
     
     @Override
     public String toString() {
-        String temp = "";
-        for(int i = 0; i < choices.size(); i++) {
-            for(int j = 0; j < choices.get(i).size(); j++) {
-                System.out.print(choices.get(i).get(j));
-                System.out.println("  ");
-            }
-            System.out.println("");
+        for(int i = 0; i < choices.get(0).size(); i++) {
+            System.out.println(choices.get(0).get(i));
         }
-        System.out.println("");
-        return temp;
+        return "";
     }
 }

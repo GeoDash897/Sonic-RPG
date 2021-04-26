@@ -163,19 +163,19 @@ public class SonicOWA extends BasicOWA {
                 waitTimer = 0;
             }         
             if(Math.abs(super.getGroundSpeed()) > 0.5 && Math.abs(super.getGroundSpeed()) < 6 && (!super.getMLCollide() || !super.getMRCollide())) {
-                if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_WALK) {
+                if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_WALK) {
                     super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_WALK);    
                 }
             }
             else if(Math.abs(super.getGroundSpeed()) >= 6) {//Controls when Sonic's running animation plays
-                if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_RUN) {
+                if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_RUN) {
                     super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_RUN);    
                 }
             }
-            if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && super.getMLCollide() && super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_PUSH) {
+            if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && super.getMLCollide() && super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_PUSH) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_PUSH);
             }
-            else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT) && super.getMRCollide() && super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_PUSH) {
+            else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT) && super.getMRCollide() && super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_PUSH) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_PUSH);
             }
         }
@@ -184,38 +184,38 @@ public class SonicOWA extends BasicOWA {
         }
         if(super.getLedgeState() == BasicOWA.LedgeState.STATE_LEFTLEDGE && super.getDuckState() == BasicOWA.DuckState.STATE_NODUCK 
                 && rollState  == RollState.STATE_NOROLL) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_TRIPA) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_TRIPA) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_TRIPA);    
             }
         }
         else if(super.getLedgeState() == BasicOWA.LedgeState.STATE_RIGHTLEDGE && super.getDuckState() == BasicOWA.DuckState.STATE_NODUCK 
                 && rollState  == RollState.STATE_NOROLL) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_TRIPA) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_TRIPA) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_TRIPA);    
             }
         }
         if(super.getJumpState() == BasicOWA.JumpState.STATE_JUMP_UP || super.getJumpState() == BasicOWA.JumpState.STATE_JUMP_DOWN) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_JUMP) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_JUMP) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_JUMP);   
             }
         }
         if(super.getDuckState() == BasicOWA.DuckState.STATE_DUCK && spindashState == SpindashState.STATE_NOSPINDASH) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_DUCK) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_DUCK) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_DUCK);   
             }
         }
         else if(super.getDuckState() == BasicOWA.DuckState.STATE_NODUCK && rollState  == RollState.STATE_ROLL) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_JUMP) {               
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_JUMP) {               
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_JUMP);   
             }
         }
         if(spindashState == SpindashState.STATE_SPINDASH) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_SPINDASH) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_SPINDASH) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_SPINDASH);   
             }
         }
         if(super.getSpringState() == BasicOWA.SpringState.STATE_SPRING && !super.isGrounded()) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_SPRING) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_SPRING) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_SPRING);   
             }
         }
@@ -224,17 +224,17 @@ public class SonicOWA extends BasicOWA {
     private void idleAnimation() {
         waitTimer++;
         if(waitTimer < 988) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_STAND) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_STAND) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_STAND);               
             }                   
         }
         else if(waitTimer >= 998 && waitTimer < 3000) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_WAIT) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_WAIT) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_WAIT);               
             }
         }
         else if(waitTimer >= 3000 && waitTimer < 3001) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_SONIC_BORED) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_SONIC_BORED) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_SONIC_BORED);               
             }
         }

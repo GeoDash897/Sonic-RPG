@@ -99,7 +99,7 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     public void draw(Graphics2D g2) { 
         g2.setFont(debugStat);
         g2.setColor(Color.ORANGE);
-        g2.drawString(toString(), 200, 300);
+        //g2.drawString(toString(), 200, 300);
         g2.drawImage(characterPicture,xDrawCharacter,yDrawCharacter,characterWidth,characterWidth, null);
         g2.setColor(Color.MAGENTA);
         g2.fillRect(xDrawCharacter+(characterWidth/2),yDrawCharacter+(characterWidth/2),4,4);
@@ -112,8 +112,8 @@ public class AnimationControl implements Picture {//This will control Sonic's an
     public void addToRoomPictureAL() {
         manager.getCurrentRoom().addPicture(this);
     }
-    
-    public AnimationName getAnimationNumber() {
+       
+    public AnimationName getAnimationName() {
         return currentAnimation.getAnimationName();
     }
     

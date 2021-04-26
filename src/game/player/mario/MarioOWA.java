@@ -131,19 +131,19 @@ public class MarioOWA extends BasicOWA {
                 waitTimer = 0;
             }         
             if(Math.abs(super.getGroundSpeed()) > 0.5 && Math.abs(super.getGroundSpeed()) < 6 && (!super.getMLCollide() || !super.getMRCollide())) {
-                if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_WALK) {
+                if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_WALK) {
                     super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_WALK);    
                 }
             }
             else if(Math.abs(super.getGroundSpeed()) >= 6) {//Controls when Sonic's running animation plays
-                if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_RUN) {
+                if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_RUN) {
                     super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_RUN);    
                 }
             }
-            if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && super.getMLCollide() && super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_PUSH) {
+            if(PlayerInput.checkIsPressed(KeyEvent.VK_LEFT) && super.getMLCollide() && super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_PUSH) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_PUSH);
             }
-            else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT) && super.getMRCollide() && super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_PUSH) {
+            else if(PlayerInput.checkIsPressed(KeyEvent.VK_RIGHT) && super.getMRCollide() && super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_PUSH) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_PUSH);
             }
         }
@@ -151,37 +151,37 @@ public class MarioOWA extends BasicOWA {
             waitTimer = 0;
         }
         if(super.getLedgeState() == BasicOWA.LedgeState.STATE_LEFTLEDGE && hammerState == HammerState.STATE_NOHAMMER && super.getDuckState() == BasicOWA.DuckState.STATE_NODUCK) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_PANIC) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_PANIC) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_PANIC);    
             }
         }
         else if(super.getLedgeState() == BasicOWA.LedgeState.STATE_RIGHTLEDGE && hammerState == HammerState.STATE_NOHAMMER && super.getDuckState() == BasicOWA.DuckState.STATE_NODUCK) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_PANIC) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_PANIC) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_PANIC);    
             }
         }
         if(super.getJumpState() == BasicOWA.JumpState.STATE_JUMP_UP) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_JUMPUP) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_JUMPUP) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_JUMPUP);   
             }
         }
         else if(super.getJumpState() == BasicOWA.JumpState.STATE_JUMP_DOWN) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_JUMPDOWN) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_JUMPDOWN) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_JUMPDOWN);   
             }
         }
         if(super.getDuckState() == BasicOWA.DuckState.STATE_DUCK) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_DUCK) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_DUCK) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_DUCK);   
             }
         }
         if(super.getSpringState() == BasicOWA.SpringState.STATE_SPRING && !super.isGrounded()) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_JUMPUP) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_JUMPUP) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_JUMPUP);   
             }
         }
         if(hammerState == HammerState.STATE_HAMMER) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_HAMMER) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_HAMMER) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_HAMMER);   
             } 
         }
@@ -190,17 +190,17 @@ public class MarioOWA extends BasicOWA {
     private void idleAnimation() {
         waitTimer++;
         if(waitTimer < 988) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_STAND) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_STAND) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_STAND);               
             }                   
         }
         else if(waitTimer >= 998 && waitTimer < 3000) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_THINK) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_THINK) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_THINK);               
             }
         }
         else if(waitTimer >= 3000 && waitTimer < 3001) {
-            if(super.getAnimationControl().getAnimationNumber() != Animation.AnimationName.ANIMATION_MARIO_THINK) {
+            if(super.getAnimationControl().getAnimationName() != Animation.AnimationName.ANIMATION_MARIO_THINK) {
                 super.getAnimationControl().setAnimation(Animation.AnimationName.ANIMATION_MARIO_THINK);               
             }
         }

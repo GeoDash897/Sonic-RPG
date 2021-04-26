@@ -73,6 +73,11 @@ public class OverWorld {
     public ArrayList<Room> getRoomsArrayList() {
         return rooms;
     }
+    
+    public PlayerManager getManager() {
+        return manager;
+    }
+    
     public Room getCurrentRoom() {
         for(int i = 0; i < rooms.size(); i ++) {
             if(rooms.get(i).getRoomType() == currentRoomName) {
