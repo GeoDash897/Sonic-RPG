@@ -10,6 +10,7 @@ import game.overworld.OverWorld;
 import game.overworld.Room;
 import game.playerMenu.OWMenuManager;
 import game.player.PlayerCharacter.PlayerName;
+import game.randombattle.RandomBattle;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
@@ -23,13 +24,16 @@ public class PlayerManager {
     private OWMenuManager owMManager;
     private OverWorld overWorld;
     private Room currentRoom;
+    private RandomBattle currentBattle;
     private ArrayList<PlayerCharacter> players;
+    
     public PlayerManager(OverWorld overWorld) {
         this.overWorld = overWorld;
+        this.currentBattle = null;
         this.currentRoom = overWorld.getCurrentRoom();
         this.players = new ArrayList<PlayerCharacter>(1);
-        //players.add(new PlayerCharacter(this, PlayerName.PLAYERNAME_SONIC, OWPosition.OWPOSITION_FRONT, 300, 600));
-        players.add(new PlayerCharacter(this, PlayerName.PLAYERNAME_MARIO, OWPosition.OWPOSITION_FRONT, 1100, 600));
+        players.add(new PlayerCharacter(this, PlayerName.PLAYERNAME_SONIC, OWPosition.OWPOSITION_FRONT, 300, 600));
+        //players.add(new PlayerCharacter(this, PlayerName.PLAYERNAME_MARIO, OWPosition.OWPOSITION_FRONT, 1100, 600));
         partySize = players.size();
         this.inventory = new ArrayList<Inventory>(2);
         inventory.add(new Inventory(30));
@@ -39,19 +43,23 @@ public class PlayerManager {
     }
     
     public void standard() {
-        for(PlayerCharacter temp : players) {
-            temp.standard();
-        }
+        /*for(PlayerCharacter temp : players) {
+            temp.OWAStandard();
+        }*/
     }
     
     public void draw(Graphics2D g2) {
-        for(PlayerCharacter temp : players) {
+        /*for(PlayerCharacter temp : players) {
             temp.draw(g2);
-        }
+        }*/
     }
     
     public Room getCurrentRoom() {
         return currentRoom;
+    }
+    
+    public RandomBattle getCurrentBattle() {
+        return currentBattle;
     }
     
     public Inventory getInventory(int position) {
@@ -86,6 +94,17 @@ public class PlayerManager {
             temp.getAnimationControl().addToRoomPictureAL();
         }
     }    
+    
+    public void addToNewBattle(RandomBattle temp) {
+        if(currentBattle != currentRoom.getRandomBattle()) {
+            currentBattle = currentRoom.getRandomBattle();
+        }
+        for(PlayerCharacter player : players) {
+            temp.addBattleCreature(player.getPlayerBattleCharacter());
+            temp.addPicture(player.getAnimationControl());
+            temp.addGUI(player.getPlayerBattleCharacter().getPlayerBattleMenu());
+        }
+    }
     
     public enum OWPosition {
         OWPOSITION_FRONT(0),
